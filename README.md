@@ -173,14 +173,48 @@ Desktop application's engine selected, then manage the resulting container in
 Desktop. These Desktop configurations have not been runtime-tested here;
 the tested configuration is direct Podman inside WSL2.
 
+### Podman Desktop: configure the GPU entirely in the UI
+
+In **Images → Run Image**, use the following settings. The device fields are
+under **Advanced**, not the **Basic** tab shown in the screenshot.
+
+| Tab / field | Value |
+| --- | --- |
+| Basic → Entrypoint | Keep `/usr/local/bin/bonsai-server` |
+| Basic → Command | Leave empty |
+| Basic → Volumes | Host model directory accessible to the engine → `/models`, writable |
+| Basic → Port mapping | Host port `8080` → container port `8080` |
+| Basic → Environment variables | Optional `BONSAI_CTX_SIZE=16384`, `BONSAI_REASONING_EFFORT=medium`; backend detection is automatic |
+| Advanced → Devices → Host Device | `nvidia.com/gpu=all` — enter only this selector, without `--device` |
+| Advanced → Devices → Container Device | Leave empty; the UI uses the host value |
+| Advanced → Devices → Permissions | Enable **Read**, **Write**, and **Mknod** |
+| Security → Security options | `label=disable` when needed for the CDI/SELinux configuration |
+
+Click **Start Container** after configuring all tabs. No console `podman run`
+is required. Device access is a creation setting; recreate an incorrectly
+configured container rather than just restarting it. If the port dialog does
+not provide a host-address field, its port binding may expose the API on all
+host interfaces; inspect the created port binding and restrict host access as
+needed. The CLI examples below explicitly bind to localhost.
+
+The UI sends these fields as `HostConfig.Devices`. Podman's API recognizes a
+qualified CDI selector when the container-device field is empty or equal to
+the host selector. See the official
+[Desktop device form](https://github.com/podman-desktop/podman-desktop/blob/main/packages/renderer/src/lib/image/RunImage.svelte)
+and [Podman CDI mapping helper](https://github.com/containers/podman/blob/main/pkg/api/handlers/utils/docker_device.go).
+This recipe was checked against upstream source; it has not been runtime-tested
+in Desktop here. Older Desktop/engine versions may differ. A working NVIDIA
+CDI specification must already exist in the selected engine. On Windows, use
+the documented WSL2 GPU route; entering a selector does not add GPU passthrough
+to a stock Hyper-V machine.
+
 ### Desktop command fields do not configure GPU devices
 
 Do not put `--device nvidia.com/gpu=all` or `--gpus all` in the Desktop
 **Command/Arguments** field. That field becomes the container's `Config.Cmd`
 and is passed to the image entrypoint. It cannot configure Podman or Docker
-GPU access. Leave it empty for normal startup. If the dialog offers a device
-selector that supports CDI, select `nvidia.com/gpu=all` there; otherwise create
-the container from the CLI against the same engine, then manage it in Desktop.
+GPU access. Leave it empty for normal startup. Podman Desktop exposes device
+mappings in the **Advanced** tab; configure GPU access there as described below.
 
 For example, this inspect output indicates misplaced runtime options:
 

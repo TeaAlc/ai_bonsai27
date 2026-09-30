@@ -354,3 +354,21 @@ requires WSL2 and excludes Hyper-V. The README now distinguishes Desktop command
 fields from device configuration and provides a CLI recreation example.
 This is documentation validation against supplied inspect evidence and official
 references, not a new runtime test on the reported remote machine.
+
+
+## Podman Desktop device form verification (2026-09-30 follow-up)
+
+The previous suggestion that CLI creation was necessary was incomplete. The
+[upstream RunImage form](https://github.com/podman-desktop/podman-desktop/blob/main/packages/renderer/src/lib/image/RunImage.svelte)
+has **Advanced → Devices** with Host Device, Container Device, and Read/Write/Mknod
+fields. It sends `PathOnHost`, `PathInContainer` (defaulting to the host value),
+and `CgroupPermissions` in `HostConfig.Devices`.
+
+[Podman's API mapping helper](https://github.com/containers/podman/blob/main/pkg/api/handlers/utils/docker_device.go)
+recognizes qualified CDI names and returns the selector alone when the container
+path is empty or equal to the host selector. Thus the UI recipe is Host Device
+`nvidia.com/gpu=all`, Container Device empty, and Read/Write/Mknod enabled. Basic
+Command remains empty. The README now gives these field-level instructions.
+This verifies the upstream source path, not runtime compatibility of an unknown
+installed Desktop/engine version or GPU availability in the user's machine.
+NVIDIA Container Toolkit/CDI and a supported GPU-enabled engine remain required.
