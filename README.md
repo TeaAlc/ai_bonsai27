@@ -281,6 +281,24 @@ BONSAI_IMAGE=localhost/bonsai2-27b:1.0.0 ./run.sh
 
 Version calculation uses committed history and locally available stable tags. Builds do not fetch, create Git tags, push, or publish a release. Use a full Git checkout with release tags; shallow checkouts are rejected. Repeated builds can reuse the same version until release history changes, and uncommitted changes do not influence semrel's version calculation. OCI labels record the calculated version and source commit; `io.bonsai.git.dirty` identifies builds that include uncommitted project changes. The `latest` alias tracks the last successful local build.
 
+Release tags must identify the source commit of the built image. After a clean
+build, use the local release helper:
+
+```bash
+./build.sh
+./tools/tag-release.sh
+# Publish only when intended:
+./image_push.sh
+git push origin v1.2.0             # substitute the version printed by the helper
+```
+
+`tag-release.sh` reads the image's version, source revision, and clean-build
+label. It creates an annotated tag at that revision, rejects dirty builds and
+conflicting existing tags, and never pushes or moves a tag. Release tags and
+registry version tags are separate: neither rebuilding nor pushing an image
+alone records a Git release. New `feat` commits after `v1.1.0` produce `1.2.0`;
+`fix`/`perf` alone produce `1.1.1`. Published release tags must remain stable.
+
 The pinned executable, cached download, installer, release policy, and tool license all live in [tools/](tools/README.md). Subsequent builds use the verified cached binary without downloading again. Git, Podman, and basic shell utilities remain host prerequisites. Downloaded tool files are excluded from Git and the container image.
 
 ## Publishing to GitHub Container Registry

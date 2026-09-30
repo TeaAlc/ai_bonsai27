@@ -40,3 +40,10 @@ repositories and checks ordinary commits, breaking changes, lightweight and
 annotated tags, unrelated branch tags, and shallow-checkout rejection.
 
 The upstream Apache 2.0 license is retained in `semrel/LICENSE`.
+
+`tag-release.sh` creates an annotated local release tag from the latest built
+Podman image's OCI version and source revision labels. Override the image with
+BONSAI_IMAGE. The image must come from a clean commit present in this checkout.
+Existing tags are never moved; a conflicting source revision is an error.
+The helper does not build, push, or publish. Tag the completed build before
+starting work on the next release so semrel has the correct baseline.

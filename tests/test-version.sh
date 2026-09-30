@@ -52,6 +52,14 @@ git -C "$repository" tag v1.2.3
 git -C "$repository" commit --quiet --allow-empty -m 'feat: add configuration'
 expect_version 1.3.0
 
+# A feature after the existing 1.1.0 release must produce the requested 1.2.0.
+new_repository release-1.2.0
+git -C "$repository" tag -a v1.1.0 -m 'Release 1.1.0'
+git -C "$repository" commit --quiet --allow-empty -m 'feat(build): add image-based release tagging'
+expect_version 1.2.0
+git -C "$repository" commit --quiet --allow-empty -m 'docs: explain release workflow'
+expect_version 1.2.0
+
 new_repository breaking-subject
 git -C "$repository" tag v1.2.3
 git -C "$repository" commit --quiet --allow-empty -m 'feat!: change API'

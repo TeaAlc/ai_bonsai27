@@ -88,6 +88,8 @@ The wrapper normalizes annotated tags in a temporary snapshot because the
 pinned tool compares tag hashes against commit hashes. Original Git refs must
 remain unchanged. Version calculation is local, rejects shallow history, and
 uses reachable stable SemVer tags. Build both the version and `latest` tags.
+Use `tools/tag-release.sh` for explicitly requested local release tagging from
+a clean built image; never move published release tags.
 Keep Git tagging and publication disabled for builds; use `image_push.sh` for
 authorized registry publication. Determine the push version from the built
 image label, not newly committed but unbuilt changes. Test push logic with
