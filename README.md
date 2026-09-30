@@ -141,7 +141,7 @@ feature; older published images require both GGUF files to exist already.
 | GPU access | Docker: `--gpus all`; Podman with CDI: `--device nvidia.com/gpu=all` | Required; environment variables alone do not enable GPU access |
 | Models volume | Writable host directory or named volume mounted at `/models` | Required for persistent downloads; an empty writable directory is sufficient |
 | Published port | Host `127.0.0.1:8080` → container `8080/tcp` | Required for the documented host API access; choose another free host port if needed |
-| Backend | `BONSAI_GPU_BACKEND=blackwell` or `ampere-ada` | Must match the GPU; direct starts do not detect it automatically |
+| Backend | Automatically detected; optional `BONSAI_GPU_BACKEND` override | No manual selection required when `nvidia-smi` is available in the container |
 | Entrypoint | Keep the image default | Required for downloads and configured server startup |
 
 Missing models are downloaded before the API becomes ready. Provide internet
@@ -163,12 +163,21 @@ the tested configuration is direct Podman inside WSL2.
 
 | Variable | Default in image/entrypoint | Required to set? | Meaning |
 | --- | --- | --- | --- |
-| `BONSAI_GPU_BACKEND` | `blackwell` | Yes for compute capability 8.6/8.9 | `blackwell` for 12.0; `ampere-ada` for 8.6/8.9. Other capabilities are unsupported |
+| `BONSAI_GPU_BACKEND` | Automatic GPU detection | No | `blackwell` for 12.0; `ampere-ada` for 8.6/8.9. Other capabilities are unsupported |
 | `BONSAI_CTX_SIZE` | `16384` | No | Context tokens; integer ≥ 512. Larger values need more VRAM |
 | `BONSAI_REASONING_EFFORT` | `medium` | No | Official accepted values: `low`, `medium`, `xhigh`; `high` is invalid |
 | `BONSAI_MODEL` | `/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf` | No | Language-model path **inside** the container |
 | `BONSAI_MMPROJ` | `/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf` | No | BF16 vision-projector path **inside** the container |
 | `GGML_CUDA_BATCH_INVARIANT` | `1` | No | Preserve the bundled CUDA batch-invariant setting |
+
+When `BONSAI_GPU_BACKEND` is unset or empty, the entrypoint queries GPU 0 through
+`nvidia-smi` (from the runtime's PATH or `/usr/lib/wsl/lib/nvidia-smi`). It selects
+`ampere-ada` for 8.6/8.9 and `blackwell` for 12.0 before downloading models.
+An unavailable GPU query or unsupported capability causes startup to fail with
+an error. An explicit `blackwell` or `ampere-ada` value bypasses detection; it
+must match your GPU. Detection selects a backend, not GPU passthrough: the GPU
+runtime/device configuration above remains required. Older images may retain
+a fixed backend default; rebuild or pull a release containing this feature.
 
 Normally keep both model paths unchanged and mount your selected host directory
 at `/models`. A missing file at an overridden path receives the same pinned
@@ -195,15 +204,15 @@ For a native Linux Docker Engine, NVIDIA Container Toolkit must already be
 configured; this is a separate setup from Docker Desktop.
 
 The following single-line command works in PowerShell or a Linux/WSL2 shell.
-It uses a persistent named volume and explicitly selects the Blackwell backend:
+It uses a persistent named volume; the container detects the GPU backend:
 
 ```bash
 docker volume create bonsai-models
-docker run -d --name bonsai2-27b --gpus all -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_GPU_BACKEND=blackwell -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
+docker run -d --name bonsai2-27b --gpus all -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
 docker logs -f bonsai2-27b
 ```
 
-For an 8.6/8.9 GPU, replace `blackwell` with `ampere-ada`. For a host directory,
+For a host directory,
 replace the volume mount with
 `--mount "type=bind,source=/absolute/path/to/models,target=/models"` (use your
 actual Windows or Linux path). Create the directory first. Docker's GPU runtime
@@ -220,11 +229,11 @@ On native Linux, use the host's configured NVIDIA CDI setup.
 
 ```bash
 podman volume create bonsai-models
-podman run -d --name bonsai2-27b --device nvidia.com/gpu=all --security-opt label=disable -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_GPU_BACKEND=blackwell -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
+podman run -d --name bonsai2-27b --device nvidia.com/gpu=all --security-opt label=disable -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
 podman logs -f bonsai2-27b
 ```
 
-Again, select `ampere-ada` for compute capability 8.6/8.9. A bind mount can replace
+A bind mount can replace
 the named volume, using a source path accessible to the Podman engine.
 
 For **Podman installed directly in your WSL2 distribution**, the tested GPU
@@ -237,7 +246,6 @@ podman run -d --name bonsai2-27b \
   --device /dev/dxg -v /usr/lib/wsl:/usr/lib/wsl:ro \
   --security-opt label=disable \
   -p 127.0.0.1:8080:8080 -v "$PWD:/models:rw" \
-  -e BONSAI_GPU_BACKEND=blackwell \
   -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium \
   ghcr.io/teaalc/ai_bonsai27:latest
 ```

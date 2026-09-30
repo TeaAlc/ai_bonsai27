@@ -34,7 +34,10 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
 - `data/models/download.sh`: shared pinned model metadata and locked, resumable,
   SHA256-verified downloads for missing model files. Keep pins shared with
   `prepare.sh`. Existing nonempty readable model files are reused.
-- `entrypoint.sh`: validate settings, download missing models into the writable
+- `data/gpu/detect.sh`: detect the first visible GPU inside the container; map
+  8.6/8.9 to ampere-ada and 12.0 to blackwell. An explicit BONSAI_GPU_BACKEND
+  overrides detection. Fail clearly on query errors or unsupported GPUs.
+- `entrypoint.sh`: detect the backend, validate settings, download missing models into the writable
   cache, and assemble readable, commented
   argument groups before replacing itself with llama-server using `exec`.
 - `download_models.sh`: download missing models on the host with the shared helper.
@@ -91,6 +94,7 @@ image label, not newly committed but unbuilt changes. Test push logic with
 `tests/test-image-push.py`; Docker fallback needs separate storage or an import.
 Run `tests/test-version.sh` when changing versioning or build-tool behavior.
 Run `tests/test-model-download.sh` when changing model downloads or cache paths.
+Run `tests/test-gpu-backend.sh` when changing backend detection.
 `BONSAI_IMAGE` pins a runtime image; its default is the last successful local
 build through `localhost/bonsai2-27b:latest`.
 

@@ -86,3 +86,13 @@ Fresh API checks passed: the 1080p unicorn scene was described correctly, the
 16k context test processed 15,009 prompt tokens at 666.3 tokens/s, and all three
 coding tasks passed their assertions at 58.6–62.5 decoded tokens/s. These are
 measurements from the same WSL2 notebook; other hosts remain untested.
+
+## Automatic container backend selection (2026-09-30)
+
+The entrypoint now selects a backend from GPU 0's compute capability when
+BONSAI_GPU_BACKEND is unset or empty. The image no longer sets a fixed backend
+default. Fixture checks cover sm86, sm89, sm120, explicit overrides, unsupported
+capabilities, and query failures. A rebuilt image was started directly through
+Podman on the test WSL2 notebook without any backend environment variable:
+startup reported `Selected GPU backend: blackwell` and `/health` returned OK.
+Ampere/Ada and Desktop runtimes remain fixture-tested or documented only.

@@ -11,3 +11,6 @@ used by `download_models.sh`, `prepare.sh`, and the container entrypoint. The
 container also installs curl, CA certificates, and util-linux through its base
 distribution package manager. GGUF files are stored outside `data/` in the
 configured `BONSAI_MODEL_DIR`, defaulting to the caller’s current directory.
+
+`gpu/detect.sh` selects the CUDA backend inside the container through
+`nvidia-smi`; an explicit `BONSAI_GPU_BACKEND` overrides detection.

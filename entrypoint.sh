@@ -6,9 +6,13 @@ set -euo pipefail
 ctx_size=${BONSAI_CTX_SIZE:-16384}
 model=${BONSAI_MODEL:-/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf}
 vision_projector=${BONSAI_MMPROJ:-/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf}
-gpu_backend=${BONSAI_GPU_BACKEND:-blackwell}
 reasoning_effort=${BONSAI_REASONING_EFFORT:-medium}
 source /opt/bonsai/download-models.sh
+source /opt/bonsai/detect-gpu.sh
+
+# Detect the visible GPU unless the caller explicitly selected a CUDA bundle.
+gpu_backend=$(select_gpu_backend)
+echo "Selected GPU backend: $gpu_backend"
 
 fail() {
     echo "Error: $*" >&2
