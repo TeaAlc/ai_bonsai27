@@ -97,7 +97,7 @@ host port `8080`.
 
 `prepare.sh` downloads missing PTQ1_0 MTP Lean and official BF16 vision files with SHA256 verification, reuses existing model files, and downloads and verifies both CUDA backend bundles. The GGUF files stay in `BONSAI_MODEL_DIR`, defaulting to the caller’s current directory; existing files are reused. Backend archives and extracted binaries live under `data/backends/{blackwell,ampere-ada}/`; research inputs live under `data/research/`. The downloads and image need several gigabytes of disk space.
 
-`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. Every successful build produces both the calculated version tag and `localhost/bonsai2-27b:latest` from the same image; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Only backend runtime files and `entrypoint.sh` are copied into the image; model files are mounted read/write as a persistent download cache when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
+`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. Every successful build produces both the calculated version tag and `localhost/bonsai2-27b:latest` from the same image; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Backend runtime files, `entrypoint.sh`, and the shared download helper are copied into the image; model files are mounted read/write as a persistent download cache when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
 
 `run.sh` creates the model cache directory, detects WSL2 versus native Linux, selects the backend from the first GPU's compute capability, and starts the `bonsai2-27b` container in the background. Its default API base URL is **`http://127.0.0.1:8080/v1`**, with model ID **`bonsai2-27b`**. No API key is configured for local access.
 
@@ -109,7 +109,7 @@ podman rm bonsai2-27b
 BONSAI_CTX_SIZE=32768 BONSAI_PORT=8081 ./run.sh
 ```
 
-### Startup parameters
+### Parameters for `run.sh`
 
 These are all environment variables read by `run.sh`:
 
@@ -124,6 +124,128 @@ These are all environment variables read by `run.sh`:
 `BONSAI_CTX_SIZE` must be an integer of at least 512. `BONSAI_REASONING_EFFORT` accepts `low`, `medium`, or `xhigh` (default: `medium`). The official model default is `xhigh`; `medium` gives shorter reasoning. The model accepts `low` but it may behave much like `xhigh`; `high` is invalid and can cause an HTTP 500. Larger contexts need more VRAM; 32k has not been validated on the test notebook. See the [official model card](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf) and [known issues](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/blob/main/KNOWN_ISSUES.md).
 
 Optional positional arguments passed to `run.sh` are forwarded to `llama-server`, for example `./run.sh --log-verbose`. Additional server flags can override the defaults, so preserve the GPU-only language-model and CPU vision settings. `BONSAI_BASE_URL` configures request scripts; it does not change the container binding. `BONSAI_GPU_BACKEND` is detected automatically; `BONSAI_MODEL` and `BONSAI_MMPROJ` are container entrypoint settings and are not forwarded from the host environment by `run.sh`. For status and logs, use `podman ps` and `podman logs -f bonsai2-27b`.
+
+## Start directly with Docker Desktop or Podman Desktop
+
+No repository scripts are needed to start the image directly. Use
+`ghcr.io/teaalc/ai_bonsai27:latest`, keep the image entrypoint, and configure the
+following runtime settings in the container creation dialog or equivalent CLI.
+The download behavior below requires an image built with the model-cache
+feature; older published images require both GGUF files to exist already.
+
+### Required runtime settings
+
+| Setting | Value | Requirement |
+| --- | --- | --- |
+| Image | `ghcr.io/teaalc/ai_bonsai27:latest` or a versioned tag | Required |
+| GPU access | Docker: `--gpus all`; Podman with CDI: `--device nvidia.com/gpu=all` | Required; environment variables alone do not enable GPU access |
+| Models volume | Writable host directory or named volume mounted at `/models` | Required for persistent downloads; an empty writable directory is sufficient |
+| Published port | Host `127.0.0.1:8080` → container `8080/tcp` | Required for the documented host API access; choose another free host port if needed |
+| Backend | `BONSAI_GPU_BACKEND=blackwell` or `ampere-ada` | Must match the GPU; direct starts do not detect it automatically |
+| Entrypoint | Keep the image default | Required for downloads and configured server startup |
+
+Missing models are downloaded before the API becomes ready. Provide internet
+access and enough disk space on first start; a populated cache supports offline
+startup. In a Desktop application's **Volumes** section, enter your absolute
+host model directory as the source, `/models` as the destination, and enable
+write access. Alternatively, use a named volume as in the examples below.
+Host bind paths must be accessible to the selected engine/VM. A named volume
+belongs to that engine and avoids host-path sharing issues.
+
+In **Environment variables**, use the container variables below. Configure
+ports, volumes, and GPU devices separately. If the creation dialog cannot
+express GPU access or the localhost binding, use the CLI command with the
+Desktop application's engine selected, then manage the resulting container in
+Desktop. These Desktop configurations have not been runtime-tested here;
+the tested configuration is direct Podman inside WSL2.
+
+### Container environment variables
+
+| Variable | Default in image/entrypoint | Required to set? | Meaning |
+| --- | --- | --- | --- |
+| `BONSAI_GPU_BACKEND` | `blackwell` | Yes for compute capability 8.6/8.9 | `blackwell` for 12.0; `ampere-ada` for 8.6/8.9. Other capabilities are unsupported |
+| `BONSAI_CTX_SIZE` | `16384` | No | Context tokens; integer ≥ 512. Larger values need more VRAM |
+| `BONSAI_REASONING_EFFORT` | `medium` | No | Official accepted values: `low`, `medium`, `xhigh`; `high` is invalid |
+| `BONSAI_MODEL` | `/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf` | No | Language-model path **inside** the container |
+| `BONSAI_MMPROJ` | `/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf` | No | BF16 vision-projector path **inside** the container |
+| `GGML_CUDA_BATCH_INVARIANT` | `1` | No | Preserve the bundled CUDA batch-invariant setting |
+
+Normally keep both model paths unchanged and mount your selected host directory
+at `/models`. A missing file at an overridden path receives the same pinned
+artifact, not a different model chosen by its filename.
+
+`BONSAI_MODEL_DIR`, `BONSAI_PORT`, and `BONSAI_IMAGE` are **host `run.sh` settings**,
+not container settings. Setting them in a Desktop environment-variable dialog
+will not create a mount, publish a port, or select an image. `BONSAI_BASE_URL`
+only configures request clients. The container listens on `0.0.0.0:8080`;
+restrict access by publishing it on host `127.0.0.1` as shown.
+
+MTP (`n_max=2`), Flash Attention, `q8_0` main/draft K/V caches, GPU-only language
+model placement, and CPU/RAM vision are already configured by the entrypoint.
+They require no extra environment variables. Optional container command
+arguments are appended to llama-server, for example `--log-verbose`; preserve
+the default entrypoint and the project's GPU/vision settings.
+
+### Docker Desktop: direct start
+
+Docker Desktop's NVIDIA GPU support requires **Windows with the WSL2 backend**.
+Enable it and install a compatible Windows NVIDIA driver following
+[Docker's GPU documentation](https://docs.docker.com/desktop/features/gpu/).
+For a native Linux Docker Engine, NVIDIA Container Toolkit must already be
+configured; this is a separate setup from Docker Desktop.
+
+The following single-line command works in PowerShell or a Linux/WSL2 shell.
+It uses a persistent named volume and explicitly selects the Blackwell backend:
+
+```bash
+docker volume create bonsai-models
+docker run -d --name bonsai2-27b --gpus all -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_GPU_BACKEND=blackwell -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
+docker logs -f bonsai2-27b
+```
+
+For an 8.6/8.9 GPU, replace `blackwell` with `ampere-ada`. For a host directory,
+replace the volume mount with
+`--mount "type=bind,source=/absolute/path/to/models,target=/models"` (use your
+actual Windows or Linux path). Create the directory first. Docker's GPU runtime
+supplies driver access; the manual WSL driver mount used by `run.sh` is not
+part of this Docker command.
+
+### Podman Desktop: direct start with CDI
+
+GPU access must be configured in the engine used by Podman Desktop. On Windows,
+use a WSL2-backed Podman machine with NVIDIA Container Toolkit and a generated
+CDI specification as described in
+[Podman Desktop's GPU documentation](https://podman-desktop.io/docs/podman/gpu).
+On native Linux, use the host's configured NVIDIA CDI setup.
+
+```bash
+podman volume create bonsai-models
+podman run -d --name bonsai2-27b --device nvidia.com/gpu=all --security-opt label=disable -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_GPU_BACKEND=blackwell -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
+podman logs -f bonsai2-27b
+```
+
+Again, select `ampere-ada` for compute capability 8.6/8.9. A bind mount can replace
+the named volume, using a source path accessible to the Podman engine.
+
+For **Podman installed directly in your WSL2 distribution**, the tested GPU
+access route uses `/dev/dxg` and the WSL driver directory instead of CDI. Run
+this Bash command inside that distribution; it mounts the current directory
+as the persistent model cache:
+
+```bash
+podman run -d --name bonsai2-27b \
+  --device /dev/dxg -v /usr/lib/wsl:/usr/lib/wsl:ro \
+  --security-opt label=disable \
+  -p 127.0.0.1:8080:8080 -v "$PWD:/models:rw" \
+  -e BONSAI_GPU_BACKEND=blackwell \
+  -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium \
+  ghcr.io/teaalc/ai_bonsai27:latest
+```
+
+After loading completes, check `http://localhost:8080/health` and send API
+requests to `http://localhost:8080/v1` using model ID `bonsai2-27b`. Stop and
+remove an existing container before creating another with the same name;
+keep its model volume/directory to reuse the downloads.
 
 ## Image versions and build tools
 
