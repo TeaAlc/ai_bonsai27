@@ -1,0 +1,11 @@
+# Match the standard semantic-release bump rules.
+patchTypes: [fix, perf]
+minorTypes: [feat]
+majorTypes: []
+defaultBump: none
+initialVersion: 1.0.0
+development: false
+prefix: ""
+# Image builds calculate versions only; release tagging is a separate action.
+createTag: false
+pushTag: false

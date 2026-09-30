@@ -23,7 +23,9 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
 - `prepare.sh`: download pinned models and backend bundles, verify SHA256, and
   extract backends. Do not build the image here.
 - `build.sh`: verify extracted backend files and build the image using
-  `Containerfile`. Keep image creation in this script.
+  `Containerfile`. Determine the image version through `tools/version.sh` and
+  semrel, then tag the successful build with its SemVer version and `latest`.
+  Keep image creation in this script.
 - `run.sh`: validate startup settings, prepare GPU access, and start the container.
 - `entrypoint.sh`: validate container settings and assemble readable, commented
   argument groups before replacing itself with llama-server using `exec`.
@@ -32,6 +34,9 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   Put additional project-supplied build/runtime dependencies in suitable `data/`
   subdirectories. Do not recreate a top-level `vendor/` directory.
 - `data/research/`: retained research metadata and source inputs.
+- `tools/`: all project-supplied build tooling, including the pinned semrel
+  installer, binary cache, license, and version policy. Host GPU runtime
+  dependencies remain under `data/`. Do not install build tools globally.
 - `assets/`: committed assets, including `fairyland-unicorns-1080p.png`.
 - `tests/`: test scripts. The single top-level request example is
   `simple_request.sh`, which sends the existing image asset and prints indented
@@ -49,7 +54,7 @@ Quote variables and preserve the boundaries of forwarded arguments.
 
 Project-specific environment variables use the `BONSAI_` prefix:
 `BONSAI_CTX_SIZE`, `BONSAI_REASONING_EFFORT`, `BONSAI_PORT`, and
-`BONSAI_BASE_URL`. Container settings also include `BONSAI_GPU_BACKEND`,
+`BONSAI_BASE_URL`, and `BONSAI_IMAGE`. Container settings also include `BONSAI_GPU_BACKEND`,
 `BONSAI_MODEL`, and `BONSAI_MMPROJ`. Keep standard external variables such as
 `TMPDIR`, `LD_LIBRARY_PATH`, and `GGML_CUDA_BATCH_INVARIANT` under their official
 names.
@@ -59,6 +64,18 @@ The project default is `medium`; the model's official default is `xhigh`.
 `low` may behave like `xhigh`, and `high` is invalid. Document the accepted values
 in the startup script comments. Verify model-specific changes against official
 model documentation and the pinned backend, not generic llama.cpp assumptions.
+
+## Image versioning
+
+Use the pinned semrel binary through `tools/version.sh`; do not implement a
+second commit parser or hardcode the llama-server commit as the image version.
+The wrapper normalizes annotated tags in a temporary snapshot because the
+pinned tool compares tag hashes against commit hashes. Original Git refs must
+remain unchanged. Version calculation is local, rejects shallow history, and
+uses reachable stable SemVer tags. Keep tagging/pushing disabled for builds.
+Run `tests/test-version.sh` when changing versioning or build-tool behavior.
+`BONSAI_IMAGE` pins a runtime image; its default is the last successful local
+build through `localhost/bonsai2-27b:latest`.
 
 ## Python: never create bytecode caches
 

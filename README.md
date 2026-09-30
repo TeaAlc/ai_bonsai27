@@ -6,7 +6,7 @@ The server uses MTP with `n_max=2`, Flash Attention, and `q8_0` K/V caches for b
 
 ## Requirements
 
-- x86-64 Linux or WSL2, Bash, rootless Podman, `curl`, `tar`, and `sha256sum`. Python 3 is needed for the tests. The coding test also pulls `python:3.12-slim` if it is not cached.
+- x86-64 Linux or WSL2, Bash, rootless Podman, Git, `curl`, `tar`, and `sha256sum`. Python 3 is needed for the tests. The coding test also pulls `python:3.12-slim` if it is not cached.
 - A discrete NVIDIA GPU with compute capability **8.6 or 8.9** (the bundled Ampere/Ada backend) or **12.0** (Blackwell backend). Other compute capabilities are rejected by `run.sh`. The first GPU reported by `nvidia-smi` is selected as CUDA0.
 - Enough free VRAM for the entire language model and its 16k runtime state. The tested 12 GB laptop GPU worked with this configuration. Approximately 8 GB of free VRAM is a practical starting point, but usage varies by host and workload. Memory pressure causes startup to fail; the configuration does not silently offload language-model weights to CPU.
 - **Native Linux:** a working NVIDIA driver and NVIDIA Container Toolkit with CDI already configured, so `--device nvidia.com/gpu=all` works. Native Linux execution has not been tested in this project.
@@ -27,7 +27,7 @@ curl http://127.0.0.1:8080/health
 
 `prepare.sh` downloads and SHA256-verifies the PTQ1_0 MTP Lean model, the official BF16 vision projector, and both CUDA backend bundles. The GGUF files stay in `models/`. Backend archives and extracted binaries live under `data/backends/{blackwell,ampere-ada}/`; research inputs live under `data/research/`. The downloads and image need several gigabytes of disk space.
 
-`build.sh` checks the extracted backend files again, then builds `localhost/bonsai2-27b:ff41412`. Only backend runtime files and `entrypoint.sh` are copied into the image; model files are mounted read-only when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
+`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. It updates `localhost/bonsai2-27b:latest` after a successful build; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Only backend runtime files and `entrypoint.sh` are copied into the image; model files are mounted read-only when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
 
 `run.sh` checks both GGUF files, detects WSL2 versus native Linux, selects the backend from the first GPU's compute capability, and starts the `bonsai2-27b` container in the background. Its default API base URL is **`http://127.0.0.1:8080/v1`**, with model ID **`bonsai2-27b`**. No API key is configured for local access.
 
@@ -46,8 +46,23 @@ The public startup variables are:
 | `BONSAI_CTX_SIZE` | `16384` | Context window in tokens |
 | `BONSAI_REASONING_EFFORT` | `medium` | Reasoning effort: `low`, `medium`, or `xhigh` |
 | `BONSAI_PORT` | `8080` | Host port, bound to localhost |
+| `BONSAI_IMAGE` | `localhost/bonsai2-27b:latest` | Image to start; set a versioned tag to pin a build |
 
 `BONSAI_CTX_SIZE` must be an integer of at least 512. `BONSAI_REASONING_EFFORT` accepts `low`, `medium`, or `xhigh` (default: `medium`). The official model default is `xhigh`; `medium` gives shorter reasoning. The model accepts `low` but it may behave much like `xhigh`; `high` is invalid and can cause an HTTP 500. Larger contexts need more VRAM; 32k has not been validated on the test notebook. See the [official model card](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf) and [known issues](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/blob/main/KNOWN_ISSUES.md). Extra arguments passed to `run.sh` are forwarded to `llama-server`. For status and logs, use `podman ps` and `podman logs -f bonsai2-27b`.
+
+## Image versions and build tools
+
+Versions are calculated by the pinned [greatliontech/semrel](https://github.com/greatliontech/semrel) tool. Without a release tag the first version is `1.0.0`. After a reachable stable release tag, `fix` and `perf` commits increment the patch version, `feat` increments the minor version, and breaking changes increment the major version. Documentation and maintenance commits alone retain the existing version. Both lightweight and annotated tags such as `v1.2.3` are supported.
+
+```bash
+./tools/version.sh                  # print the calculated version
+./tests/test-version.sh             # check version rules using isolated Git fixtures
+BONSAI_IMAGE=localhost/bonsai2-27b:1.0.0 ./run.sh
+```
+
+Version calculation uses committed history and locally available stable tags. Builds do not fetch, create Git tags, push, or publish a release. Use a full Git checkout with release tags; shallow checkouts are rejected. Repeated builds can reuse the same version until release history changes, and uncommitted changes do not influence semrel's version calculation. OCI labels record the calculated version and source commit; `io.bonsai.git.dirty` identifies builds that include uncommitted project changes. The `latest` alias tracks the last successful local build.
+
+The pinned executable, cached download, installer, release policy, and tool license all live in [tools/](tools/README.md). Subsequent builds use the verified cached binary without downloading again. Git, Podman, and basic shell utilities remain host prerequisites. Downloaded tool files are excluded from Git and the container image.
 
 ## API examples
 
@@ -120,7 +135,7 @@ The recorded server log showed **66/66 language-model layers on CUDA0**, a 5,995
 On the target system, copy the project and run `./prepare.sh`, `./build.sh`, and `./run.sh`. Alternatively, export the built image and transfer it alongside `run.sh` and **both** GGUF files in `models/`:
 
 ```bash
-podman save -o bonsai2-27b.tar localhost/bonsai2-27b:ff41412
+podman save -o bonsai2-27b.tar localhost/bonsai2-27b:latest
 # On the target system:
 podman load -i bonsai2-27b.tar
 BONSAI_CTX_SIZE=16384 ./run.sh

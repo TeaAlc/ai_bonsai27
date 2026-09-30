@@ -1,0 +1,42 @@
+# Local build tools
+
+`install.sh` installs the pinned Linux x86-64 binary of
+[greatliontech/semrel](https://github.com/greatliontech/semrel) **0.7.0** into
+`semrel/bin/semrel`. It verifies both the official archive and the extracted
+binary against the SHA256 values in `semrel/artifacts.sh`. Downloaded archives
+are kept in `semrel/downloads/`. These generated directories are excluded from
+Git and from the container build context. No global tool installation, Go,
+Node.js, or sudo is required; the host still supplies Git, Bash, curl, tar,
+sha256sum, and Podman.
+
+`version.sh` installs the tool if necessary and prints only the calculated
+stable image version on stdout. Build scripts call it automatically. Run it
+manually with `./tools/version.sh`; an optional repository path is supported
+for the isolated tests.
+
+Release policy is in `semrel/config.yaml`: the first version is `1.0.0`, `fix`
+and `perf` cause a patch bump, `feat` causes a minor bump, and breaking changes
+cause a major bump. Other commit types do not bump the version. The highest
+stable SemVer tag reachable from HEAD is the baseline; both `v1.2.3` and
+`1.2.3`, lightweight and annotated, are supported. Prerelease and non-SemVer
+tags do not serve as release baselines.
+
+The pinned tool compares tag object hashes with commit hashes. To support
+annotated release tags, `version.sh` creates a temporary local Git snapshot,
+dereferences reachable stable tags there, and supplies the tool configuration
+from this directory. The upstream binary is unchanged, and semrel performs
+the actual commit analysis and version calculation. The original repository
+is not modified. Temporary directories are removed on exit and live under
+`/tmp/bonsai27/` by default, or the standard `TMPDIR` when supplied.
+
+Only committed local history is analyzed. Obtain full history and release
+tags before building a clone; shallow checkouts are rejected. A build does not
+fetch remote history, create release tags, push, or publish a release. Repeated
+builds without new releasable commits return the same version. Adding a release
+tag is a separate release action, not part of this installer or image build.
+
+Validate the version behavior with `./tests/test-version.sh`. It uses temporary
+repositories and checks ordinary commits, breaking changes, lightweight and
+annotated tags, unrelated branch tags, and shallow-checkout rejection.
+
+The upstream Apache 2.0 license is retained in `semrel/LICENSE`.

@@ -8,6 +8,8 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 # much like xhigh. high is not accepted by this model.
 ctx_size=${BONSAI_CTX_SIZE:-16384}
 reasoning_effort=${BONSAI_REASONING_EFFORT:-medium}
+# latest points to the last successful local build; use a versioned tag to pin it.
+image=${BONSAI_IMAGE:-localhost/bonsai2-27b:latest}
 if [[ ! "$ctx_size" =~ ^[0-9]+$ ]] || (( 10#$ctx_size < 512 )); then
     echo 'BONSAI_CTX_SIZE must be an integer of at least 512' >&2
     exit 2
@@ -70,5 +72,5 @@ exec podman run \
     -e "BONSAI_GPU_BACKEND=$backend" \
     -e "BONSAI_REASONING_EFFORT=$reasoning_effort" \
     --security-opt label=disable \
-    localhost/bonsai2-27b:ff41412 \
+    "$image" \
     "$@"

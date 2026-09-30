@@ -16,3 +16,7 @@ __pycache__/
 .env.*
 .vscode/
 .idea/
+
+# Locally installed build tools; installers and configuration stay in Git
+tools/semrel/bin/
+tools/semrel/downloads/
