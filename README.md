@@ -353,6 +353,13 @@ BONSAI_IMAGE=localhost/bonsai2-27b:1.0.0 ./run.sh
 
 Version calculation uses committed history and locally available stable tags. Builds do not fetch, create Git tags, push, or publish a release. Use a full Git checkout with release tags; shallow checkouts are rejected. Repeated builds can reuse the same version until release history changes, and uncommitted changes do not influence semrel's version calculation. OCI labels record the calculated version and source commit; `io.bonsai.git.dirty` identifies builds that include uncommitted project changes. The `latest` alias tracks the last successful local build.
 
+A published registry image does not automatically create a Git release tag.
+Record each published release with its source commit and push that Git tag;
+otherwise semrel keeps calculating the same pending release version. For
+example, after `v1.2.0` exists, subsequent `fix` commits produce `1.2.1`.
+Documentation commits alone do not increase it. Keep release tags available
+in every checkout that builds images.
+
 Release tags must identify the source commit of the built image. After a clean
 build, use the local release helper:
 
