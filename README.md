@@ -27,7 +27,7 @@ curl http://127.0.0.1:8080/health
 
 `prepare.sh` downloads and SHA256-verifies the PTQ1_0 MTP Lean model, the official BF16 vision projector, and both CUDA backend bundles. The GGUF files stay in `models/`. Backend archives and extracted binaries live under `data/backends/{blackwell,ampere-ada}/`; research inputs live under `data/research/`. The downloads and image need several gigabytes of disk space.
 
-`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. It updates `localhost/bonsai2-27b:latest` after a successful build; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Only backend runtime files and `entrypoint.sh` are copied into the image; model files are mounted read-only when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
+`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. Every successful build produces both the calculated version tag and `localhost/bonsai2-27b:latest` from the same image; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Only backend runtime files and `entrypoint.sh` are copied into the image; model files are mounted read-only when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
 
 `run.sh` checks both GGUF files, detects WSL2 versus native Linux, selects the backend from the first GPU's compute capability, and starts the `bonsai2-27b` container in the background. Its default API base URL is **`http://127.0.0.1:8080/v1`**, with model ID **`bonsai2-27b`**. No API key is configured for local access.
 
@@ -63,6 +63,51 @@ BONSAI_IMAGE=localhost/bonsai2-27b:1.0.0 ./run.sh
 Version calculation uses committed history and locally available stable tags. Builds do not fetch, create Git tags, push, or publish a release. Use a full Git checkout with release tags; shallow checkouts are rejected. Repeated builds can reuse the same version until release history changes, and uncommitted changes do not influence semrel's version calculation. OCI labels record the calculated version and source commit; `io.bonsai.git.dirty` identifies builds that include uncommitted project changes. The `latest` alias tracks the last successful local build.
 
 The pinned executable, cached download, installer, release policy, and tool license all live in [tools/](tools/README.md). Subsequent builds use the verified cached binary without downloading again. Git, Podman, and basic shell utilities remain host prerequisites. Downloaded tool files are excluded from Git and the container image.
+
+## Publishing to GitHub Container Registry
+
+`./image_push.sh` publishes the last successful local build as both
+`ghcr.io/teaalc/ai_bonsai27:<version>` and
+`ghcr.io/teaalc/ai_bonsai27:latest`. The version comes from the semrel-generated
+label of the actual local image. Both remote tags use the same source image;
+the version tag is pushed first, followed by `latest`.
+
+```bash
+./build.sh
+./image_push.sh                          # ask for the token with hidden input
+./image_push.sh --token 'YOUR_GHCR_TOKEN' # alternatively pass the token explicitly
+```
+
+The script prefers a working Podman with the local build and falls back to a
+working Docker daemon. You can select an engine explicitly with
+`BONSAI_PUSH_ENGINE=podman` or `BONSAI_PUSH_ENGINE=docker`. When Docker is selected
+and only Podman holds the image, the script exports a temporary Docker archive
+and loads it into Docker before publishing.
+
+The login user defaults to `TeaAlc`; set `BONSAI_GHCR_USER` if your token belongs
+to another authorized GitHub user. The token needs the `write:packages` scope.
+For local CLI authentication, GitHub documents a personal access token
+(classic). The OCI source label links the package to this project. See
+[GitHub's Container Registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
+
+Authentication uses `--password-stdin` and a temporary, restricted credential
+configuration under `/tmp/bonsai27/`, removed when the script exits. Tokens are
+never saved in the repository or permanent Podman/Docker configuration. Prefer
+the hidden prompt if you want to keep the token out of shell history and process
+arguments; an explicit `--token` parameter may be visible there.
+
+GitHub initially creates packages as private. Access for other users depends on
+the package's configured visibility and permissions. Once authorized, another
+machine can run the published image with:
+
+```bash
+podman pull ghcr.io/teaalc/ai_bonsai27:latest
+BONSAI_IMAGE=ghcr.io/teaalc/ai_bonsai27:latest ./run.sh
+```
+
+The two GGUF files and GPU host setup remain required. Run
+`python3 -B tests/test-image-push.py` to check engine selection, prompt and token
+parameter handling, Docker import, and failure behavior without publishing.
 
 ## API examples
 

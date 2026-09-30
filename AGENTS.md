@@ -26,6 +26,10 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   `Containerfile`. Determine the image version through `tools/version.sh` and
   semrel, then tag the successful build with its SemVer version and `latest`.
   Keep image creation in this script.
+- `image_push.sh`: publish the last built image to the project GHCR package
+  under its version and `latest` tags. Prefer Podman and support Docker fallback.
+  Prompt for a token unless `--token` was supplied, use password-stdin, and clean
+  up temporary credential files. Never commit credentials.
 - `run.sh`: validate startup settings, prepare GPU access, and start the container.
 - `entrypoint.sh`: validate container settings and assemble readable, commented
   argument groups before replacing itself with llama-server using `exec`.
@@ -54,7 +58,8 @@ Quote variables and preserve the boundaries of forwarded arguments.
 
 Project-specific environment variables use the `BONSAI_` prefix:
 `BONSAI_CTX_SIZE`, `BONSAI_REASONING_EFFORT`, `BONSAI_PORT`, and
-`BONSAI_BASE_URL`, and `BONSAI_IMAGE`. Container settings also include `BONSAI_GPU_BACKEND`,
+`BONSAI_BASE_URL`, `BONSAI_IMAGE`, `BONSAI_GHCR_USER`, and
+`BONSAI_PUSH_ENGINE`. Container settings also include `BONSAI_GPU_BACKEND`,
 `BONSAI_MODEL`, and `BONSAI_MMPROJ`. Keep standard external variables such as
 `TMPDIR`, `LD_LIBRARY_PATH`, and `GGML_CUDA_BATCH_INVARIANT` under their official
 names.
@@ -72,7 +77,11 @@ second commit parser or hardcode the llama-server commit as the image version.
 The wrapper normalizes annotated tags in a temporary snapshot because the
 pinned tool compares tag hashes against commit hashes. Original Git refs must
 remain unchanged. Version calculation is local, rejects shallow history, and
-uses reachable stable SemVer tags. Keep tagging/pushing disabled for builds.
+uses reachable stable SemVer tags. Build both the version and `latest` tags.
+Keep Git tagging and publication disabled for builds; use `image_push.sh` for
+authorized registry publication. Determine the push version from the built
+image label, not newly committed but unbuilt changes. Test push logic with
+`tests/test-image-push.py`; Docker fallback needs separate storage or an import.
 Run `tests/test-version.sh` when changing versioning or build-tool behavior.
 `BONSAI_IMAGE` pins a runtime image; its default is the last successful local
 build through `localhost/bonsai2-27b:latest`.

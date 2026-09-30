@@ -29,15 +29,15 @@ for backend in blackwell ampere-ada; do
     (cd "$runtime" && sha256sum -c SHA256SUMS)
 done
 
-# Keep the versioned tag and update the local latest alias for run.sh only after
-# a successful build. OCI labels make the calculated version inspectable.
+# Build one image with both the semrel version and latest tags. Podman applies
+# both tags to the successful result; OCI labels keep the version inspectable.
 podman build \
     --tag "$image" \
+    --tag localhost/bonsai2-27b:latest \
     --label "org.opencontainers.image.version=$version" \
     --label "org.opencontainers.image.revision=$revision" \
     --label "io.bonsai.git.dirty=$dirty" \
     --label 'org.opencontainers.image.source=https://github.com/TeaAlc/ai_bonsai27' \
     --file Containerfile \
     .
-podman tag "$image" localhost/bonsai2-27b:latest
 printf 'Built %s (also available as localhost/bonsai2-27b:latest)\n' "$image"
