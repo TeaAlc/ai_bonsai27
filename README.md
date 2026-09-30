@@ -1,3 +1,5 @@
+![Unicorns grazing in a sunny fairyland meadow with a rainbow and castle](assets/fairyland-unicorns-1080p.png)
+
 # Bonsai 2 27B with Vision in Podman
 
 Run **`Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf`**, a Bonsai 2 model based on Qwen3.8-27B, with a Bonsai-compatible `llama-server` and its OpenAI-compatible API. The language model, MTP head, KV caches, and recurrent state run on the NVIDIA GPU. The separate **BF16 vision encoder/projector runs on CPU and system RAM** to save VRAM.
