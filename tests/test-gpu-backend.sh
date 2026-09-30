@@ -10,6 +10,7 @@ nvidia-smi() {
     printf ' %s\n' "$fixture_capability"
 }
 unset BONSAI_GPU_BACKEND
+query_cuda_capability() { return 1; }
 for fixture_capability in 8.6 8.9 12.0; do
     expected=ampere-ada
     [[ "$fixture_capability" == 12.0 ]] && expected=blackwell
@@ -23,4 +24,11 @@ for override in blackwell ampere-ada; do
     [[ $(BONSAI_GPU_BACKEND=$override select_gpu_backend) == "$override" ]]
 done
 if BONSAI_GPU_BACKEND=invalid select_gpu_backend; then exit 1; fi
+
+# A working CUDA probe must not depend on the failing nvidia-smi fallback.
+query_cuda_capability() { echo "$fixture_capability"; }
+fixture_capability=12.0
+[[ $(select_gpu_backend) == blackwell ]]
+fixture_capability=8.9
+[[ $(select_gpu_backend) == ampere-ada ]]
 echo 'Passed GPU detection, unsupported GPU, query failure, and override checks.'

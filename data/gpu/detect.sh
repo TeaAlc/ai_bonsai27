@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Choose the bundle for the first GPU visible inside the container. An explicit
-# setting bypasses detection, allowing hosts with no nvidia-smi to select it.
+# setting bypasses detection. The CUDA driver probe works without nvidia-smi.
+query_cuda_capability() {
+    LD_LIBRARY_PATH="/usr/lib/wsl/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+        /opt/bonsai/cuda-compute-capability
+}
+
 select_gpu_backend() {
     local requested=${BONSAI_GPU_BACKEND:-} smi capability
     if [[ -n "$requested" ]]; then
@@ -10,19 +15,23 @@ select_gpu_backend() {
         esac
     fi
 
-    if smi=$(command -v nvidia-smi); then
+    # Prefer the driver query: it uses CUDA device ordering, honors visibility,
+    # and needs only the driver libraries already required by llama-server.
+    if capability=$(query_cuda_capability); then
         :
+    elif smi=$(command -v nvidia-smi); then
+        if ! capability=$("$smi" --id=0 --query-gpu=compute_cap --format=csv,noheader); then
+            echo 'Error: cannot query the GPU. Check container GPU access.' >&2
+            return 2
+        fi
     elif [[ -x /usr/lib/wsl/lib/nvidia-smi ]]; then
-        smi=/usr/lib/wsl/lib/nvidia-smi
+        if ! capability=$(LD_LIBRARY_PATH="/usr/lib/wsl/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+            /usr/lib/wsl/lib/nvidia-smi --id=0 --query-gpu=compute_cap --format=csv,noheader); then
+            echo 'Error: cannot query the GPU. Check container GPU access.' >&2
+            return 2
+        fi
     else
-        echo 'Error: GPU detection needs nvidia-smi. Check GPU access or set BONSAI_GPU_BACKEND explicitly.' >&2
-        return 2
-    fi
-
-    # WSL's tool also needs the mounted driver libraries before backend selection.
-    if ! capability=$(LD_LIBRARY_PATH="/usr/lib/wsl/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
-        "$smi" --id=0 --query-gpu=compute_cap --format=csv,noheader); then
-        echo 'Error: cannot query the GPU. Check container GPU access.' >&2
+        echo 'Error: GPU detection failed through CUDA and nvidia-smi. Check GPU passthrough and driver libraries, or set BONSAI_GPU_BACKEND explicitly.' >&2
         return 2
     fi
     capability=${capability//[[:space:]]/}

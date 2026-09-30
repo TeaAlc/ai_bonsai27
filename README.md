@@ -97,7 +97,7 @@ host port `8080`.
 
 `prepare.sh` downloads missing PTQ1_0 MTP Lean and official BF16 vision files with SHA256 verification, reuses existing model files, and downloads and verifies both CUDA backend bundles. The GGUF files stay in `BONSAI_MODEL_DIR`, defaulting to the caller’s current directory; existing files are reused. Backend archives and extracted binaries live under `data/backends/{blackwell,ampere-ada}/`; research inputs live under `data/research/`. The downloads and image need several gigabytes of disk space.
 
-`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. Every successful build produces both the calculated version tag and `localhost/bonsai2-27b:latest` from the same image; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Backend runtime files, `entrypoint.sh`, and the shared download helper are copied into the image; model files are mounted read/write as a persistent download cache when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
+`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. Every successful build produces both the calculated version tag and `localhost/bonsai2-27b:latest` from the same image; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Backend runtime files, `entrypoint.sh`, the shared download helper, and a small CUDA driver probe are copied into the image; model files are mounted read/write as a persistent download cache when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
 
 `run.sh` creates the model cache directory, detects WSL2 versus native Linux, selects the backend from the first GPU's compute capability, and starts the `bonsai2-27b` container in the background. Its default API base URL is **`http://127.0.0.1:8080/v1`**, with model ID **`bonsai2-27b`**. No API key is configured for local access.
 
@@ -184,10 +184,12 @@ this model and context size. The tested GPU is an RTX 5070 Ti Laptop GPU.
 Other compute capabilities are unsupported by the bundled backends, including
 the A100 (8.0), H100 (9.0), and B200 (10.0).
 
-When `BONSAI_GPU_BACKEND` is unset or empty, the entrypoint queries GPU 0 through
-`nvidia-smi` (from the runtime's PATH or `/usr/lib/wsl/lib/nvidia-smi`). It selects
+When `BONSAI_GPU_BACKEND` is unset or empty, the entrypoint queries CUDA device 0
+through a bundled driver probe using `libcuda.so.1`; `nvidia-smi` is not required.
+If that query fails, it tries `nvidia-smi` as a fallback. It selects
 `ampere-ada` for 8.6/8.9 and `blackwell` for 12.0 before downloading models.
-An unavailable GPU query or unsupported capability causes startup to fail with
+Missing driver libraries, unavailable GPU access, or an unsupported capability
+causes startup to fail with
 an error. An explicit `blackwell` or `ampere-ada` value bypasses detection; it
 must match your GPU. Detection selects a backend, not GPU passthrough: the GPU
 runtime/device configuration above remains required. Older images may retain
@@ -437,6 +439,8 @@ python3 -B tests/test-api.py       # model list, chat, and ~15k-token prompt
 python3 -B tests/test-vision.py    # two known-shape image requests
 python3 -B tests/test-coding.py    # three Python tasks, 23 assertions
 ./tests/test-model-download.sh    # cache, integrity, locking, and directory fixtures
+./tests/test-gpu-backend.sh       # backend detection and overrides
+./tests/test-cuda-probe.sh        # driver probe fixtures; requires a host C compiler
 ```
 
 `tests/test-api.py` accepts `BONSAI_BASE_URL` and `BONSAI_CTX_SIZE`; its long-context test requires a window of at least 16k. The vision and coding scripts currently use port 8080. The coding script executes generated programs in restricted, network-disabled Python containers. Outputs are written to the local, Git-ignored `results/` directory. Project test scripts disable Python bytecode caching, and `simple_request.sh` invokes Python with `-B`, so these entry points do not create `__pycache__` directories. Use `python3 -B` or `PYTHONDONTWRITEBYTECODE=1` for any additional Python commands in the project; avoid `py_compile` and `compileall`, which explicitly write bytecode files.

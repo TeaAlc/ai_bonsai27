@@ -13,4 +13,5 @@ distribution package manager. GGUF files are stored outside `data/` in the
 configured `BONSAI_MODEL_DIR`, defaulting to the caller’s current directory.
 
 `gpu/detect.sh` selects the CUDA backend inside the container through
-`nvidia-smi`; an explicit `BONSAI_GPU_BACKEND` overrides detection.
+the CUDA driver probe compiled from `gpu/compute-capability.c`, with
+`nvidia-smi` as a fallback; an explicit `BONSAI_GPU_BACKEND` overrides detection.

@@ -96,3 +96,16 @@ capabilities, and query failures. A rebuilt image was started directly through
 Podman on the test WSL2 notebook without any backend environment variable:
 startup reported `Selected GPU backend: blackwell` and `/health` returned OK.
 Ampere/Ada and Desktop runtimes remain fixture-tested or documented only.
+
+## CUDA detection without nvidia-smi (2026-09-30)
+
+Detection now queries libcuda.so.1 directly before falling back to nvidia-smi.
+The small C probe uses cuInit, cuDeviceGet, and cuDeviceGetAttribute with the
+public compute-capability attribute IDs 75/76, following
+[NVIDIA's Driver API guidance](https://docs.nvidia.com/cuda/cuda-programming-guide/05-appendices/compute-capabilities.html).
+It is compiled in an Ubuntu build stage; the compiler is absent from the final
+image. Fake-driver tests cover capability lookup and initialization failure.
+On the actual WSL2 notebook, the probe reported 12.0 with PATH set to a directory
+containing no nvidia-smi. GPU driver libraries and passthrough remain required.
+The direct-start test container selected blackwell without a backend override,
+returned OK from /health, and answered the API arithmetic check with 42.

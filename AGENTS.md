@@ -34,7 +34,8 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
 - `data/models/download.sh`: shared pinned model metadata and locked, resumable,
   SHA256-verified downloads for missing model files. Keep pins shared with
   `prepare.sh`. Existing nonempty readable model files are reused.
-- `data/gpu/detect.sh`: detect the first visible GPU inside the container; map
+- `data/gpu/detect.sh`: detect CUDA device 0 through the bundled libcuda probe,
+  with nvidia-smi as a fallback; map
   8.6/8.9 to ampere-ada and 12.0 to blackwell. An explicit BONSAI_GPU_BACKEND
   overrides detection. Fail clearly on query errors or unsupported GPUs.
 - `entrypoint.sh`: detect the backend, validate settings, download missing models into the writable

@@ -8,6 +8,7 @@ data/*
 !data/models/download.sh
 !data/gpu
 !data/gpu/detect.sh
+!data/gpu/compute-capability.c
 data/backends/*
 !data/backends/blackwell
 !data/backends/ampere-ada
