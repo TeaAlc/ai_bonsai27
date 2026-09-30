@@ -27,3 +27,17 @@ Model download serialization uses atomic `<filename>.lock.d` directory creation
 on the shared model mount rather than flock. Locks are cleaned on normal exit
 and handled signals. Stale locks after forced shutdown are not automatically
 stolen across container PID namespaces; waiters fail after ten minutes.
+
+Backend archives are reused offline when their pinned checksums pass.
+Preparation extracts into a fresh temporary directory, checks the complete file
+inventory, and replaces the runtime tree under the shared project lock. A
+`runtime.previous/` directory is recovery state after an interrupted replacement;
+preparation/build restore it if the main tree is absent. Builds snapshot the
+runtime and compare its checksum manifest identity against the pinned value in
+`tools/backend-artifacts.sh`. Preserve upstream license files and verified
+contents. The host CUDA driver is injected at runtime, not bundled here.
+
+`gpu/settings.sh` shares bounded configuration validation between the wrapper
+and container. Backend overrides must match the actual CUDA device. Model
+transfers use supervised children and directory locks, with explicit host
+`download_models.sh --verify` / `--repair` operations for pinned cache files.

@@ -1,33 +1,64 @@
 #!/usr/bin/env -S python3 -B
-
-# Keep imports from writing bytecode caches, including when run via python3.
+"""Identify two known shapes through the actual vision API."""
 import sys
 sys.dont_write_bytecode = True
+import base64
+import json
+import struct
+import time
+import zlib
+from api_support import call, save, RUN_DIR, identity
 
-import base64,json,struct,time,urllib.request,zlib
-from pathlib import Path
-out=Path(__file__).resolve().parent.parent / 'results/vision';out.mkdir(parents=True,exist_ok=True)
-def chunk(t,b): return struct.pack('!I',len(b))+t+b+struct.pack('!I',zlib.crc32(t+b)&0xffffffff)
-def fixture(name):
- w=h=384; rows=[]
- for y in range(h):
-  row=bytearray()
-  for x in range(w):
-   if name=='red-square': inside=90<=x<294 and 90<=y<294; color=(230,20,20)
-   else: inside=(x-192)**2+(y-192)**2<105**2; color=(20,40,230)
-   row.extend(color if inside else (255,255,255))
-  rows.append(b'\x00'+row)
- return b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('!2I5B',w,h,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(b''.join(rows)))+chunk(b'IEND',b'')
-summary=[]
-for name,expected in [('red-square',('red','square')),('blue-circle',('blue','circle'))]:
- png=fixture(name);(out/(name+'.png')).write_bytes(png)
- data={'model':'bonsai2-27b','messages':[{'role':'user','content':[{'type':'text','text':'Identify the single colored shape in this image. Answer in English with just its color and shape.'},{'type':'image_url','image_url':{'url':'data:image/png;base64,'+base64.b64encode(png).decode()}}]}],'temperature':0,'max_tokens':128,'chat_template_kwargs':{'enable_thinking':False}}
- req=urllib.request.Request('http://127.0.0.1:8080/v1/chat/completions',data=json.dumps(data).encode(),headers={'Content-Type':'application/json'})
- start=time.monotonic()
- with urllib.request.urlopen(req,timeout=600) as r: response=json.load(r)
- (out/(name+'.json')).write_text(json.dumps(response,indent=2))
- answer=response['choices'][0]['message']['content'];passed=all(x in answer.lower() for x in expected)
- item={'fixture':name,'answer':answer,'passed':passed,'wall_seconds':time.monotonic()-start,'timings':response.get('timings')}
- summary.append(item);print(json.dumps(item),flush=True)
-(out/'summary.json').write_text(json.dumps(summary,indent=2))
-assert all(x['passed'] for x in summary)
+
+def png_chunk(kind, content):
+    return (struct.pack('!I', len(content)) + kind + content
+            + struct.pack('!I', zlib.crc32(kind + content) & 0xffffffff))
+
+
+def image_fixture(name):
+    width = height = 384
+    rows = []
+    for y in range(height):
+        row = bytearray()
+        for x in range(width):
+            if name == 'red-square':
+                inside = 90 <= x < 294 and 90 <= y < 294
+                color = (230, 20, 20)
+            else:
+                inside = (x - 192)**2 + (y - 192)**2 < 105**2
+                color = (20, 40, 230)
+            row.extend(color if inside else (255, 255, 255))
+        rows.append(b'\x00' + row)
+    return (b'\x89PNG\r\n\x1a\n'
+            + png_chunk(b'IHDR', struct.pack('!2I5B', width, height, 8, 2, 0, 0, 0))
+            + png_chunk(b'IDAT', zlib.compress(b''.join(rows)))
+            + png_chunk(b'IEND', b''))
+
+
+identity()
+output = RUN_DIR / 'vision'
+output.mkdir(parents=True, exist_ok=True)
+summary = []
+for name, expected in [('red-square', ('red', 'square')), ('blue-circle', ('blue', 'circle'))]:
+    png = image_fixture(name)
+    (output / (name + '.png')).write_bytes(png)
+    data = {
+        'model': 'bonsai2-27b',
+        'messages': [{'role': 'user', 'content': [
+            {'type': 'text', 'text': 'Identify the single colored shape in this image. Answer in English with just its color and shape.'},
+            {'type': 'image_url', 'image_url': {'url': 'data:image/png;base64,' + base64.b64encode(png).decode()}},
+        ]}],
+        'temperature': 0, 'max_tokens': 128,
+        'chat_template_kwargs': {'enable_thinking': False},
+    }
+    started = time.monotonic()
+    response = call('/v1/chat/completions', data)
+    save('vision/' + name, response)
+    answer = response['choices'][0]['message']['content']
+    item = {'fixture': name, 'answer': answer,
+            'passed': all(word in answer.lower() for word in expected),
+            'wall_seconds': time.monotonic() - started, 'timings': response.get('timings')}
+    summary.append(item)
+    print(json.dumps(item), flush=True)
+save('vision/summary', summary)
+assert all(item['passed'] for item in summary), 'Vision test failed'

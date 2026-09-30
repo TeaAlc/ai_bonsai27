@@ -1,153 +1,103 @@
 #!/usr/bin/env -S python3 -B
-
-# Keep all fixture execution free of Python bytecode caches.
+"""Exercise publication selection and credentials in isolated stores/repos."""
 import sys
 sys.dont_write_bytecode = True
-
+import json
 import os
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
 
-PROJECT = Path(__file__).resolve().parent.parent
+PROJECT = Path(__file__).resolve().parents[1]
 TOKEN = 'unit-test-secret'
-
-# Stub only the external container commands. The actual push script runs with
-# isolated image stores, credential files, and command traces for each fixture.
-ENGINE_STUB = r'''#!/usr/bin/env bash
+IMAGE_ID = 'sha256:' + 'a'*64
+STUB = r'''#!/usr/bin/env bash
 set -euo pipefail
-engine=$(basename -- "$0")
+engine=$(basename "$0")
 printf '%s|%s\n' "$engine" "$*" >> "$MOCK_LOG"
-config_dir=''
-if [[ ${1:-} == --config ]]; then
-    config_dir=$2
-    shift 2
-fi
+if [[ ${1:-} == --config ]]; then shift 2; fi
 case "${1:-}" in
-    info)
-        if [[ "$engine" == podman && ${MOCK_PODMAN_READY:-true} == false ]]; then
-            exit 1
-        fi
-        ;;
+    info) [[ "$engine" != podman || ${MOCK_PODMAN_READY:-true} == true ]] ;;
     image)
-        if [[ "$engine" == docker && ${MOCK_DOCKER_HAS_IMAGE:-true} == false && ! -f "$MOCK_IMPORTED" ]]; then
-            exit 1
-        fi
-        if [[ "$*" == *org.opencontainers.image.version* ]]; then
-            printf '%s\n' "${MOCK_VERSION:-1.2.3}"
-        else
-            echo 'sha256:fixture-image'
-        fi
-        ;;
+        if [[ "$engine" == docker && ${MOCK_DOCKER_HAS_SOURCE:-false} == false && ! -f "$MOCK_IMPORTED" ]]; then exit 1; fi
+        cat "$MOCK_IMAGE_JSON" ;;
     save)
-        while (( $# > 0 )); do
-            if [[ "$1" == --output ]]; then
-                printf 'fixture archive' > "$2"
-                break
-            fi
+        while (( $# )); do
+            if [[ "$1" == --output ]]; then touch "$2"; break; fi
             shift
-        done
-        ;;
-    load)
-        touch "$MOCK_IMPORTED"
-        ;;
-    login)
-        received=$(cat)
-        [[ "$received" == unit-test-secret ]] || exit 1
-        if [[ "$engine" == docker ]]; then
-            printf 'fixture credentials' > "$config_dir/config.json"
-        else
-            while (( $# > 0 )); do
-                if [[ "$1" == --authfile ]]; then
-                    printf 'fixture credentials' > "$2"
-                    break
-                fi
-                shift
-            done
-        fi
-        echo 'Login succeeded'
-        ;;
+        done ;;
+    load) touch "$MOCK_IMPORTED" ;;
+    login) [[ $(cat) == unit-test-secret ]] ;;
     tag) ;;
-    push)
-        if [[ ${MOCK_FAIL_PUSH:-false} == true ]]; then
-            echo 'Fixture registry rejected the push' >&2
-            exit 1
-        fi
-        while (( $# > 0 )); do
-            if [[ "$1" == --digestfile ]]; then
-                echo 'sha256:fixture-manifest' > "$2"
-                break
-            fi
-            shift
-        done
-        echo 'Push succeeded'
-        ;;
-    *) exit 1 ;;
+    push) [[ ${MOCK_FAIL_PUSH:-false} == false ]] ;;
+    *) exit 2 ;;
 esac
 '''
 
 
-def run_case(name, changes=None, parameter=False, success=True):
-    with tempfile.TemporaryDirectory(prefix='image-push-test.', dir='/tmp/bonsai27') as directory:
+def run_case(name, changes=None, parameter=False, success=True, dirty=False, invalid=False):
+    with tempfile.TemporaryDirectory(dir='/tmp/bonsai27', prefix='push-test.') as directory:
         root = Path(directory)
-        binaries = root / 'bin'
-        binaries.mkdir()
-        for engine in ('podman', 'docker'):
-            stub = binaries / engine
-            stub.write_text(ENGINE_STUB)
-            stub.chmod(0o755)
-        log = root / 'commands.log'
-        environment = dict(
-            os.environ,
-            PATH=str(binaries) + os.pathsep + os.environ['PATH'],
-            TMPDIR=str(root),
-            MOCK_LOG=str(log),
-            MOCK_IMPORTED=str(root / 'imported'),
-            BONSAI_PUSH_ENGINE='auto',
-        )
+        repo=root/'repo'; (repo/'tools').mkdir(parents=True); (repo/'results').mkdir()
+        for filename in ('image_push.sh','tools/project.sh','tools/registry.py'):
+            shutil.copy2(PROJECT/filename, repo/filename)
+        def git(*args): return subprocess.check_output(['git','-C',str(repo),*args],text=True).strip()
+        git('init','--quiet','--initial-branch=main');git('config','user.name','Test');git('config','user.email','test@example.invalid');git('add','.');git('commit','--quiet','-m','feat: fixture');revision=git('rev-parse','HEAD');git('tag','v1.2.3')
+        receipt={'schema':1,'image_id':IMAGE_ID,'version':'1.2.3','revision':revision,'source':'https://github.com/TeaAlc/ai_bonsai27','dirty':dirty}
+        (repo/'results/last-build.json').write_text(json.dumps(receipt))
+        image={'Id':IMAGE_ID.removeprefix('sha256:'),'Config':{'Labels':{'org.opencontainers.image.version':'1.2.3','org.opencontainers.image.revision':revision,'org.opencontainers.image.source':receipt['source'],'io.bonsai.git.dirty':'false'}}}
+        if invalid: image['Config']['Labels']['org.opencontainers.image.source']='wrong'
+        image_file=root/'image.json';image_file.write_text(json.dumps([image]))
+        binaries=root/'bin';binaries.mkdir()
+        for engine in ('podman','docker'):
+            path=binaries/engine;path.write_text(STUB);path.chmod(0o755)
+        wrapper=binaries/'python3'
+        wrapper.write_text('''#!/usr/bin/env bash
+if [[ "$*" == *tools/registry.py* ]]; then
+    echo "registry|$3" >> "$MOCK_LOG"
+    if [[ "$3" == guard ]]; then
+        [[ ${MOCK_REGISTRY_CONFLICT:-false} == false ]] || exit 2
+        echo "${MOCK_PUBLICATION:-new}"
+    else
+        [[ ${MOCK_PROMOTE_FAIL:-false} == false ]] || exit 2
+        echo sha256:fixture-manifest
+    fi
+else
+    exec "$MOCK_PYTHON" "$@"
+fi
+''');wrapper.chmod(0o755)
+        log=root/'commands.log'
+        environment=dict(os.environ, PATH=str(binaries)+':'+os.environ['PATH'], TMPDIR=str(root), MOCK_LOG=str(log), MOCK_IMPORTED=str(root/'imported'), MOCK_IMAGE_JSON=str(image_file), MOCK_PYTHON=sys.executable, BONSAI_PUSH_ENGINE='auto')
         environment.update(changes or {})
-        command = [str(PROJECT / 'image_push.sh')]
-        if parameter:
-            command += ['--token', TOKEN]
-        result = subprocess.run(
-            command,
-            input='' if parameter else TOKEN + '\n',
-            text=True,
-            capture_output=True,
-            env=environment,
-            check=False,
-        )
-        trace = log.read_text()
-        assert (result.returncode == 0) == success, result.stderr
-        assert TOKEN not in result.stdout + result.stderr + trace
-        assert not list(root.glob('ghcr-push.*')), 'Temporary credentials were not removed'
-        if success:
-            pushes = [line for line in trace.splitlines() if '|push ' in line or '|--config ' in line and ' push ' in line]
-            assert len(pushes) == 2, trace
-            assert pushes[0].endswith('ghcr.io/teaalc/ai_bonsai27:1.2.3'), trace
-            assert pushes[1].endswith('ghcr.io/teaalc/ai_bonsai27:latest'), trace
-        print('PASS:', name)
-        return trace, result
+        command=[str(repo/'image_push.sh')]+(['--token',TOKEN] if parameter else [])
+        result=subprocess.run(command,input='' if parameter else TOKEN+'\n',text=True,capture_output=True,env=environment)
+        trace=log.read_text() if log.exists() else ''
+        assert (result.returncode==0)==success,(name,result.stderr)
+        assert TOKEN not in result.stdout+result.stderr+trace
+        assert not list(root.glob('ghcr-push.*'))
+        if success: assert 'registry|promote' in trace
+        print('PASS:',name)
+        return trace,result
 
 
 Path('/tmp/bonsai27').mkdir(exist_ok=True)
-trace, result = run_case('Podman preferred; token prompted')
-assert 'podman|push ' in trace and 'docker|' not in trace
-assert 'input hidden' in result.stderr
-
-trace, result = run_case('Token parameter skips prompt', parameter=True)
+trace,result=run_case('Podman preferred, hidden prompt')
+assert 'podman|push ' in trace and 'docker|' not in trace and 'input hidden' in result.stderr
+trace,result=run_case('Explicit token',parameter=True)
 assert 'input hidden' not in result.stderr
-
-trace, _ = run_case('Unavailable Podman falls back to Docker', {'MOCK_PODMAN_READY': 'false'})
-assert 'docker|--config ' in trace and ' push ghcr.io/' in trace
-
-trace, _ = run_case('Explicit Docker imports a Podman image', {
-    'BONSAI_PUSH_ENGINE': 'docker', 'MOCK_DOCKER_HAS_IMAGE': 'false',
-})
+trace,_=run_case('Docker imports exact source despite stale latest',{'BONSAI_PUSH_ENGINE':'docker'})
 assert 'podman|save ' in trace and ' load --input ' in trace
-
-trace, _ = run_case('Invalid image version rejected before login', {'MOCK_VERSION': 'invalid'}, success=False)
-assert ' login ' not in trace and '|login ' not in trace
-
-trace, _ = run_case('Failed version push does not update latest', {'MOCK_FAIL_PUSH': 'true'}, success=False)
-assert 'docker://ghcr.io/teaalc/ai_bonsai27:latest' not in trace
+trace,_=run_case('Docker fallback with exact image',{'MOCK_PODMAN_READY':'false','MOCK_DOCKER_HAS_SOURCE':'true'})
+assert ' push ghcr.io/' in trace
+trace,_=run_case('Dirty build rejected before login',success=False,dirty=True)
+assert 'login' not in trace
+trace,_=run_case('Wrong source rejected before login',success=False,invalid=True)
+assert 'login' not in trace
+trace,_=run_case('Published conflict rejected before push',{'MOCK_REGISTRY_CONFLICT':'true'},success=False)
+assert '|push ' not in trace and 'registry|promote' not in trace
+trace,_=run_case('Identical retry preserves version',{'MOCK_PUBLICATION':'existing'})
+assert '|push ' not in trace
+trace,_=run_case('Failed version push never promotes latest',{'MOCK_FAIL_PUSH':'true'},success=False)
+assert 'registry|promote' not in trace
+run_case('Failed promotion reports partial publication',{'MOCK_PROMOTE_FAIL':'true'},success=False)

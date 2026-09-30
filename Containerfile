@@ -1,10 +1,10 @@
 # Compile a small runtime GPU probe; no compiler or CUDA toolkit in the final image.
-FROM docker.io/library/ubuntu:24.04 AS gpu-probe-build
+FROM docker.io/library/ubuntu:24.04@sha256:008173c23f95b170204355c12626cb5a965d779a7e1283b09e9cffbb1bf33ca3 AS gpu-probe-build
 RUN apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev && rm -rf /var/lib/apt/lists/*
 COPY data/gpu/compute-capability.c /src/compute-capability.c
 RUN gcc -O2 -Wall -Wextra -Werror /src/compute-capability.c -ldl -o /cuda-compute-capability
 
-FROM docker.io/library/ubuntu:24.04
+FROM docker.io/library/ubuntu:24.04@sha256:008173c23f95b170204355c12626cb5a965d779a7e1283b09e9cffbb1bf33ca3
 # HTTPS downloads are needed only when a mounted model file is missing.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash coreutils curl ca-certificates util-linux libc-bin libstdc++6 libgcc-s1 \
@@ -13,6 +13,7 @@ COPY data/backends/blackwell/runtime/ /opt/bonsai/blackwell/
 COPY data/backends/ampere-ada/runtime/ /opt/bonsai/ampere-ada/
 COPY entrypoint.sh /usr/local/bin/bonsai-server
 COPY data/models/download.sh /opt/bonsai/download-models.sh
+COPY data/gpu/settings.sh /opt/bonsai/settings.sh
 COPY data/gpu/detect.sh /opt/bonsai/detect-gpu.sh
 COPY data/gpu/check-runtime.sh /opt/bonsai/check-runtime.sh
 COPY --from=gpu-probe-build /cuda-compute-capability /opt/bonsai/cuda-compute-capability

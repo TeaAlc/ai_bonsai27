@@ -4,7 +4,6 @@ set +x
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
-readonly local_image=localhost/bonsai2-27b:latest
 readonly registry_image=ghcr.io/teaalc/ai_bonsai27
 username=${BONSAI_GHCR_USER:-TeaAlc}
 engine=${BONSAI_PUSH_ENGINE:-auto}
@@ -45,6 +44,26 @@ fail() {
     exit 2
 }
 
+source tools/project.sh
+lock_project
+readonly receipt_file=results/last-build.json
+[[ -r "$receipt_file" ]] || { echo 'Error: missing build receipt; run build.sh.' >&2; exit 2; }
+# Validate the receipt and corresponding Git release tag before asking for secrets.
+read -r source_id version revision < <(python3 -B - "$receipt_file" <<'PYCODE'
+import json, sys
+sys.path.insert(0, 'tools')
+from registry import validate_receipt
+with open(sys.argv[1]) as stream: receipt = json.load(stream)
+validate_receipt(receipt)
+print(receipt['image_id'], receipt['version'], receipt['revision'])
+PYCODE
+)
+assert_tag_aliases "$version" "$revision"
+git show-ref --verify --quiet "refs/tags/v$version" \
+    || git show-ref --verify --quiet "refs/tags/$version" \
+    || { echo 'Error: build source needs its release tag; use create_realease.sh or tools/tag-release.sh.' >&2; exit 2; }
+readonly local_image="$source_id"
+
 engine_ready() {
     command -v "$1" >/dev/null 2>&1 && "$1" info >/dev/null 2>&1
 }
@@ -81,7 +100,7 @@ trap 'exit 143' TERM
 if [[ "$engine" == docker ]]; then
     mkdir -p "$work_dir/docker"
     engine_command=(docker --config "$work_dir/docker")
-    if ! docker image inspect "$local_image" >/dev/null 2>&1; then
+    if ! docker image inspect "$source_id" >/dev/null 2>&1; then
         # An explicitly selected Docker can publish a Podman build by importing
         # its docker-archive. No rebuilding or model files are required.
         engine_ready podman || fail 'Docker has no local build and Podman cannot export it.'
@@ -95,13 +114,19 @@ else
     engine_command=(podman)
 fi
 
-# Pin the source image ID, then read the version assigned by semrel at build
-# time. Do not calculate a different version from newer, unbuilt Git commits.
-source_id=$("${engine_command[@]}" image inspect --format '{{.Id}}' "$local_image")
-version=$("${engine_command[@]}" image inspect \
-    --format '{{index .Config.Labels "org.opencontainers.image.version"}}' "$source_id")
-[[ "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] \
-    || fail 'The local image has no valid semrel version label. Rebuild it with ./build.sh.'
+# Check inspected labels against the build receipt, independent of mutable aliases.
+"${engine_command[@]}" image inspect "$source_id" > "$work_dir/image.json"
+python3 -B - "$receipt_file" "$work_dir/image.json" <<'PYCODE'
+import json, sys
+receipt = json.load(open(sys.argv[1]))
+image = json.load(open(sys.argv[2]))[0]
+labels = image['Config']['Labels']
+expected = {'org.opencontainers.image.version': receipt['version'],
+            'org.opencontainers.image.revision': receipt['revision'],
+            'org.opencontainers.image.source': receipt['source'], 'io.bonsai.git.dirty': 'false'}
+if 'sha256:' + image['Id'].removeprefix('sha256:') != receipt['image_id'] or any(labels.get(k) != v for k,v in expected.items()):
+    raise ValueError('local image does not match the clean build receipt')
+PYCODE
 
 # Prompt when no token parameter was supplied. Registry login receives the
 # token through stdin; credentials never enter the repository or permanent
@@ -125,28 +150,25 @@ else
     printf '%s' "$token" | "${engine_command[@]}" login \
         ghcr.io --username "$username" --password-stdin
 fi
+# Use a private credential file for registry API checks; never pass its contents
+# through command arguments. The EXIT trap removes it and engine credentials.
+printf '%s' "$token" | python3 -B -c 'import json,sys; json.dump({"username":sys.argv[2],"token":sys.stdin.read()},open(sys.argv[1],"w"))' "$work_dir/credentials.json" "$username"
 unset token
+publication=$(python3 -B tools/registry.py guard --receipt "$receipt_file" --credentials "$work_dir/credentials.json")
 
-# Push the version first. Update the remote latest tag only after it succeeds.
-# Both destinations refer to the same source image, regardless of local tags.
-for tag in "$version" latest; do
-    destination="$registry_image:$tag"
+# Publish an absent version with the selected engine. An identical publication
+# is reused; published version manifests are never replaced by this script.
+if [[ "$publication" == new ]]; then
+    destination="$registry_image:$version"
     "${engine_command[@]}" tag "$source_id" "$destination"
     echo "Pushing $destination with $engine"
     if [[ "$engine" == podman ]]; then
-        podman push "${auth_args[@]}" \
-            --digestfile "$work_dir/$tag.digest" \
-            "$source_id" "docker://$destination"
+        podman push "${auth_args[@]}" "$source_id" "docker://$destination"
     else
         "${engine_command[@]}" push "$destination"
     fi
-done
-# The Podman path also verifies that both uploaded manifests have the same
-# digest. Docker pushes the same image ID under both tags using its own CLI.
-if [[ "$engine" == podman ]]; then
-    version_digest=$(cat "$work_dir/$version.digest")
-    latest_digest=$(cat "$work_dir/latest.digest")
-    [[ "$version_digest" == "$latest_digest" ]] || fail 'Uploaded image digests differ.'
-    printf 'Registry digest: %s\n' "$version_digest"
 fi
-printf 'Published %s:%s and %s:latest\n' "$registry_image" "$version" "$registry_image"
+# Promote the exact version manifest via the registry API. This keeps the two
+# tags identical for both engines and supports retry after a partial push.
+digest=$(python3 -B tools/registry.py promote --receipt "$receipt_file" --credentials "$work_dir/credentials.json")
+printf 'Published %s:%s and latest; registry digest: %s\n' "$registry_image" "$version" "$digest"

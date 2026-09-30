@@ -13,7 +13,7 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   `--no-mmproj-offload`.
 - MTP uses `draft-mtp` with `n_max=2`; Flash Attention is enabled; main and draft
   K/V cache types are `q8_0`.
-- Context defaults to 16,384 tokens. The API model ID is `bonsai2-27b`, and the
+- Context defaults to 16,384 tokens; validate 512–262144 before Bash arithmetic. The API model ID is `bonsai2-27b`, and the
   host API is published only on localhost, port 8080 by default.
 - Do not claim stock Podman Desktop Hyper-V supports NVIDIA CUDA. A separately
   GPU-provisioned Hyper-V Linux guest is conditional on working guest drivers,
@@ -34,20 +34,20 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
 - `build.sh`: verify extracted backend files and build the image using
   `Containerfile`. Determine the image version through `tools/version.sh` and
   semrel, then tag the successful build with its SemVer version and `latest`.
-  Keep image creation in this script.
+  Keep image creation in this script. Build immutable source/backend snapshots and atomically record results/last-build.json with image identity and dependency inventory.
 - `image_push.sh`: publish the last built image to the project GHCR package
   under its version and `latest` tags. Prefer Podman and support Docker fallback.
-  Prompt for a token unless `--token` was supplied, use password-stdin, and clean
+  Publish the exact clean image from the receipt, require matching release tags, reject remote conflicts/rollback, and promote the exact version manifest to latest. Prompt for a token unless `--token` was supplied, use password-stdin, and clean
   up temporary credential files. Never commit credentials.
 - `run.sh`: validate startup settings, prepare GPU access, and start the container.
 - `data/models/download.sh`: shared pinned model metadata and locked, resumable,
   SHA256-verified downloads for missing model files. Use atomic directory locks,
   not flock on model mounts; shared filesystems may not implement it. Keep pins shared with
-  `prepare.sh`. Existing nonempty readable model files are reused.
+  `prepare.sh`. Existing nonempty readable model files are reused; --verify and --repair are explicit pinned-cache operations. Forward stop signals through the supervised download worker and release only its owned lock.
 - `data/gpu/detect.sh`: detect CUDA device 0 through the bundled libcuda probe,
   with nvidia-smi as a fallback; map
   8.6/8.9 to ampere-ada and 12.0 to blackwell. An explicit BONSAI_GPU_BACKEND
-  overrides detection. Fail clearly on query errors or unsupported GPUs.
+  must match the detected device; run.sh leaves selection to the container. Fail clearly on query errors or unsupported GPUs.
 - `entrypoint.sh`: detect the backend, validate settings, download missing models into the writable
   cache, and assemble readable, commented
   argument groups before replacing itself with llama-server using `exec`.
@@ -81,7 +81,9 @@ Project-specific environment variables use the `BONSAI_` prefix:
 `BONSAI_CTX_SIZE`, `BONSAI_REASONING_EFFORT`, `BONSAI_MODEL_DIR`, `BONSAI_PORT`, and
 `BONSAI_BASE_URL`, `BONSAI_IMAGE`, `BONSAI_GHCR_USER`, and
 `BONSAI_PUSH_ENGINE`. Container settings also include `BONSAI_GPU_BACKEND`,
-`BONSAI_MODEL`, and `BONSAI_MMPROJ`. Keep standard external variables such as
+`BONSAI_MODEL`, and `BONSAI_MMPROJ`. Runtime controls also include
+`BONSAI_CONTAINER_NAME`, `BONSAI_DOWNLOAD_WAIT_SECONDS` (600), and
+`BONSAI_DOWNLOAD_TIMEOUT` (3600); download limits accept 1–86400 seconds. Keep standard external variables such as
 `TMPDIR`, `LD_LIBRARY_PATH`, and `GGML_CUDA_BATCH_INVARIANT` under their official
 names.
 
@@ -105,6 +107,8 @@ Keep Git tagging and publication disabled for builds; use `image_push.sh` for
 authorized registry publication. Determine the push version from the built
 image label, not newly committed but unbuilt changes. Test push logic with
 `tests/test-image-push.py`; Docker fallback needs separate storage or an import.
+Run `tests/run-regressions.sh` for offline fixtures. Use the shared project
+lock in tools/project.sh for preparation/build/release/tag/push operations.
 Run `tests/test-version.sh`, `tests/test-create-release.sh`, and
 `tests/test-release-tag.sh` when changing versioning or release tooling.
 Run `tests/test-model-download.sh` when changing model downloads or cache paths.
@@ -132,13 +136,14 @@ Use outside-sandbox access when needed and authorized by the active session.
 Do not install host drivers or rely on sudo.
 
 The API tests are `tests/test-api.py`, `tests/test-vision.py`, and
-`tests/test-coding.py`. The API test supports `BONSAI_BASE_URL` and
-`BONSAI_CTX_SIZE`; the other two currently use port 8080. The long-context test
+`tests/test-coding.py`. All three use `BONSAI_BASE_URL` and identified evidence through
+`BONSAI_TEST_RUN_DIR`, `BONSAI_TEST_SUITE_ID`, and `BONSAI_TEST_CONTAINER`.
+Use tests/run-qa.sh for owned 16k/8k containers and a shared suite identity. The long-context test
 requires at least a 16k window. Execute generated code only in the existing
 restricted Python container setup.
 
-`tests/qa.py` audits saved evidence, including a server log and an earlier 8k
-`/props` response. Passing that audit does not prove a fresh runtime test passed.
+`tests/qa.py <run-directory>` audits identified saved evidence, including a
+checksum-bound server log and the explicitly related 8k /props response. Passing that audit does not prove a fresh runtime test passed.
 Clearly distinguish recorded measurements, new measurements, and untested
 platforms. Do not present external benchmarks as measurements from this host.
 

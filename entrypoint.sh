@@ -10,38 +10,13 @@ reasoning_effort=${BONSAI_REASONING_EFFORT:-medium}
 source /opt/bonsai/download-models.sh
 source /opt/bonsai/detect-gpu.sh
 
-# Detect the visible GPU unless the caller explicitly selected a CUDA bundle.
+# Validate input before driver initialization or downloading large artifacts.
+source /opt/bonsai/settings.sh
+validate_bonsai_settings
+ctx_size=$((10#$ctx_size))
+fail() { echo "Error: $*" >&2; exit 2; }
 gpu_backend=$(select_gpu_backend)
 echo "Selected GPU backend: $gpu_backend"
-
-fail() {
-    echo "Error: $*" >&2
-    exit 2
-}
-
-# Reject invalid settings before loading model weights or allocating VRAM.
-validate_settings() {
-    if [[ ! "$ctx_size" =~ ^[0-9]+$ ]]; then
-        fail 'BONSAI_CTX_SIZE must be an integer of at least 512'
-    fi
-    if (( 10#$ctx_size < 512 )); then
-        fail 'BONSAI_CTX_SIZE must be at least 512'
-    fi
-
-    case "$gpu_backend" in
-        blackwell|ampere-ada) ;;
-        *) fail "Unknown BONSAI_GPU_BACKEND: $gpu_backend" ;;
-    esac
-
-    # Official Bonsai 2 template values: low, medium, xhigh. The model default
-    # is xhigh; medium gives shorter reasoning. low may behave like xhigh.
-    case "$reasoning_effort" in
-        low|medium|xhigh) ;;
-        *) fail 'BONSAI_REASONING_EFFORT must be low, medium, or xhigh' ;;
-    esac
-}
-
-validate_settings
 
 # Use one library search path for preflight and the server. CUDA driver files
 # come from the host GPU runtime, never from a stub or bundled host driver.
@@ -53,8 +28,29 @@ fi
 
 # Populate the writable model mount before loading the server. Reuse cached
 # files; missing files are downloaded from pinned revisions and SHA256-checked.
-download_missing_model "$MODEL_REPO/$MODEL_FILE" "$model" "$MODEL_SHA"
-download_missing_model "$VISION_REPO/$VISION_FILE" "$vision_projector" "$VISION_SHA"
+# While downloading, PID 1 forwards stop signals and waits for child cleanup.
+download_pid=''
+stop_download() {
+    local status=$1
+    if [[ -n "$download_pid" ]]; then
+        kill -TERM "$download_pid" 2>/dev/null || true
+        wait "$download_pid" 2>/dev/null || true
+    fi
+    exit "$status"
+}
+trap 'stop_download 143' TERM
+trap 'stop_download 130' INT
+for artifact in model vision; do
+    if [[ "$artifact" == model ]]; then
+        download_missing_model "$MODEL_REPO/$MODEL_FILE" "$model" "$MODEL_SHA" &
+    else
+        download_missing_model "$VISION_REPO/$VISION_FILE" "$vision_projector" "$VISION_SHA" &
+    fi
+    download_pid=$!
+    wait "$download_pid"
+    download_pid=''
+done
+trap - TERM INT
 
 # Keep the BF16 vision encoder/projector on CPU and in system RAM.
 model_args=(

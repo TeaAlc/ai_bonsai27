@@ -13,6 +13,7 @@ new_repository() {
     repository="$work_dir/$1"
     mkdir -p "$repository/tools"
     cp "$project_dir/create_realease.sh" "$repository/"
+    cp "$project_dir/tools/project.sh" "$repository/tools/"
     cat > "$repository/tools/version.sh" <<'SH'
 #!/usr/bin/env bash
 exec "$fixture_version_tool" "$(dirname -- "${BASH_SOURCE[0]}")/.."
@@ -93,3 +94,16 @@ conflicting_tag=$(git -C "$repository" rev-parse v1.2.0)
 if PATH="$work_dir/bin:$PATH" "$repository/create_realease.sh"; then exit 1; fi
 [[ $(git -C "$repository" rev-parse v1.2.0) == "$conflicting_tag" ]]
 echo 'Passed semrel bumps, repeat release, docs-only rejection, rollback, dirty checkout, and published baseline recovery.'
+
+# Parallel calls share the checkout lock and retain one stable release source.
+new_repository concurrent-release
+git -C "$repository" tag v1.2.0
+git -C "$repository" commit --quiet --allow-empty -m 'fix: concurrent fixture'
+"$repository/create_realease.sh" --offline &
+first=$!
+"$repository/create_realease.sh" --offline &
+second=$!
+wait "$first"
+wait "$second"
+[[ $(git -C "$repository" rev-parse 'v1.2.1^{commit}') == $(git -C "$repository" rev-parse HEAD) ]]
+echo 'Passed concurrent release creation without moving tags.'

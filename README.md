@@ -8,11 +8,11 @@ The server uses MTP with `n_max=2`, Flash Attention, and `q8_0` K/V caches for b
 
 ## Requirements
 
-- x86-64 Linux or WSL2, Bash, rootless Podman, Git, `curl`, `tar`, and `sha256sum`. Python 3 is needed for the tests. The coding test also pulls `python:3.12-slim` if it is not cached.
-- A discrete NVIDIA GPU with compute capability **8.6 or 8.9** (the bundled Ampere/Ada backend) or **12.0** (Blackwell backend). Other compute capabilities are rejected by `run.sh`. The first GPU reported by `nvidia-smi` is selected as CUDA0.
+- x86-64 Linux or WSL2, Bash, rootless Podman, Git, `curl`, `tar`, and `sha256sum`. Python 3 is needed for builds, release tooling, and tests. `flock` is needed on the local build-tool filesystem; model mounts use directory locks. The coding test also pulls `python:3.12-slim` if it is not cached.
+- A discrete NVIDIA GPU with compute capability **8.6 or 8.9** (the bundled Ampere/Ada backend) or **12.0** (Blackwell backend). Other compute capabilities are rejected by the container before downloads. Backend selection uses CUDA device 0 inside the container; `run.sh` does not require `nvidia-smi`. An explicit backend override must match that device.
 - Enough free VRAM for the entire language model and its 16k runtime state. The tested 12 GB laptop GPU worked with this configuration. Approximately 8 GB of free VRAM is a practical starting point, but usage varies by host and workload. Memory pressure causes startup to fail; the configuration does not silently offload language-model weights to CPU.
 - **Native Linux:** a working NVIDIA driver and NVIDIA Container Toolkit with CDI already configured, so `--device nvidia.com/gpu=all` works. Native Linux execution has not been tested in this project.
-- **WSL2:** a working NVIDIA Windows driver, `/dev/dxg`, and `/usr/lib/wsl/lib/nvidia-smi`. `run.sh` mounts `/usr/lib/wsl` read-only so the container can access the host driver libraries. Do not install a separate Linux NVIDIA driver in WSL2 for this setup.
+- **WSL2:** a working NVIDIA Windows driver, `/dev/dxg`, and the projected CUDA driver libraries under `/usr/lib/wsl/lib`. `run.sh` mounts `/usr/lib/wsl` read-only so the container can access the host driver libraries. Do not install a separate Linux NVIDIA driver in WSL2 for this setup.
 
 The scripts themselves do not require `sudo`. Host driver and CDI installation, if needed, are outside their scope.
 
@@ -62,17 +62,15 @@ the caller’s current directory and is mounted read/write at `/models`. Downloa
 verification; atomic per-file `.lock.d` directories prevent simultaneous
 downloads without requiring `flock` support on the model filesystem. An invalid
 download is deleted and startup fails. Existing files can also be supplied
-through this directory; remove a corrupt cached file to download it again.
+through this directory. Use `download_models.sh --verify` to check pinned cache contents, or `--repair` to replace damaged pinned files after a verified download. Custom model paths are not automatically checked against these pins.
 `prepare.sh` remains available for preparing models and backends on the host.
 
 A shared Windows/network model mount can reject `flock` with “Function not
 implemented”. Model downloads now use directory locks instead. Waiting for
-another download is limited to ten minutes; retry if that transfer is still
-running. Normal exits release the lock. After a forced container/VM shutdown,
-a stale `<filename>.lock.d` may remain: remove that empty directory only once
-all downloads using the cache have stopped, then restart. Existing `.part`
+another download defaults to ten minutes (`BONSAI_DOWNLOAD_WAIT_SECONDS`); retry or raise the limit if that transfer is still running. Each HTTP attempt defaults to a one-hour limit (`BONSAI_DOWNLOAD_TIMEOUT`), with a 30-second connection timeout and a stalled-transfer limit. Normal exits and handled stop signals cancel the download child and release the owned lock. After a forced container/VM shutdown,
+a stale `<filename>.lock.d` may remain: remove that directory and its temporary status file only once all downloads using the cache have stopped, then restart. Existing `.part`
 files are retained for resumable transfers. Old `.lock` files from previous
-images are not used by the new downloader.
+images are not used by the new downloader. Stop old `flock`-based containers before sharing their cache with directory-lock versions; the two locking protocols do not coordinate.
 
 ### Download models separately
 
@@ -82,6 +80,8 @@ requires Bash, `curl`, `sha256sum`, and standard coreutils:
 ```bash
 ./download_models.sh                      # save in the current directory
 BONSAI_MODEL_DIR="$HOME/bonsai-models" ./download_models.sh
+BONSAI_MODEL_DIR="$HOME/bonsai-models" ./download_models.sh --verify
+BONSAI_MODEL_DIR="$HOME/bonsai-models" ./download_models.sh --repair
 BONSAI_MODEL_DIR="$HOME/bonsai-models" ./run.sh
 ```
 
@@ -107,9 +107,9 @@ host port `8080`.
 
 `prepare.sh` downloads missing PTQ1_0 MTP Lean and official BF16 vision files with SHA256 verification, reuses existing model files, and downloads and verifies both CUDA backend bundles. The GGUF files stay in `BONSAI_MODEL_DIR`, defaulting to the caller’s current directory; existing files are reused. Backend archives and extracted binaries live under `data/backends/{blackwell,ampere-ada}/`; research inputs live under `data/research/`. The downloads and image need several gigabytes of disk space.
 
-`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. Every successful build produces both the calculated version tag and `localhost/bonsai2-27b:latest` from the same image; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Backend runtime files, `entrypoint.sh`, the shared download helper, and a small CUDA driver probe are copied into the image; model files are mounted read/write as a persistent download cache when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
+`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. Every successful build produces both the calculated version tag and `localhost/bonsai2-27b:latest` from the same image; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Backend runtime files, `entrypoint.sh`, the shared download helper, and a small CUDA driver probe are copied into the image; model files are mounted read/write as a persistent download cache when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Clean builds use a committed Git snapshot; development builds overlay local files and are marked dirty. Both backend snapshots are checked against pinned manifest identities, with additional files and symlinks rejected. `prepare.sh`, build, release, tag, and push operations share a local checkout lock. Preparation reuses verified archives offline and replaces runtime trees only after extraction and validation. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
 
-`run.sh` creates the model cache directory, detects WSL2 versus native Linux, selects the backend from the first GPU's compute capability, and starts the `bonsai2-27b` container in the background. Its default API base URL is **`http://127.0.0.1:8080/v1`**, with model ID **`bonsai2-27b`**. No API key is configured for local access.
+`run.sh` creates the model cache directory, detects WSL2 versus native Linux, leaves backend detection to CUDA device 0 inside the container, and starts the `bonsai2-27b` container in the background. Its default API base URL is **`http://127.0.0.1:8080/v1`**, with model ID **`bonsai2-27b`**. No API key is configured for local access.
 
 To change the context size or host port, stop and remove the existing named container before starting another:
 
@@ -126,14 +126,18 @@ These are all environment variables read by `run.sh`:
 | Variable | Default | Required? | Purpose |
 | --- | --- | --- | --- |
 | `BONSAI_MODEL_DIR` | Caller’s current directory | No | Host directory mounted read/write at `/models`; created if missing |
-| `BONSAI_CTX_SIZE` | `16384` | No | Context window in tokens; integer ≥ 512 |
+| `BONSAI_CTX_SIZE` | `16384` | No | Context window in tokens; integer 512–262144 (VRAM permitting) |
 | `BONSAI_REASONING_EFFORT` | `medium` | No | Reasoning effort: `low`, `medium`, or `xhigh` |
 | `BONSAI_PORT` | `8080` | No | Available host TCP port, 1–65535; bound to localhost |
-| `BONSAI_IMAGE` | `localhost/bonsai2-27b:latest` | For the GHCR image | Image to start, e.g. `ghcr.io/teaalc/ai_bonsai27:latest`; use a versioned tag to pin a build |
+| `BONSAI_IMAGE` | `localhost/bonsai2-27b:latest` | For the GHCR image | Image to start; a versioned tag pins a build |
+| `BONSAI_GPU_BACKEND` | Automatic | No | Empty, `blackwell` (12.0), or `ampere-ada` (8.6/8.9); override must match CUDA device 0 |
+| `BONSAI_CONTAINER_NAME` | `bonsai2-27b` | No | Container name; select a unique name for independent instances |
+| `BONSAI_DOWNLOAD_WAIT_SECONDS` | `600` | No | Shared-cache lock wait, integer 1–86400 seconds |
+| `BONSAI_DOWNLOAD_TIMEOUT` | `3600` | No | Per-attempt HTTP limit, integer 1–86400 seconds |
 
-`BONSAI_CTX_SIZE` must be an integer of at least 512. `BONSAI_REASONING_EFFORT` accepts `low`, `medium`, or `xhigh` (default: `medium`). The official model default is `xhigh`; `medium` gives shorter reasoning. The model accepts `low` but it may behave much like `xhigh`; `high` is invalid and can cause an HTTP 500. Larger contexts need more VRAM; 32k has not been validated on the test notebook. See the [official model card](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf) and [known issues](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/blob/main/KNOWN_ISSUES.md).
+`BONSAI_CTX_SIZE` must be a decimal integer from 512 to 262144. Leading zeros are normalized; oversized integers are rejected before arithmetic. The upper bound follows the model's supported context and does not guarantee available VRAM. `BONSAI_REASONING_EFFORT` accepts `low`, `medium`, or `xhigh` (default: `medium`). The official model default is `xhigh`; `medium` gives shorter reasoning. The model accepts `low` but it may behave much like `xhigh`; `high` is invalid and can cause an HTTP 500. Larger contexts need more VRAM; 32k has not been validated on the test notebook. See the [official model card](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf) and [known issues](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/blob/main/KNOWN_ISSUES.md).
 
-Optional positional arguments passed to `run.sh` are forwarded to `llama-server`, for example `./run.sh --log-verbose`. Additional server flags can override the defaults, so preserve the GPU-only language-model and CPU vision settings. `BONSAI_BASE_URL` configures request scripts; it does not change the container binding. `BONSAI_GPU_BACKEND` is detected automatically; `BONSAI_MODEL` and `BONSAI_MMPROJ` are container entrypoint settings and are not forwarded from the host environment by `run.sh`. For status and logs, use `podman ps` and `podman logs -f bonsai2-27b`.
+Optional positional arguments passed to `run.sh` are forwarded to `llama-server`, for example `./run.sh --log-verbose`. Additional server flags can override the defaults, so preserve the GPU-only language-model and CPU vision settings. `BONSAI_BASE_URL` configures request scripts; it does not change the container binding. `BONSAI_GPU_BACKEND` is forwarded when supplied and validated against the detected device; `BONSAI_MODEL` and `BONSAI_MMPROJ` are container entrypoint settings and are not forwarded from the host environment by `run.sh`. For status and logs, use `podman ps` and `podman logs -f bonsai2-27b`.
 
 ## Start directly with Docker Desktop or Podman Desktop
 
@@ -151,7 +155,7 @@ feature; older published images require both GGUF files to exist already.
 | GPU access | Docker: `--gpus all`; Podman with CDI: `--device nvidia.com/gpu=all` | Required; environment variables alone do not enable GPU access |
 | Models volume | Writable host directory or named volume mounted at `/models` | Required for persistent downloads; an empty writable directory is sufficient |
 | Published port | Host `127.0.0.1:8080` → container `8080/tcp` | Required for the documented host API access; choose another free host port if needed |
-| Backend | Automatically detected; optional `BONSAI_GPU_BACKEND=blackwell` or `BONSAI_GPU_BACKEND=ampere-ada` | Allowed override values: `blackwell` (compute capability 12.0), `ampere-ada` (8.6/8.9). Unset or empty enables automatic detection |
+| Backend | Automatically detected; optional `BONSAI_GPU_BACKEND=blackwell` or `BONSAI_GPU_BACKEND=ampere-ada` | Allowed override values: `blackwell` (compute capability 12.0), `ampere-ada` (8.6/8.9); must match CUDA device 0. Unset or empty enables automatic detection |
 | Entrypoint | Keep the image default | Required for downloads and configured server startup |
 
 Missing models are downloaded before the API becomes ready. Provide internet
@@ -221,11 +225,13 @@ the missing VM GPU assignment. Hyper-V execution has not been tested here.
 
 | Variable | Default in image/entrypoint | Required to set? | Meaning |
 | --- | --- | --- | --- |
-| `BONSAI_GPU_BACKEND` | Automatic GPU detection | No | `blackwell` for 12.0; `ampere-ada` for 8.6/8.9. Other capabilities are unsupported |
-| `BONSAI_CTX_SIZE` | `16384` | No | Context tokens; integer ≥ 512. Larger values need more VRAM |
+| `BONSAI_GPU_BACKEND` | Automatic GPU detection | No | `blackwell` for 12.0; `ampere-ada` for 8.6/8.9. Other capabilities are unsupported; overrides are checked against the actual GPU |
+| `BONSAI_CTX_SIZE` | `16384` | No | Context tokens; integer 512–262144, subject to available VRAM. Larger values need more VRAM |
 | `BONSAI_REASONING_EFFORT` | `medium` | No | Official accepted values: `low`, `medium`, `xhigh`; `high` is invalid |
 | `BONSAI_MODEL` | `/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf` | No | Language-model path **inside** the container |
 | `BONSAI_MMPROJ` | `/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf` | No | BF16 vision-projector path **inside** the container |
+| `BONSAI_DOWNLOAD_WAIT_SECONDS` | `600` | No | Lock wait: integer 1–86400 seconds |
+| `BONSAI_DOWNLOAD_TIMEOUT` | `3600` | No | Per-attempt HTTP timeout: integer 1–86400 seconds |
 | `NVIDIA_DRIVER_CAPABILITIES` | `compute,utility` | No; keep `compute` enabled | NVIDIA runtime driver features; CUDA needs `compute`, GPU tools need `utility` |
 | `GGML_CUDA_BATCH_INVARIANT` | `1` | No | Preserve the bundled CUDA batch-invariant setting |
 
@@ -249,8 +255,8 @@ If that query fails, it tries `nvidia-smi` as a fallback. It selects
 `ampere-ada` for 8.6/8.9 and `blackwell` for 12.0 before downloading models.
 Missing driver libraries, unavailable GPU access, or an unsupported capability
 causes startup to fail with
-an error. An explicit `blackwell` or `ampere-ada` value bypasses detection; it
-must match your GPU. Detection selects a backend, not GPU passthrough: the GPU
+an error. An explicit `blackwell` or `ampere-ada` value is checked against the
+actual CUDA device before downloads. Detection selects a backend, not GPU passthrough: the GPU
 runtime/device configuration above remains required. Older images may retain
 a fixed backend default; rebuild or pull a release containing this feature.
 
@@ -361,7 +367,12 @@ Versions are calculated by the pinned [greatliontech/semrel](https://github.com/
 BONSAI_IMAGE=localhost/bonsai2-27b:1.0.0 ./run.sh
 ```
 
-Version calculation uses committed history and locally available stable tags. Builds do not fetch, create Git tags, push, or publish a release. Use a full Git checkout with release tags; shallow checkouts are rejected. Repeated builds can reuse the same version until release history changes, and uncommitted changes do not influence semrel's version calculation. OCI labels record the calculated version and source commit; `io.bonsai.git.dirty` identifies builds that include uncommitted project changes. The `latest` alias tracks the last successful local build.
+Version calculation uses committed history and locally available stable tags. Builds do not fetch, create Git tags, push, or publish a release. Use a full Git checkout with release tags; shallow checkouts are rejected. Repeated builds can reuse the same version until release history changes, and uncommitted changes do not influence semrel's version calculation. OCI labels record the calculated version and source commit; `io.bonsai.git.dirty` identifies builds that include uncommitted project changes. The `latest` alias tracks the last successful local build. A successful build
+atomically records `results/last-build.json`: immutable image ID, engine, source
+revision, version, cleanliness, backend manifest/archive pins, model and semrel
+pins, the Containerfile/base digest, and installed package versions. Development
+builds remain runnable but cannot be published. Different `vX.Y.Z` and `X.Y.Z`
+source commits are rejected before semrel analysis.
 
 A published registry image does not automatically create a Git release tag.
 Record each published release with its source commit and push that Git tag;
@@ -451,11 +462,19 @@ Package visibility is separate from repository visibility. See
 `./image_push.sh` publishes the last successful local build as both
 `ghcr.io/teaalc/ai_bonsai27:<version>` and
 `ghcr.io/teaalc/ai_bonsai27:latest`. The version comes from the semrel-generated
-label of the actual local image. Both remote tags use the same source image;
-the version tag is pushed first, followed by `latest`.
+label of the actual local image. The source is pinned by `results/last-build.json`, independently of mutable
+`latest` aliases or newer Git commits. A clean project image and matching release
+tag are required. An absent version is pushed with the selected engine; an
+identical existing version is reused, and a conflicting one is rejected. The
+exact published version manifest is then promoted to `latest` through the
+registry API, and both remote manifest digests are verified. Older versions
+cannot roll `latest` back. Retry the script after a failed promotion; the valid
+version publication is retained. These preflight checks do not provide a
+registry-wide transaction across independent publishers; serialize release
+publication across machines.
 
 ```bash
-./build.sh
+./create_realease.sh                     # clean committed release + build
 ./image_push.sh                          # ask for the token with hidden input
 ./image_push.sh --token 'YOUR_GHCR_TOKEN' # alternatively pass the token explicitly
 ```
@@ -463,8 +482,8 @@ the version tag is pushed first, followed by `latest`.
 The script prefers a working Podman with the local build and falls back to a
 working Docker daemon. You can select an engine explicitly with
 `BONSAI_PUSH_ENGINE=podman` or `BONSAI_PUSH_ENGINE=docker`. When Docker is selected
-and only Podman holds the image, the script exports a temporary Docker archive
-and loads it into Docker before publishing.
+and lacks the exact recorded image ID, the script exports a temporary Docker archive
+and loads it into Docker before publishing. An older Docker `latest` alias is ignored.
 
 The login user defaults to `TeaAlc`; set `BONSAI_GHCR_USER` if your token belongs
 to another authorized GitHub user. The token needs the `write:packages` scope.
@@ -547,27 +566,66 @@ An explicit argument overrides `BONSAI_BASE_URL`; without an argument, the envir
 
 ## Tests and measured performance
 
-With the server running on the default port:
+Run a fresh identified suite against its own containers on port 18080:
 
 ```bash
-python3 -B tests/test-api.py       # model list, chat, and ~15k-token prompt
-python3 -B tests/test-vision.py    # two known-shape image requests
-python3 -B tests/test-coding.py    # three Python tasks, 23 assertions
-./tests/test-model-download.sh    # cache, integrity, locking, and directory fixtures
-./tests/test-gpu-backend.sh       # backend detection and overrides
-./tests/test-cuda-probe.sh        # driver probe fixtures; requires a host C compiler
-./tests/test-runtime.sh           # both backend dependencies and early CUDA failure; needs Podman/GPU
+BONSAI_MODEL_DIR="$HOME/bonsai-models" ./tests/run-qa.sh
 ```
 
-`tests/test-api.py` accepts `BONSAI_BASE_URL` and `BONSAI_CTX_SIZE`; its long-context test requires a window of at least 16k. The vision and coding scripts currently use port 8080. The coding script executes generated programs in restricted, network-disabled Python containers. Outputs are written to the local, Git-ignored `results/` directory. Project test scripts disable Python bytecode caching, and `simple_request.sh` invokes Python with `-B`, so these entry points do not create `__pycache__` directories. Use `python3 -B` or `PYTHONDONTWRITEBYTECODE=1` for any additional Python commands in the project; avoid `py_compile` and `compileall`, which explicitly write bytecode files.
+The suite starts a 16k server, checks the API, two vision fixtures, three coding
+problems with 23 assertions, and the included unicorn image. It then starts the
+same image with an 8k context and records `/props`. Containers are removed on
+exit, and the model cache is retained. `BONSAI_PORT` can select another free port;
+`BONSAI_IMAGE` can pin the image under test. `BONSAI_TEST_READY_SECONDS` bounds readiness waiting (default 600, allowed 1–3600 seconds), with per-health-call timeouts of at most three seconds. The API tests all use
+`BONSAI_BASE_URL`. The 16k test requires a context of at least 16384 tokens.
 
-`python3 -B tests/qa.py` checks **previously saved** runtime evidence, including `results/server.log`, the API and vision/coding results, and `results/context-env-8192.json` from a separate 8k-context run. It is an audit of the completed validation, not a fresh end-to-end test of the current container. Capture a current server log with `podman logs bonsai2-27b > results/server.log` after running the API tests; the 8k artifact requires a separate 8k start and a saved `/props` response.
+Evidence is saved under `results/runs/<suite-id>/`, with image/container IDs,
+source revision, model hashes, GPU capability/backend, context, timestamps,
+responses, timings, and a checksum-bound server log. QA rejects empty summaries,
+wrong answers, mismatched runs/images, and altered logs. To inspect a saved run:
+
+```bash
+python3 -B tests/qa.py results/runs/<suite-id>
+```
+
+For individual tests against an existing local Podman container, explicitly set
+`BONSAI_TEST_CONTAINER`, `BONSAI_TEST_SUITE_ID`, `BONSAI_TEST_RUN_DIR`,
+`BONSAI_BASE_URL`, and `BONSAI_CTX_SIZE`. Keep those settings shared across its
+API/vision/coding tests. Passing saved-evidence QA does not prove a new live run.
+Coding programs run in restricted containers without network access; a separate
+harness must complete its assertions, and timed-out containers are removed.
+
+Offline regression fixtures can be run with:
+
+```bash
+./tests/run-regressions.sh
+./tests/test-runtime.sh             # real GPU dependency checks; needs Podman
+python3 -B tests/test-coding-runner.py # real restricted-container failure checks
+./tests/test-container-download.sh  # real PID 1 stop/lock cleanup; needs Podman
+BONSAI_MODEL_DIR="$HOME/bonsai-models" ./tests/test-offline-start.sh
+```
+
+Python entry points disable bytecode caching. Use `python3 -B` for extra commands;
+avoid `py_compile` and `compileall`. All local evidence remains excluded from Git.
+The following performance figures were recorded before this hardening work:
 
 On **WSL2 with an RTX 5070 Ti Laptop GPU (12 GB)**, the 16k API test, both vision function tests, and all 23 coding assertions passed. The saved QA audit reported **14/14 checks passed**. A 15,009-token prompt was processed at **629 prompt tokens/s**. Three coding generations measured **60.5, 57.8, and 54.8 generated tokens/s**. These are individual measurements on this notebook, not guaranteed throughput elsewhere. MTP `n_max=2` was active; it is not necessarily the fastest setting for every prompt.
 
 A separate [vision quality check](results/vision/quality-check.json) sent [this synthetic image](results/vision/quality-check.png) through `/v1/chat/completions`. The model correctly described a red square at the upper left and a blue circle at the lower right. This verifies a simple image request, not general photo understanding or OCR. The linked results are local test artifacts and are excluded from Git.
 
 The recorded server log showed **66/66 language-model layers on CUDA0**, a 5,995.31 MiB CUDA0 model buffer, `q8_0` K/V caches for main and draft contexts, Flash Attention, and `CLIP using CPU backend` for vision. A later GPU snapshot showed **9,078 of 12,227 MiB** in use, including other processes; it is not an isolated model-only VRAM measurement.
+
+A new development-image run on **2026-09-30** passed **18/18 identified QA
+checks**, both vision shapes, the unicorn description, and all 23 coding
+assertions. It processed 15,009 prompt tokens at **696.1 prompt tokens/s**;
+the coding responses measured **61.4, 68.6, and 59.4 generated tokens/s**.
+MTP counters were **68/72, 76/88, and 66/78 accepted/drafted tokens** for those
+coding requests. Detailed logs verified GPU allocation, main/draft Flash
+Attention and q8 caches, and CPU vision. Evidence:
+`results/runs/20260930T152810Z-495703/`, image
+`ce3dda017fddc4c8e421bb698873c060aa1da4038bee96bdcfb4283975c591e2`
+(marked dirty during development). These observations are separate from the
+older measurements above and from a later clean release verification.
 
 ## Moving to another computer
 
@@ -582,11 +640,43 @@ BONSAI_MODEL_DIR=/path/to/models BONSAI_CTX_SIZE=16384 ./run.sh
 
 The target still needs working NVIDIA GPU access and a supported compute capability. WSL2 with sm120 was tested; native Linux and sm86/sm89 are packaged but have not had runtime validation here. The image contains CUDA runtime libraries and Bonsai-compatible binaries, while NVIDIA driver libraries come from the target host. See [RECHERCHE.md](RECHERCHE.md) for model variants, server forks, and the choice of artifacts.
 
+## Dependency refresh and platform validation
+
+The Ubuntu 24.04 base is pinned by digest in both Containerfile stages. Apt
+packages are resolved during a build and recorded in its receipt; builds are
+therefore auditable but not promised to be bit-for-bit reproducible. Refresh the
+base digest intentionally, rebuild, review package/bundle/license inventories,
+and rerun both dependency checks and the live suite before a release. Never
+modify verified upstream bundles to make checks pass.
+
+The Blackwell bundle documents driver 570 or newer. NVIDIA's CUDA 12.8 release
+notes list toolkit drivers ≥570.26 (Linux) / ≥570.65 (Windows); CUDA 12.4 GA lists
+≥550.54.14 / ≥551.61. These toolkit driver rows differ from the broader CUDA
+12.x minor-compatibility floor, which has feature restrictions and does not
+establish Blackwell support. Use a driver that supports the actual GPU and the
+bundle. See [CUDA 12.8 release notes](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-toolkit-release-notes/index.html),
+[CUDA 12.4 release notes](https://docs.nvidia.com/cuda/archive/12.4.0/cuda-toolkit-release-notes/index.html),
+and [minor compatibility limits](https://docs.nvidia.com/deploy/cuda-compatibility/minor-version-compatibility.html).
+
+| Deployment | Status | Remaining verification |
+| --- | --- | --- |
+| Direct Podman / WSL2 / RTX 5070 Ti Laptop, sm120 | Cold download and fresh 16k/8k API, vision, coding, MTP/FA/cache allocation checks passed | Warm-cache startup also passed with networking disabled; every run records its image/source identity |
+| Native Linux / CDI / sm86 or sm89 | Packaged; library resolution checked here | Real GPU inference and mount behavior on that host |
+| RTX 4070 Ti Super / shared Windows model mount | Backend packaged; ENOSYS/race fixes covered by fixtures | Repeat downloads, restart, and live API checks on the reported filesystem |
+| Docker Desktop / WSL2 GPU route | Documented; engine fallback tested with isolated stores | Real Desktop GPU inference |
+| Independently GPU-provisioned Hyper-V Linux guest | Conditional; no test host available | Guest driver, CDI, CUDA probe, then full API suite |
+| Stock Podman Desktop Hyper-V GPU machine | Unsupported by the documented upstream route | Use WSL2 or a GPU-enabled remote Linux engine |
+
+Downloads and model loading happen before `/health` is ready. Inspect container
+logs to distinguish waiting for a cache lock, transferring files, loading model
+weights, and serving requests. Warm-cache starts use no model-download network
+access. Driver/passthrough failures happen before model downloads.
+
 ## Repository conventions
 
 See [TODO_PLAN.md](TODO_PLAN.md) for the 2026-09-30 repository audit, fresh
 validation results, remaining defects, and the prioritized implementation plan.
-Its TODOs describe planned work, not features already implemented.
+Its status table records implemented changes and the hardware/publication checks still pending.
 
 See [AGENTS.md](AGENTS.md) for the project workflow and validation rules. Keep
 documentation, script comments, and messages in English; use `BONSAI_` for

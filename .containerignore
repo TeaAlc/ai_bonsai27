@@ -19,3 +19,5 @@ data/backends/ampere-ada/*
 !data/backends/ampere-ada/runtime
 !data/backends/blackwell/runtime/**
 !data/backends/ampere-ada/runtime/**
+
+!data/gpu/settings.sh

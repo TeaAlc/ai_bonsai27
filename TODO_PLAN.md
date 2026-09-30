@@ -1,9 +1,50 @@
 # Repository audit and implementation plan
 
 Audit date: 2026-09-30. Audited source: `845d89edac88094f65009d874b243d20024cf7ac`.
-This document records findings and proposed work; it does not claim that the
-TODOs below have been implemented. P1 means address before the next published
+The audit findings below are historical. Implementation status and fresh
+validation are recorded in the following section; remaining hardware and registry
+publication checks are explicitly pending. P1 means address before the next published
 release; P2 means follow-up reliability or maintainability work.
+
+## Implementation status (2026-09-30)
+
+Items 1–9 have been implemented with regression checks. Item 10 is complete for
+available WSL2 hardware and documentation, with other deployment rows pending.
+The detailed original findings below explain why the changes were needed.
+
+| Item | Implementation and validation |
+| --- | --- |
+| 1 | Atomic build receipt; exact image selection/import; clean/source/tag checks; remote conflict and rollback guards; exact manifest promotion and digest verification. Isolated engine and registry fixtures pass. Live new publication is pending. |
+| 2 | Shared project lock; committed source/backend snapshots; final label verification; contradictory tag aliases rejected; semrel retained. Version/release/tag/snapshot/concurrency fixtures pass. |
+| 3 | Wrapper configures GPU access; container selects CUDA device 0 and validates overrides. CUDA detection/override fixtures and WSL2 inference pass. |
+| 4 | Disappearing lock retry; supervised download workers; configurable waits/timeouts; conservative stale-lock policy. Signal/Range/timeout fixtures and real container stop/read-only-cache checks pass. |
+| 5 | Offline verified archive reuse; clean staged extraction; exact inventory verification; coordinated replacement and recovery. Tiny bundle preparation and snapshot fixtures pass. |
+| 6 | Explicit --verify/--repair; old file preserved until verified replacement; complete partial-file reuse and Range fallback. Cache/transfer fixtures pass. |
+| 7 | Context 512–262144, host port 1–65535, bounded decimal parsing, allowed reasoning/backend values validated before GPU work. Configuration fixtures and real 8k/16k API checks pass. |
+| 8 | Common endpoint/deadline handling; per-suite identity and model hashes; checksum-bound logs; reject mixed/stale/empty evidence; trusted coding completion and timeout cleanup; simple-request fixtures. Fresh 18/18 QA audit and live vision/coding tests pass. |
+| 9 | Pinned Ubuntu digest; dependency/package/input inventory in receipt; documented refresh procedure and official driver references. Both bundled runtimes pass dependency checks. Apt resolution is inventoried, not frozen; no vulnerability scan claimed. |
+| 10 | WSL2 cold pinned-model download, warm-cache offline API and full suite, actual 16k/8k API, CPU vision, GPU LLM, MTP/FA/q8 evidence, and coding completed. Native/CDI, actual Ada/shared Windows mounts, Desktop, Hyper-V guest, and post-publication anonymous pull remain pending. |
+
+Development runtime evidence: `results/runs/20260930T152810Z-495703/`, image ID
+`ce3dda017fddc4c8e421bb698873c060aa1da4038bee96bdcfb4283975c591e2`, explicitly
+marked dirty. Fresh model files downloaded into the ignored validation cache
+were SHA256-verified. The suite recorded 18 passing QA checks, 23 coding
+assertions, two vision shapes, the full unicorn image, and a related 8k context
+run. Final clean builds are recorded separately by `results/last-build.json`.
+All runtime changes must also pass the suite on the final clean image.
+
+### Outstanding environment checks
+
+- [ ] Actual RTX 4070 Ti Super inference and restart/download behavior on the
+  reported Windows/shared filesystem.
+- [ ] Native Linux/CDI and actual sm86/sm89 GPU inference.
+- [ ] Docker Desktop GPU inference; engine fallback/import already covered by
+  isolated fixtures.
+- [ ] Independently GPU-provisioned Hyper-V guest, only when such a host is
+  available. Stock Podman Desktop Hyper-V is not claimed as supported.
+- [ ] Live authorized publication and anonymous pull of both new GHCR tags;
+  current registry guards/promotion are covered by isolated tests. Serialize
+  independent publishers because registry preflight is not a global transaction.
 
 ## Scope and results
 
@@ -64,7 +105,7 @@ does not establish support for a stock Podman Desktop Hyper-V GPU machine.
 
 ### 1. Protect published versions and select the correct image store
 
-- [ ] Harden `image_push.sh` before its first registry mutation.
+- [x] Harden `image_push.sh` before its first registry mutation.
 
 **Finding (code inspection):** only the local image's version is validated.
 Dirty builds, wrong source/revision labels, and a different image under an
@@ -90,7 +131,7 @@ mutate the registry. Live publication remains a separate authorized action.
 
 ### 2. Make release/build provenance consistent across all entry points
 
-- [ ] Align `create_realease.sh`, `build.sh`, `tools/tag-release.sh`, and
+- [x] Align `create_realease.sh`, `build.sh`, `tools/tag-release.sh`, and
   `tools/version.sh` around one release validation policy.
 
 **Finding (reproduced):** `tools/tag-release.sh` accepts an existing bare `1.2.0`
@@ -120,7 +161,7 @@ mismatched final labels. Original published tags must never move. Confirm a
 
 ### 3. Use the container's CUDA device for backend selection
 
-- [ ] Remove duplicate GPU-generation selection from `run.sh`; share validation
+- [x] Remove duplicate GPU-generation selection from `run.sh`; share validation
   between `data/gpu/detect.sh` and `entrypoint.sh`.
 
 **Finding (code inspection):** direct container starts can detect CUDA without
@@ -143,7 +184,7 @@ and an RTX 4070 Ti Super test when that machine is available.
 
 ### 4. Finish download locking and shutdown handling
 
-- [ ] Improve `data/models/download.sh` and startup download process handling.
+- [x] Improve `data/models/download.sh` and startup download process handling.
 
 **Finding (reproduced with injected interleaving):** if `mkdir` fails because a
 lock exists and its owner removes the directory before the subsequent `-d`
@@ -175,7 +216,7 @@ existing ENOSYS fixture and never put the shared-cache lock in container-local
 
 ### 5. Prepare backend bundles without exposing partial state
 
-- [ ] Refactor archive preparation and build input verification.
+- [x] Refactor archive preparation and build input verification.
 
 **Finding (code inspection):** `prepare.sh` resumes directly into the archive
 path and extracts over an existing runtime directory. Preparation is not
@@ -196,7 +237,7 @@ the verified set.
 
 ### 6. Offer explicit verification of an existing model cache
 
-- [ ] Add an opt-in cache verification/repair workflow to the shared downloader
+- [x] Add an opt-in cache verification/repair workflow to the shared downloader
   and document it in `download_models.sh` and the README.
 
 **Finding (reproduced; existing documented policy):** a readable nonempty file
@@ -215,7 +256,7 @@ last good file.
 
 ### 7. Bound numeric input and validate configuration before GPU work
 
-- [ ] Harden context and port validation in `run.sh` and `entrypoint.sh`.
+- [x] Harden context and port validation in `run.sh` and `entrypoint.sh`.
 
 **Finding (reproduced):** `BONSAI_CTX_SIZE=18446744073709552128` passes the current
 minimum check because Bash arithmetic wraps. `BONSAI_PORT` lacks wrapper-side
@@ -233,7 +274,7 @@ must still reach the API unchanged.
 
 ### 8. Tie QA evidence to one image and make failures trustworthy
 
-- [ ] Refactor API, vision, coding, and saved-evidence tests under `tests/`.
+- [x] Refactor API, vision, coding, and saved-evidence tests under `tests/`.
 
 **Finding (code inspection):** only `test-api.py` supports `BONSAI_BASE_URL`;
 vision/coding hardcode port 8080. QA combines fixed-path artifacts from different
@@ -259,7 +300,7 @@ where exposed, retain draft/acceptance counters from actual requests.
 
 ### 9. Record reproducible dependency and driver evidence
 
-- [ ] Pin and inventory release inputs without altering upstream bundles.
+- [x] Pin and inventory release inputs without altering upstream bundles.
 
 **Finding (code inspection):** model/backend/semrel artifacts are pinned, but
 both Ubuntu base stages and installed apt packages are mutable. The two GPU

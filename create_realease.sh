@@ -19,19 +19,13 @@ esac
 (( $# == 0 )) || { echo 'Error: unexpected arguments.' >&2; exit 2; }
 
 fail() { echo "Error: $*" >&2; exit 2; }
+source tools/project.sh
+lock_project
 [[ -z $(git status --porcelain --untracked-files=normal) ]] \
     || fail 'Commit or remove local changes before creating a release.'
 [[ $(git rev-parse --is-shallow-repository) == false ]] \
     || fail 'Release creation requires full Git history.'
 revision=$(git rev-parse HEAD)
-
-# Serialize release creation within this checkout, with temporary state outside
-# the project. Existing Git tags are never moved, including fetched conflicts.
-mkdir -p "${TMPDIR:-/tmp/bonsai27}"
-checkout_key=$(printf '%s' "$PWD" | sha256sum)
-checkout_key=${checkout_key%% *}
-exec 9>"${TMPDIR:-/tmp/bonsai27}/release-$checkout_key.lock"
-flock 9
 if [[ "$offline" == false ]]; then
     # Public HTTPS also works when the configured SSH remote has no local key.
     git fetch --tags https://github.com/TeaAlc/ai_bonsai27.git
@@ -93,6 +87,9 @@ trap 'exit 143' TERM
 [[ $(git rev-parse HEAD) == "$revision" ]] || fail 'HEAD changed during release creation.'
 echo "Creating release $version from $revision; Git and GHCR publication remain separate."
 
+[[ -z $(git status --porcelain --untracked-files=normal) ]] || fail 'Working tree changed during release creation.'
+export BONSAI_RELEASE_REVISION="$revision"
+export BONSAI_RELEASE_VERSION="$version"
 # Tagging establishes the same version as the build baseline. This final action
 # builds both the versioned image and latest through the existing build script.
 ./build.sh

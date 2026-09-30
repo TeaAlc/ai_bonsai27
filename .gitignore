@@ -24,3 +24,8 @@ __pycache__/
 # Locally installed build tools; installers and configuration stay in Git
 tools/semrel/bin/
 tools/semrel/downloads/
+
+# Interrupted backend preparation
+data/backends/*/runtime.previous/
+data/backends/*/*.part
+data/backends/*/*.lock.d/

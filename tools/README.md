@@ -55,3 +55,26 @@ version and source commit without downloading image layers. Python runs with
 bytecode disabled. Online releases recover missing published baseline tags;
 offline releases rely only on existing local tags. Build failures roll back
 only the new release tag, and existing release tags are never moved.
+
+## Verified builds and publication
+
+`project.sh` provides one checkout-local lock shared by preparation, build,
+release, tagging, and publication. Release/build snapshots are established after
+locking. `backend-artifacts.sh` pins archives and manifest identities;
+`verify-backend.py` rejects extra files, symlinks, and checksum mismatches.
+`build-receipt.py` writes `results/last-build.json` atomically after inspecting a
+successful build and collecting its installed package inventory. Source snapshots
+and temporary backend copies live under `/tmp/bonsai27/` (or `TMPDIR`).
+
+`registry.py` validates that receipt, checks existing GHCR versions/`latest`, and
+promotes the exact version manifest after the selected engine publishes it.
+Matching published versions are reused; conflicting contents and version
+rollback are rejected. Credentials come from a private temporary file, never
+from command arguments to this helper. Registry checks do not constitute a
+transaction across independent publishing machines; publication must be
+serialized. `image_push.sh` imports the receipt's exact Podman image into Docker
+when needed, independently of Docker's `latest` alias.
+
+Run `tests/run-regressions.sh` for isolated version, release, publication,
+preparation, cache, signal, configuration, and evidence regressions. No fixture
+publishes to GHCR. Real GPU/API validation uses `tests/run-qa.sh`.

@@ -12,6 +12,16 @@ if [[ $(git -C "$repository" rev-parse --is-shallow-repository) == true ]]; then
     exit 2
 fi
 revision=$(git -C "$repository" rev-parse HEAD)
+# Reject contradictory spellings of the same stable release before analysis.
+while IFS= read -r tag; do
+    if [[ "$tag" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+        bare=${tag#v}
+        if git -C "$repository" show-ref --verify --quiet "refs/tags/$bare"; then
+            [[ $(git -C "$repository" rev-parse "$tag^{commit}") == $(git -C "$repository" rev-parse "$bare^{commit}") ]] \
+                || { echo "Error: conflicting tag aliases $tag and $bare." >&2; exit 2; }
+        fi
+    fi
+done < <(git -C "$repository" tag --list)
 "$tools_dir/install.sh"
 
 # semrel 0.7.0 compares tag object hashes to commit hashes. Use an isolated,

@@ -87,3 +87,10 @@ if "$version_tool" "$fixtures/shallow" > "$fixtures/shallow-output" 2>&1; then
     exit 1
 fi
 echo 'PASS: shallow checkout rejected'
+
+new_repository contradictory-aliases
+git -C "$repository" tag 1.2.3
+git -C "$repository" commit --quiet --allow-empty -m 'fix: later source'
+git -C "$repository" tag v1.2.3
+if "$version_tool" "$repository"; then exit 1; fi
+echo 'PASS: contradictory tag aliases rejected'

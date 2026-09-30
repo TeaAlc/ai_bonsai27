@@ -15,55 +15,35 @@ ctx_size=${BONSAI_CTX_SIZE:-16384}
 reasoning_effort=${BONSAI_REASONING_EFFORT:-medium}
 # latest points to the last successful local build; use a versioned tag to pin it.
 image=${BONSAI_IMAGE:-localhost/bonsai2-27b:latest}
-if [[ ! "$ctx_size" =~ ^[0-9]+$ ]] || (( 10#$ctx_size < 512 )); then
-    echo 'BONSAI_CTX_SIZE must be an integer of at least 512' >&2
-    exit 2
-fi
-case "$reasoning_effort" in
-    low|medium|xhigh) ;;
-    *)
-        echo 'BONSAI_REASONING_EFFORT must be low, medium, or xhigh' >&2
-        exit 2
-        ;;
-esac
+source data/gpu/settings.sh
+validate_bonsai_settings
+validate_decimal BONSAI_PORT "${BONSAI_PORT:-8080}" 1 65535
+ctx_size=$((10#$ctx_size))
+port=$((10#${BONSAI_PORT:-8080}))
 
 # WSL2 provides CUDA through /dev/dxg and Windows driver libraries;
 # native Linux uses the already configured NVIDIA CDI device.
 if [[ -e /dev/dxg ]]; then
-    if [[ ! -x /usr/lib/wsl/lib/nvidia-smi ]]; then
-        echo 'WSL NVIDIA driver is missing' >&2
-        exit 2
-    fi
+    [[ -d /usr/lib/wsl/lib ]] || { echo 'Error: WSL driver directory is missing.' >&2; exit 2; }
     gpu_args=(--device /dev/dxg -v /usr/lib/wsl:/usr/lib/wsl:ro)
-    smi=/usr/lib/wsl/lib/nvidia-smi
 else
     gpu_args=(--device nvidia.com/gpu=all)
-    if ! smi=$(command -v nvidia-smi); then
-        echo 'NVIDIA driver/nvidia-smi is missing' >&2
-        exit 2
-    fi
 fi
-# The image contains specialized CUDA binaries for these GPU generations.
-cap=$("$smi" --query-gpu=compute_cap --format=csv,noheader | head -n 1)
-case "$cap" in
-    8.6|8.9) backend=ampere-ada ;;
-    12.0) backend=blackwell ;;
-    *)
-        echo "GPU Compute Capability $cap is not supported by the bundled backends" >&2
-        exit 2
-        ;;
-esac
+# Detection runs inside the container against its actual CUDA device 0.
+# An explicit override is checked against that device before any downloads.
 # Publish only on localhost and mount the persistent model cache. Arguments after
 # the image name are forwarded to the container's llama-server entrypoint.
 exec podman run \
     -d \
-    --name bonsai2-27b \
+    --name "${BONSAI_CONTAINER_NAME:-bonsai2-27b}" \
     "${gpu_args[@]}" \
-    -p "127.0.0.1:${BONSAI_PORT:-8080}:8080" \
+    -p "127.0.0.1:$port:8080" \
     -v "$model_dir:/models:rw" \
     -e "BONSAI_CTX_SIZE=$ctx_size" \
-    -e "BONSAI_GPU_BACKEND=$backend" \
+    -e "BONSAI_GPU_BACKEND=${BONSAI_GPU_BACKEND:-}" \
     -e "BONSAI_REASONING_EFFORT=$reasoning_effort" \
+    -e "BONSAI_DOWNLOAD_WAIT_SECONDS=${BONSAI_DOWNLOAD_WAIT_SECONDS:-600}" \
+    -e "BONSAI_DOWNLOAD_TIMEOUT=${BONSAI_DOWNLOAD_TIMEOUT:-3600}" \
     --security-opt label=disable \
     "$image" \
     "$@"

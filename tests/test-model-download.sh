@@ -78,3 +78,35 @@ printf cached > "$work_dir/existing/$VISION_FILE"
 (cd "$work_dir" && BONSAI_MODEL_DIR=existing "$repo_dir/download_models.sh")
 [[ $(wc -l < "$fixture_calls") == 4 ]]
 echo 'Passed model download, reuse, integrity, concurrency, and directory checks.'
+
+# A disappearing lock after EEXIST is retried, not reported as a permission error.
+mkdir() {
+    if [[ "$*" == *race.gguf.lock.d* && ! -e "$work_dir/race-injected" ]]; then
+        touch "$work_dir/race-injected"
+        return 1
+    fi
+    command mkdir "$@"
+}
+download_missing_model fixture "$work_dir/race.gguf" "$expected_sha"
+unset -f mkdir
+
+# Verify never modifies corrupted existing files; repair publishes only valid data.
+printf damaged > "$work_dir/repair.gguf"
+if download_missing_model fixture "$work_dir/repair.gguf" "$expected_sha" verify; then exit 1; fi
+[[ $(cat "$work_dir/repair.gguf") == damaged ]]
+download_missing_model fixture "$work_dir/repair.gguf" "$expected_sha" repair
+cmp "$fixture_source" "$work_dir/repair.gguf"
+download_missing_model fixture "$work_dir/repair.gguf" "$expected_sha" verify
+
+# Complete partial downloads are published without HTTP, even offline.
+cp "$fixture_source" "$work_dir/complete.gguf.part"
+calls_before=$(wc -l < "$fixture_calls")
+download_missing_model fixture "$work_dir/complete.gguf" "$expected_sha"
+[[ $(wc -l < "$fixture_calls") == "$calls_before" ]]
+
+# A crashed owner's lock is never stolen, and an active owner can time out safely.
+mkdir "$work_dir/stale.gguf.lock.d"
+if BONSAI_DOWNLOAD_WAIT_SECONDS=1 download_missing_model fixture "$work_dir/stale.gguf" "$expected_sha"; then exit 1; fi
+[[ -d "$work_dir/stale.gguf.lock.d" ]]
+rmdir "$work_dir/stale.gguf.lock.d"
+echo 'Passed release race, explicit cache verification/repair, complete partial reuse, and conservative lock timeout.'

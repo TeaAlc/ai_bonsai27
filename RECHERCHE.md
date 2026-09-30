@@ -216,3 +216,74 @@ consistency, preparation concurrency, and QA evidence provenance need further
 work described in the plan. This audit did not repeat inference, vision,
 throughput, or coding generation tests; earlier measurements above remain
 historical and do not validate another host or GPU backend.
+
+
+## Hardening implementation and validation (2026-09-30)
+
+The follow-up audit's implementation is tracked in [TODO_PLAN.md](TODO_PLAN.md).
+Release/build/preparation/push operations now share a checkout-local lock;
+committed sources and verified backend trees are snapshotted before building.
+A successful build atomically records its exact image ID, source, semrel version,
+cleanliness, pinned inputs, Containerfile/base digest, and apt package inventory.
+The push workflow validates this receipt and its release tag, selects that exact
+image across Podman/Docker stores, rejects remote conflicts and rollback, and
+promotes the exact published version manifest to latest. These client checks
+are not a cross-machine registry transaction. Live publication is separate.
+The manifest promotion follows the
+[Distribution HTTP API V2](https://distribution.github.io/distribution/spec/api/)
+manifest PUT operation. Config and child-manifest digests are validated before
+using remote labels. Isolated tests cover both engines, stale Docker storage,
+credential cleanup, conflicting/idempotent publication, rollback, and promotion.
+
+GPU generation is selected inside the container using CUDA device 0; an override
+must match it. Configuration checks reject context overflow and accept 512–262144
+(the upper bound documented in the
+[official model card](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf)).
+The GPU-only allocation policy is unchanged. Shared-cache downloads retry the
+lock-release race, supervise children and stop signals, preserve resumable
+partials, and support explicit host verification/repair of pinned caches.
+Preparation reuses verified archives offline and replaces only complete checked
+runtime trees. A real Podman stop during an injected slow transfer exited 143,
+removed its directory lock, and retained the partial file. A read-only cache
+failed before transfer; generated-code early exit and timeout were rejected by
+the separate restricted-container harness. All offline regression suites passed.
+
+The base is pinned to Ubuntu 24.04 digest
+`sha256:008173c23f95b170204355c12626cb5a965d779a7e1283b09e9cffbb1bf33ca3`.
+Apt package versions remain resolved at build time and inventoried; this is not
+a claim of deterministic builds. The Blackwell bundle recommends driver 570+.
+[CUDA 12.8 release notes](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-toolkit-release-notes/index.html)
+list toolkit drivers 570.26 (Linux) / 570.65 (Windows), while
+[CUDA 12.4 release notes](https://docs.nvidia.com/cuda/archive/12.4.0/cuda-toolkit-release-notes/index.html)
+list 550.54.14 / 551.61. The broader CUDA 12.x minor-compatibility floor is not
+proof of Blackwell compatibility: NVIDIA documents
+[feature/PTX restrictions](https://docs.nvidia.com/deploy/cuda-compatibility/minor-version-compatibility.html).
+The measured host reports RTX 5070 Ti Laptop, compute capability 12.0, driver
+617.14. Driver matrices on other actual GPUs remain pending.
+
+### Fresh development-image API evidence
+
+The cold-cache container downloaded both pinned artifacts into
+`results/validation-model-cache/`; subsequent runs reused them. The passing
+identified suite is `results/runs/20260930T152810Z-495703/`, image ID
+`ce3dda017fddc4c8e421bb698873c060aa1da4038bee96bdcfb4283975c591e2`, marked
+**dirty during development**. It passed 18/18 QA checks: GPU-only language-model
+buffers, both main/draft Flash Attention and q8 caches, MTP n_max=2, CPU BF16
+vision, exact pinned model hashes, 16k context and 15,009-token prompt recall,
+related 8k /props, vision fixtures, and all 23 coding assertions. The included
+1920x1080 unicorn image was sent through the API and described correctly.
+Generation tests ran on host port 18080. A separate warm-cache container with `--network none` started at 8k and answered the arithmetic OpenAI API request correctly, without any model transfer. API timings expose actual MTP draft and
+acceptance counters, beyond merely showing its startup configuration.
+
+| Measurement | Fresh development run |
+| --- | --- |
+| Long prompt processing | 696.1 tokens/s for 15,009 prompt tokens |
+| Prime generation | 61.4 tokens/s; 68 of 72 draft tokens accepted |
+| Interval generation | 68.6 tokens/s; 76 of 88 draft tokens accepted |
+| Bracket generation | 59.4 tokens/s; 66 of 78 draft tokens accepted |
+
+These measurements are individual observations, not portable performance
+promises. The final clean build and subsequent suite are separately identified
+in local receipts/results. Native Linux/CDI, real Ampere/Ada inference, the
+reported Windows shared mount, Docker Desktop GPU execution, a provisioned
+Hyper-V guest, and live publication/anonymous pull remain explicit pending rows.

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Choose the bundle for the first GPU visible inside the container. An explicit
-# setting bypasses detection. The CUDA driver probe works without nvidia-smi.
+# setting must match the detected compute capability. The CUDA driver probe works without nvidia-smi.
 query_cuda_capability() {
     LD_LIBRARY_PATH="/usr/lib/wsl/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
         /opt/bonsai/cuda-compute-capability
@@ -8,13 +8,6 @@ query_cuda_capability() {
 
 select_gpu_backend() {
     local requested=${BONSAI_GPU_BACKEND:-} smi capability
-    if [[ -n "$requested" ]]; then
-        case "$requested" in
-            blackwell|ampere-ada) printf '%s\n' "$requested"; return 0 ;;
-            *) echo "Error: unknown BONSAI_GPU_BACKEND: $requested" >&2; return 2 ;;
-        esac
-    fi
-
     # Prefer the driver query: it uses CUDA device ordering, honors visibility,
     # and needs only the driver libraries already required by llama-server.
     if capability=$(query_cuda_capability); then
@@ -31,13 +24,19 @@ select_gpu_backend() {
             return 2
         fi
     else
-        echo 'Error: GPU detection failed through CUDA and nvidia-smi. Check GPU passthrough and driver libraries, or set BONSAI_GPU_BACKEND explicitly.' >&2
+        echo 'Error: CUDA driver/GPU access is unavailable; detection failed through CUDA and nvidia-smi. Check GPU passthrough and driver libraries, or set BONSAI_GPU_BACKEND explicitly.' >&2
         return 2
     fi
     capability=${capability//[[:space:]]/}
+    local detected
     case "$capability" in
-        8.6|8.9) echo ampere-ada ;;
-        12.0) echo blackwell ;;
+        8.6|8.9) detected=ampere-ada ;;
+        12.0) detected=blackwell ;;
         *) echo "Error: unsupported GPU compute capability: $capability" >&2; return 2 ;;
     esac
+    if [[ -n "$requested" && "$requested" != "$detected" ]]; then
+        echo "Error: BONSAI_GPU_BACKEND=$requested does not match CUDA device 0 ($capability; expected $detected)." >&2
+        return 2
+    fi
+    printf '%s\n' "$detected"
 }

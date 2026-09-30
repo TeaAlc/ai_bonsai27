@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Verified upstream bundle pins; shared by preparation and build inventory.
+readonly BLACKWELL_ARCHIVE=bonsai2-small-gpu-linux-x64-cuda12.8-sm120-ff41412.tar.gz
+readonly BLACKWELL_SHA=74e1cf451d41e1435d15ef93e76007219cdf28fd1eb59bf335d1f3d31bfbc4da
+readonly AMPERE_ADA_ARCHIVE=bonsai2-small-gpu-linux-x64-cuda12.4-sm86-sm89-285542d.tar.gz
+readonly AMPERE_ADA_SHA=46b0bc960f00352267ed34246b7cb5010fa64618077158647e5d2bbcf0fb60fe
+readonly BLACKWELL_MANIFEST_SHA=2d471d4e3ee1561b0af539b1b225c6c10dd39fad3e1ef47527426487d6de9fde
+readonly AMPERE_ADA_MANIFEST_SHA=e0fbc05a630584076ae6d2554483536336bf9f24ba378730b5ebe8b2bf6935ac
