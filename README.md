@@ -175,8 +175,33 @@ the tested configuration is direct Podman inside WSL2.
 
 ### Podman Desktop: configure the GPU entirely in the UI
 
-In **Images → Run Image**, use the following settings. The device fields are
-under **Advanced**, not the **Basic** tab shown in the screenshot.
+The device fields are under **Advanced**, not the **Basic** tab shown in the
+screenshot. For a **WSL2-backed engine**, the real WSL device can avoid CDI
+selector handling in the Desktop/Docker-compatible API. Use these settings:
+
+| Tab / field | WSL2 value |
+| --- | --- |
+| Basic → Command | Leave empty |
+| Basic → Volumes: driver source / container path | `/usr/lib/wsl` → `/usr/lib/wsl:ro` (the `:ro` suffix sets read-only access) |
+| Basic → Volumes: model source / container path | Your writable model directory → `/models` |
+| Advanced → Devices → Host Device | `/dev/dxg` |
+| Advanced → Devices → Container Device | `/dev/dxg` |
+| Advanced → Devices → Permissions | Enable **Read**, **Write**, and **Mknod** |
+| Security → Security options | `label=disable` |
+
+These paths must exist in the Linux environment of the engine selected in
+Desktop. The driver mount source is that engine's `/usr/lib/wsl`, not a Windows
+folder selected through the file picker. Enter the paths manually. In the form
+with only source/target fields, the target `/usr/lib/wsl:ro` produces the bind
+string `/usr/lib/wsl:/usr/lib/wsl:ro`; do not enable read-only for the whole
+container root filesystem or for the model cache. Keep the default entrypoint; it adds
+the WSL driver library search path automatically. Do not also add the CDI
+selector for this route. This API mapping and the image's CUDA backend detection
+were tested here on WSL2; the Windows Desktop application itself was not tested.
+If `/dev/dxg` is missing, the selected engine does not have this WSL GPU route.
+A stock Hyper-V machine cannot use it; select a GPU-enabled WSL2 machine.
+
+For **native Linux/CDI**, or a WSL2 engine with working CDI API support, use:
 
 | Tab / field | Value |
 | --- | --- |
@@ -197,9 +222,16 @@ not provide a host-address field, its port binding may expose the API on all
 host interfaces; inspect the created port binding and restrict host access as
 needed. The CLI examples below explicitly bind to localhost.
 
-The UI sends these fields as `HostConfig.Devices`. Podman's API recognizes a
-qualified CDI selector when the container-device field is empty or equal to
-the host selector. See the official
+The UI sends these fields as `HostConfig.Devices`. Engines containing the
+upstream CDI mapping fix recognize a qualified selector when the container-device
+field is empty or equal to the host selector. A creation error such as
+`stat nvidia.com/gpu=all: no such file or directory` means this path treated the
+selector as a file; changing the container's backend or adding image libraries
+cannot repair that API conversion. On WSL2, use the real-device settings above;
+otherwise update the engine to a version containing the
+[upstream CDI API fix](https://github.com/containers/podman/commit/f374f2c95bc8c7642a5a47d03298fe036f0f77c0)
+and verify its CDI setup. The exact installed version was not supplied, so no
+minimum release version is assumed. See the official
 [Desktop device form](https://github.com/podman-desktop/podman-desktop/blob/main/packages/renderer/src/lib/image/RunImage.svelte)
 and [Podman CDI mapping helper](https://github.com/containers/podman/blob/main/pkg/api/handlers/utils/docker_device.go).
 This recipe was checked against upstream source; it has not been runtime-tested
@@ -214,7 +246,7 @@ Do not put `--device nvidia.com/gpu=all` or `--gpus all` in the Desktop
 **Command/Arguments** field. That field becomes the container's `Config.Cmd`
 and is passed to the image entrypoint. It cannot configure Podman or Docker
 GPU access. Leave it empty for normal startup. Podman Desktop exposes device
-mappings in the **Advanced** tab; configure GPU access there as described below.
+mappings in the **Advanced** tab; configure GPU access there as described above.
 
 For example, this inspect output indicates misplaced runtime options:
 

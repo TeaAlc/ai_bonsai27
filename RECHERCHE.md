@@ -372,3 +372,34 @@ Command remains empty. The README now gives these field-level instructions.
 This verifies the upstream source path, not runtime compatibility of an unknown
 installed Desktop/engine version or GPU availability in the user's machine.
 NVIDIA Container Toolkit/CDI and a supported GPU-enabled engine remain required.
+
+
+## CDI API failure and WSL device mapping (2026-09-30 follow-up)
+
+The user's subsequent HTTP 500 `stat nvidia.com/gpu=all` shows that their
+container-create path treats the CDI selector as a filesystem device. The
+previous main-branch source check did not establish support in their installed
+engine. Upstream commit
+[`f374f2c95bc8c7642a5a47d03298fe036f0f77c0`](https://github.com/containers/podman/commit/f374f2c95bc8c7642a5a47d03298fe036f0f77c0),
+authored 2026-04-13, replaces unconditional colon-separated DeviceMapping
+conversion with the CDI-aware helper. The symptom is consistent with that
+conversion issue; the remote engine version and presence of the fix are unknown.
+
+For WSL2, the GUI can send `/dev/dxg` as both host and container device with
+`rwm` permissions and bind `/usr/lib/wsl` read-only at the same path. This uses
+real filesystem paths rather than CDI names. The upstream form concatenates
+source and target with a colon, so target `/usr/lib/wsl:ro` supplies the
+read-only bind option when no separate toggle exists. A fresh local check sent these
+settings through a temporary Docker-compatible Podman API service at
+`/v1.41/containers/create`, then ran the actual image's `select_gpu_backend`.
+With image
+`sha256:0ce2f85384dd6e061c88f00bb9d018f371205faa404971610e4e186398cad3fb`,
+the detection exited 0 and returned `blackwell` on this WSL2 host.
+The probe container was removed afterward.
+
+An initial standalone probe bypassed the detection wrapper and failed because
+it did not set the WSL library search path; the successful check used the
+image's real wrapper, which supplies that path. This validates device/library
+access through the API, not a new inference benchmark or the Windows Desktop UI.
+The remote engine must itself expose `/dev/dxg` and `/usr/lib/wsl`; the settings
+do not provision GPU passthrough for a stock Hyper-V machine.
