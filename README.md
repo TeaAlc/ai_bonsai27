@@ -194,7 +194,15 @@ The short examples disable thinking so their output limits leave room for an ans
 
 ## Quick vision request
 
-Run `./simple_request.sh` to send the included [1920×1080 fairyland image](assets/fairyland-unicorns-1080p.png) to the local API with the question “What is visible in this image?” and print the complete response as indented JSON. The image shows grazing unicorns on a green meadow, bright sunshine, green trees, a rainbow, and a distant fairy-tale castle. The full-size image was tested successfully: the model identified the unicorns, rainbow, castle, and surrounding landscape. The script needs Python 3 but no extra Python packages. If the container uses another host port, set `BONSAI_BASE_URL`, for example `BONSAI_BASE_URL=http://127.0.0.1:8081 ./simple_request.sh`.
+Run `./simple_request.sh` to send the included [1920×1080 fairyland image](assets/fairyland-unicorns-1080p.png) to the local API with the question “What is visible in this image?” and print the complete response as indented JSON. The image shows grazing unicorns on a green meadow, bright sunshine, green trees, a rainbow, and a distant fairy-tale castle. The full-size image was tested successfully: the model identified the unicorns, rainbow, castle, and surrounding landscape. The script needs Python 3 but no extra Python packages. An optional `hostname[:port]` argument selects the API server. The default host is `localhost` and the default port is `8080`:
+
+```bash
+./simple_request.sh                    # localhost:8080
+./simple_request.sh notebook           # notebook:8080
+./simple_request.sh notebook:8081      # notebook:8081
+```
+
+An explicit argument overrides `BONSAI_BASE_URL`; without an argument, the environment variable remains supported. Remote access requires the server's API to be reachable from your machine; `run.sh` binds to localhost by default.
 
 ## Tests and measured performance
 

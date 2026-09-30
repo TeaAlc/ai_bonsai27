@@ -1,11 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Send the project image to the local OpenAI-compatible vision endpoint.
-# Override BONSAI_BASE_URL when the container was started with a different BONSAI_PORT.
+# Send the project image to an OpenAI-compatible vision endpoint.
+# An explicit hostname[:port] overrides BONSAI_BASE_URL. Without either, use localhost:8080.
+if (( $# > 1 )); then
+    echo 'Usage: ./simple_request.sh [hostname[:port]]' >&2
+    exit 2
+fi
+
+if (( $# == 1 )); then
+    # Accept a hostname or IPv4 address, optionally followed by a TCP port.
+    if [[ ! "$1" =~ ^([[:alnum:]_.-]+)(:([0-9]+))?$ ]]; then
+        echo 'Error: expected hostname or hostname:port.' >&2
+        exit 2
+    fi
+    hostname=${BASH_REMATCH[1]}
+    port=${BASH_REMATCH[3]:-8080}
+    if (( ${#port} > 5 )) || (( 10#$port < 1 || 10#$port > 65535 )); then
+        echo 'Error: port must be between 1 and 65535.' >&2
+        exit 2
+    fi
+    BONSAI_BASE_URL="http://$hostname:$port"
+fi
+
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 export BONSAI_IMAGE_PATH="$script_dir/assets/fairyland-unicorns-1080p.png"
-export BONSAI_BASE_URL="${BONSAI_BASE_URL:-http://127.0.0.1:8080}"
+export BONSAI_BASE_URL="${BONSAI_BASE_URL:-http://localhost:8080}"
 
 if [[ ! -r "$BONSAI_IMAGE_PATH" ]]; then
     echo "Image is missing: $BONSAI_IMAGE_PATH" >&2
