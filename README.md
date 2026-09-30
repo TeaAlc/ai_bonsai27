@@ -1,0 +1,138 @@
+# Bonsai 2 27B with Vision in Podman
+
+Run **`Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf`**, a Bonsai 2 model based on Qwen3.8-27B, with a Bonsai-compatible `llama-server` and its OpenAI-compatible API. The language model, MTP head, KV caches, and recurrent state run on the NVIDIA GPU. The separate **BF16 vision encoder/projector runs on CPU and system RAM** to save VRAM.
+
+The server uses MTP with `n_max=2`, Flash Attention, and `q8_0` K/V caches for both the main model and MTP draft. The default context window is **16,384 tokens**, configurable through `BONSAI_CTX_SIZE`. The API is published on localhost only.
+
+## Requirements
+
+- x86-64 Linux or WSL2, Bash, rootless Podman, `curl`, `tar`, and `sha256sum`. Python 3 is needed for the tests. The coding test also pulls `python:3.12-slim` if it is not cached.
+- A discrete NVIDIA GPU with compute capability **8.6 or 8.9** (the bundled Ampere/Ada backend) or **12.0** (Blackwell backend). Other compute capabilities are rejected by `run.sh`. The first GPU reported by `nvidia-smi` is selected as CUDA0.
+- Enough free VRAM for the entire language model and its 16k runtime state. The tested 12 GB laptop GPU worked with this configuration. Approximately 8 GB of free VRAM is a practical starting point, but usage varies by host and workload. Memory pressure causes startup to fail; the configuration does not silently offload language-model weights to CPU.
+- **Native Linux:** a working NVIDIA driver and NVIDIA Container Toolkit with CDI already configured, so `--device nvidia.com/gpu=all` works. Native Linux execution has not been tested in this project.
+- **WSL2:** a working NVIDIA Windows driver, `/dev/dxg`, and `/usr/lib/wsl/lib/nvidia-smi`. `run.sh` mounts `/usr/lib/wsl` read-only so the container can access the host driver libraries. Do not install a separate Linux NVIDIA driver in WSL2 for this setup.
+
+The scripts themselves do not require `sudo`. Host driver and CDI installation, if needed, are outside their scope.
+
+## Prepare, build, and run
+
+Run these commands from the project directory:
+
+```bash
+./prepare.sh
+./build.sh
+BONSAI_CTX_SIZE=16384 BONSAI_REASONING_EFFORT=medium ./run.sh
+curl http://127.0.0.1:8080/health
+```
+
+`prepare.sh` downloads and SHA256-verifies the PTQ1_0 MTP Lean model, the official BF16 vision projector, and both CUDA backend bundles. The GGUF files stay in `models/`. Backend archives and extracted binaries live under `data/backends/{blackwell,ampere-ada}/`; research inputs live under `data/research/`. The downloads and image need several gigabytes of disk space.
+
+`build.sh` checks the extracted backend files again, then builds `localhost/bonsai2-27b:ff41412`. Only backend runtime files and `entrypoint.sh` are copied into the image; model files are mounted read-only when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
+
+`run.sh` checks both GGUF files, detects WSL2 versus native Linux, selects the backend from the first GPU's compute capability, and starts the `bonsai2-27b` container in the background. Its default API base URL is **`http://127.0.0.1:8080/v1`**, with model ID **`bonsai2-27b`**. No API key is configured for local access.
+
+To change the context size or host port, stop and remove the existing named container before starting another:
+
+```bash
+podman stop bonsai2-27b
+podman rm bonsai2-27b
+BONSAI_CTX_SIZE=32768 BONSAI_PORT=8081 ./run.sh
+```
+
+The public startup variables are:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `BONSAI_CTX_SIZE` | `16384` | Context window in tokens |
+| `BONSAI_REASONING_EFFORT` | `medium` | Reasoning effort: `low`, `medium`, or `xhigh` |
+| `BONSAI_PORT` | `8080` | Host port, bound to localhost |
+
+`BONSAI_CTX_SIZE` must be an integer of at least 512. `BONSAI_REASONING_EFFORT` accepts `low`, `medium`, or `xhigh` (default: `medium`). The official model default is `xhigh`; `medium` gives shorter reasoning. The model accepts `low` but it may behave much like `xhigh`; `high` is invalid and can cause an HTTP 500. Larger contexts need more VRAM; 32k has not been validated on the test notebook. See the [official model card](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf) and [known issues](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/blob/main/KNOWN_ISSUES.md). Extra arguments passed to `run.sh` are forwarded to `llama-server`. For status and logs, use `podman ps` and `podman logs -f bonsai2-27b`.
+
+## API examples
+
+Text chat:
+
+```bash
+curl -s http://127.0.0.1:8080/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"bonsai2-27b","messages":[{"role":"user","content":"What is 19 + 23?"}],"max_tokens":128,"chat_template_kwargs":{"enable_thinking":false}}'
+```
+
+Vision uses the same endpoint and an OpenAI-style `image_url` content block. This standard-library Python example sends a local PNG as a data URL:
+
+```python
+import base64
+import json
+import urllib.request
+from pathlib import Path
+
+image = base64.b64encode(Path("image.png").read_bytes()).decode("ascii")
+payload = {
+    "model": "bonsai2-27b",
+    "messages": [{"role": "user", "content": [
+        {"type": "text", "text": "Describe this image briefly."},
+        {"type": "image_url", "image_url": {
+            "url": "data:image/png;base64," + image
+        }},
+    ]}],
+    "max_tokens": 256,
+    "chat_template_kwargs": {"enable_thinking": False},
+}
+request = urllib.request.Request(
+    "http://127.0.0.1:8080/v1/chat/completions",
+    data=json.dumps(payload).encode(),
+    headers={"Content-Type": "application/json"},
+)
+with urllib.request.urlopen(request, timeout=600) as response:
+    result = json.load(response)
+print(result["choices"][0]["message"]["content"])
+```
+
+The short examples disable thinking so their output limits leave room for an answer. For reasoning requests, omit that override and provide a larger `max_tokens` allowance within the available context; reasoning tokens count toward that limit. PNG and JPEG data URLs are supported. `--no-mmproj-offload` keeps the BF16 vision weights and encoder computation on CPU; the language model processes the resulting image tokens on CUDA. The projector file is 931,145,856 bytes, and the observed CPU compute buffer was about 248 MiB. Image size also affects runtime and memory use.
+
+## Quick vision request
+
+Run `./simple_request.sh` to send the included [1920×1080 fairyland image](assets/fairyland-unicorns-1080p.png) to the local API with the question “What is visible in this image?” and print the complete response as indented JSON. The image shows grazing unicorns on a green meadow, bright sunshine, green trees, a rainbow, and a distant fairy-tale castle. The full-size image was tested successfully: the model identified the unicorns, rainbow, castle, and surrounding landscape. The script needs Python 3 but no extra Python packages. If the container uses another host port, set `BONSAI_BASE_URL`, for example `BONSAI_BASE_URL=http://127.0.0.1:8081 ./simple_request.sh`.
+
+## Tests and measured performance
+
+With the server running on the default port:
+
+```bash
+python3 -B tests/test-api.py       # model list, chat, and ~15k-token prompt
+python3 -B tests/test-vision.py    # two known-shape image requests
+python3 -B tests/test-coding.py    # three Python tasks, 23 assertions
+```
+
+`tests/test-api.py` accepts `BONSAI_BASE_URL` and `BONSAI_CTX_SIZE`; its long-context test requires a window of at least 16k. The vision and coding scripts currently use port 8080. The coding script executes generated programs in restricted, network-disabled Python containers. Outputs are written to the local, Git-ignored `results/` directory. Project test scripts disable Python bytecode caching, and `simple_request.sh` invokes Python with `-B`, so these entry points do not create `__pycache__` directories. Use `python3 -B` or `PYTHONDONTWRITEBYTECODE=1` for any additional Python commands in the project; avoid `py_compile` and `compileall`, which explicitly write bytecode files.
+
+`python3 -B tests/qa.py` checks **previously saved** runtime evidence, including `results/server.log`, the API and vision/coding results, and `results/context-env-8192.json` from a separate 8k-context run. It is an audit of the completed validation, not a fresh end-to-end test of the current container. Capture a current server log with `podman logs bonsai2-27b > results/server.log` after running the API tests; the 8k artifact requires a separate 8k start and a saved `/props` response.
+
+On **WSL2 with an RTX 5070 Ti Laptop GPU (12 GB)**, the 16k API test, both vision function tests, and all 23 coding assertions passed. The saved QA audit reported **14/14 checks passed**. A 15,009-token prompt was processed at **629 prompt tokens/s**. Three coding generations measured **60.5, 57.8, and 54.8 generated tokens/s**. These are individual measurements on this notebook, not guaranteed throughput elsewhere. MTP `n_max=2` was active; it is not necessarily the fastest setting for every prompt.
+
+A separate [vision quality check](results/vision/quality-check.json) sent [this synthetic image](results/vision/quality-check.png) through `/v1/chat/completions`. The model correctly described a red square at the upper left and a blue circle at the lower right. This verifies a simple image request, not general photo understanding or OCR. The linked results are local test artifacts and are excluded from Git.
+
+The recorded server log showed **66/66 language-model layers on CUDA0**, a 5,995.31 MiB CUDA0 model buffer, `q8_0` K/V caches for main and draft contexts, Flash Attention, and `CLIP using CPU backend` for vision. A later GPU snapshot showed **9,078 of 12,227 MiB** in use, including other processes; it is not an isolated model-only VRAM measurement.
+
+## Moving to another computer
+
+On the target system, copy the project and run `./prepare.sh`, `./build.sh`, and `./run.sh`. Alternatively, export the built image and transfer it alongside `run.sh` and **both** GGUF files in `models/`:
+
+```bash
+podman save -o bonsai2-27b.tar localhost/bonsai2-27b:ff41412
+# On the target system:
+podman load -i bonsai2-27b.tar
+BONSAI_CTX_SIZE=16384 ./run.sh
+```
+
+The target still needs working NVIDIA GPU access and a supported compute capability. WSL2 with sm120 was tested; native Linux and sm86/sm89 are packaged but have not had runtime validation here. The image contains CUDA runtime libraries and Bonsai-compatible binaries, while NVIDIA driver libraries come from the target host. See [RECHERCHE.md](RECHERCHE.md) for model variants, server forks, and the choice of artifacts.
+
+## Repository conventions
+
+See [AGENTS.md](AGENTS.md) for the project workflow and validation rules. Keep
+documentation, script comments, and messages in English; use `BONSAI_` for
+project configuration variables. Keep temporary work under `/tmp/bonsai27/`
+and Python bytecode caches out of the project. Completed changes use English
+Conventional Commit messages compatible with semantic-release and end with
+`(by Codex)`.

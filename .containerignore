@@ -1,0 +1,15 @@
+*
+!Containerfile
+!entrypoint.sh
+!data
+data/*
+!data/backends
+data/backends/*
+!data/backends/blackwell
+!data/backends/ampere-ada
+data/backends/blackwell/*
+data/backends/ampere-ada/*
+!data/backends/blackwell/runtime
+!data/backends/ampere-ada/runtime
+!data/backends/blackwell/runtime/**
+!data/backends/ampere-ada/runtime/**

@@ -1,0 +1,18 @@
+# Downloaded models and CUDA backends
+models/
+data/backends/*/runtime/
+data/backends/*/archive.tar.gz
+
+# Local test artifacts and exported images
+results/
+*.tar
+*.tar.gz
+
+# Python and editor files
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+.vscode/
+.idea/

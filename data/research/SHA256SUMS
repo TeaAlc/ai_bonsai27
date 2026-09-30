@@ -1,0 +1,5 @@
+53107f530aa52eb00912263ab1ee29bd199261c87cd7b4ad4ca1318c1fe33ee3  Ternary-Bonsai-2-27B-PTQ1_0.gguf
+83a396ee218c36e5ed88205eccb940a71549d9a72a3d020cc2713f94a78f70f0  Ternary-Bonsai-2-27B-PTQ1_0-mtp.gguf
+1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685  Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf
+46b0bc960f00352267ed34246b7cb5010fa64618077158647e5d2bbcf0fb60fe  bonsai2-small-gpu-linux-x64-cuda12.4-sm86-sm89-285542d.tar.gz
+74e1cf451d41e1435d15ef93e76007219cdf28fd1eb59bf335d1f3d31bfbc4da  bonsai2-small-gpu-linux-x64-cuda12.8-sm120-ff41412.tar.gz
