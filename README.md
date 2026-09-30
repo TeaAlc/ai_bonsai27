@@ -584,6 +584,10 @@ The target still needs working NVIDIA GPU access and a supported compute capabil
 
 ## Repository conventions
 
+See [TODO_PLAN.md](TODO_PLAN.md) for the 2026-09-30 repository audit, fresh
+validation results, remaining defects, and the prioritized implementation plan.
+Its TODOs describe planned work, not features already implemented.
+
 See [AGENTS.md](AGENTS.md) for the project workflow and validation rules. Keep
 documentation, script comments, and messages in English; use `BONSAI_` for
 project configuration variables. Keep temporary work under `/tmp/bonsai27/`

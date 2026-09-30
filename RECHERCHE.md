@@ -197,3 +197,22 @@ download success, concurrent serialization, waiting, and lock cleanup.
 The user's actual Windows/shared filesystem is not available for live tests.
 The regression fixtures passed on the host and inside the rebuilt image;
 a WSL2 GPU container also passed /health and the arithmetic API check (42).
+
+## Follow-up repository audit (2026-09-30)
+
+[TODO_PLAN.md](TODO_PLAN.md) records the audit of source revision
+`845d89edac88094f65009d874b243d20024cf7ac`, including reproduced edge cases and
+prioritized acceptance criteria. Both pinned backend archives and extracted
+checksum manifests passed verification. The existing clean 1.3.1 image passed
+both backend dependency checks with the WSL driver mounted and rejected startup
+without GPU access before downloading models. Eight script regression suites
+and tracked Bash/Python syntax checks also passed.
+
+Additional isolated fixtures exposed a lock-release race, conflicting bare and
+v-prefixed release tags in the older tag helper, and context integer overflow.
+Existing nonempty model files were confirmed to bypass checksum verification,
+as currently documented. Registry publication safeguards, GPU selection
+consistency, preparation concurrency, and QA evidence provenance need further
+work described in the plan. This audit did not repeat inference, vision,
+throughput, or coding generation tests; earlier measurements above remain
+historical and do not validate another host or GPU backend.
