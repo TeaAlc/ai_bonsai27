@@ -170,6 +170,20 @@ the tested configuration is direct Podman inside WSL2.
 | `BONSAI_MMPROJ` | `/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf` | No | BF16 vision-projector path **inside** the container |
 | `GGML_CUDA_BATCH_INVARIANT` | `1` | No | Preserve the bundled CUDA batch-invariant setting |
 
+Supported GPU families and examples:
+
+| Backend | Compute capability | Architecture | Supported GPU examples |
+| --- | --- | --- | --- |
+| `ampere-ada` | **8.6** | Ampere | GeForce RTX **30 series**, e.g. RTX 3060, 3080, 3090; professional RTX A2000, A4000, A5000, A6000 |
+| `ampere-ada` | **8.9** | Ada Lovelace | GeForce RTX **40 series**, e.g. RTX 4060, 4070, 4090; professional RTX 2000 Ada, RTX 4000 Ada, RTX 6000 Ada |
+| `blackwell` | **12.0** | Blackwell | GeForce RTX **50 series**, e.g. RTX 5060, 5070 Ti, 5090; professional RTX PRO 4000 Blackwell, RTX PRO 6000 Blackwell |
+
+See [NVIDIA's official compute-capability list](https://developer.nvidia.com/cuda/gpus)
+for your exact GPU. Architecture support does not guarantee enough VRAM for
+this model and context size. The tested GPU is an RTX 5070 Ti Laptop GPU.
+Other compute capabilities are unsupported by the bundled backends, including
+the A100 (8.0), H100 (9.0), and B200 (10.0).
+
 When `BONSAI_GPU_BACKEND` is unset or empty, the entrypoint queries GPU 0 through
 `nvidia-smi` (from the runtime's PATH or `/usr/lib/wsl/lib/nvidia-smi`). It selects
 `ampere-ada` for 8.6/8.9 and `blackwell` for 12.0 before downloading models.
