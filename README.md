@@ -173,6 +173,42 @@ Desktop application's engine selected, then manage the resulting container in
 Desktop. These Desktop configurations have not been runtime-tested here;
 the tested configuration is direct Podman inside WSL2.
 
+### Desktop command fields do not configure GPU devices
+
+Do not put `--device nvidia.com/gpu=all` or `--gpus all` in the Desktop
+**Command/Arguments** field. That field becomes the container's `Config.Cmd`
+and is passed to the image entrypoint. It cannot configure Podman or Docker
+GPU access. Leave it empty for normal startup. If the dialog offers a device
+selector that supports CDI, select `nvidia.com/gpu=all` there; otherwise create
+the container from the CLI against the same engine, then manage it in Desktop.
+
+For example, this inspect output indicates misplaced runtime options:
+
+```json
+"Cmd": ["--device", "nvidia.com/gpu=all"]
+```
+
+The CLI syntax is `podman run [PODMAN OPTIONS] IMAGE [CONTAINER ARGUMENTS]`.
+Place the GPU flag, port, volume, and environment options **before the image**.
+For a GPU-enabled CDI engine with models at `/mnt/g/models_podman`, create a
+new container with the following single-line command (PowerShell or Bash):
+
+```bash
+podman run -d --name bonsai2-27b-cdi --device=nvidia.com/gpu=all --security-opt label=disable -p 127.0.0.1:8080:8080 --mount type=bind,source=/mnt/g/models_podman,target=/models -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
+podman logs -f bonsai2-27b-cdi
+```
+
+The source directory must exist in the engine's Linux environment; substitute
+its actual path or use the named-volume example below. Stop an old container
+first if it still occupies port 8080. Restarting the old container does not
+change its creation settings. With this command `Config.Cmd` should be empty;
+verify actual GPU access using the CUDA probe below rather than relying solely
+on `HostConfig.Devices`, whose representation can vary with CDI and Podman.
+An `unresolvable CDI devices` error now comes from Podman before the container
+starts: check NVIDIA Container Toolkit and the CDI specification in that engine.
+See [Podman's run syntax](https://docs.podman.io/en/latest/markdown/podman-run.1.html)
+and [Podman Desktop's GPU setup](https://podman-desktop.io/docs/podman/gpu).
+
 ### Hyper-V: GPU passthrough is a VM prerequisite
 
 A standard **Podman Desktop Hyper-V machine does not provide supported NVIDIA

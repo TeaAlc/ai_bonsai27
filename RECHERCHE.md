@@ -334,3 +334,23 @@ engine and registry fixtures validate these paths, including documentation
 rebuilds, dirty builds, absent tags, and replacement of older or newer `latest`.
 These fixture results do not establish a fresh live GHCR publication. Runtime
 settings are unchanged, so previous GPU/API measurements remain historical.
+
+
+## Desktop GPU option placement (2026-09-30 follow-up)
+
+The supplied inspect for container `7634af6d4207` (image version `1.4.1`) records
+`Config.Cmd` and process arguments as `["--device", "nvidia.com/gpu=all"]`. Its
+only bind mount is the model cache; CUDA reports that `libcuda.so.1` cannot be
+loaded. This shows that the GPU flag was supplied as an application argument
+instead of an engine creation option. It does not prove that the engine has a
+working GPU/CDI setup; that must still be checked independently.
+
+[Podman's official run syntax](https://docs.podman.io/en/latest/markdown/podman-run.1.html)
+places engine options before the image and container arguments after it.
+[Podman Desktop's official GPU instructions](https://podman-desktop.io/docs/podman/gpu)
+configure NVIDIA Container Toolkit/CDI in the Podman machine and pass
+`--device nvidia.com/gpu=all` to `podman run`. On Windows the documented route
+requires WSL2 and excludes Hyper-V. The README now distinguishes Desktop command
+fields from device configuration and provides a CLI recreation example.
+This is documentation validation against supplied inspect evidence and official
+references, not a new runtime test on the reported remote machine.
