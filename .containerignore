@@ -9,6 +9,7 @@ data/*
 !data/gpu
 !data/gpu/detect.sh
 !data/gpu/compute-capability.c
+!data/gpu/check-runtime.sh
 data/backends/*
 !data/backends/blackwell
 !data/backends/ampere-ada

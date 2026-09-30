@@ -7,6 +7,8 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
 
 - All language-model weights, embeddings, MTP weights, KV caches, and recurrent
   state run on CUDA0. Do not introduce automatic CPU offloading.
+- Check actual CUDA driver access before downloading models, even with a
+  backend override. Keep NVIDIA_DRIVER_CAPABILITIES=compute,utility in the image.
 - The separate BF16 vision encoder/projector runs on CPU and system RAM through
   `--no-mmproj-offload`.
 - MTP uses `draft-mtp` with `n_max=2`; Flash Attention is enabled; main and draft
@@ -97,7 +99,9 @@ image label, not newly committed but unbuilt changes. Test push logic with
 `tests/test-image-push.py`; Docker fallback needs separate storage or an import.
 Run `tests/test-version.sh` when changing versioning or build-tool behavior.
 Run `tests/test-model-download.sh` when changing model downloads or cache paths.
-Run `tests/test-gpu-backend.sh` when changing backend detection.
+Run `tests/test-gpu-backend.sh` and `tests/test-cuda-probe.sh` when changing
+backend detection; `tests/test-runtime.sh` checks dependencies with real GPU
+access and verifies missing CUDA fails before any model download.
 `BONSAI_IMAGE` pins a runtime image; its default is the last successful local
 build through `localhost/bonsai2-27b:latest`.
 

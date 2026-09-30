@@ -15,3 +15,10 @@ configured `BONSAI_MODEL_DIR`, defaulting to the caller’s current directory.
 `gpu/detect.sh` selects the CUDA backend inside the container through
 the CUDA driver probe compiled from `gpu/compute-capability.c`, with
 `nvidia-smi` as a fallback; an explicit `BONSAI_GPU_BACKEND` overrides detection.
+
+`gpu/check-runtime.sh` verifies download tools, HTTPS certificates, and all
+shared-library dependencies of both backends. Image builds permit only
+libcuda.so.1 to be absent; the GPU-enabled runtime check permits no missing
+libraries. Distribution runtime packages are explicitly installed in the image.
+The host's CUDA driver is injected through Docker GPU support, NVIDIA CDI, or
+the WSL driver mount rather than bundled with a mismatched kernel driver.

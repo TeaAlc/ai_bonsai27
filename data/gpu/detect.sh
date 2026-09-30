@@ -2,7 +2,7 @@
 # Choose the bundle for the first GPU visible inside the container. An explicit
 # setting bypasses detection. The CUDA driver probe works without nvidia-smi.
 query_cuda_capability() {
-    LD_LIBRARY_PATH="/usr/lib/wsl/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+    LD_LIBRARY_PATH="/usr/lib/wsl/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
         /opt/bonsai/cuda-compute-capability
 }
 

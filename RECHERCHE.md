@@ -109,3 +109,17 @@ On the actual WSL2 notebook, the probe reported 12.0 with PATH set to a director
 containing no nvidia-smi. GPU driver libraries and passthrough remain required.
 The direct-start test container selected blackwell without a backend override,
 returned OK from /health, and answered the API arithmetic check with 42.
+
+## Runtime dependency and CUDA preflight audit (2026-09-30)
+
+Both CUDA bundles were checked with ldd on llama-server and every packaged
+shared library. With the WSL host driver mounted, all dependencies resolved.
+The image explicitly installs bash, coreutils, curl, CA certificates, util-linux,
+libc-bin, libstdc++6, and libgcc-s1. Build-time checks allow only libcuda.so.1 to
+be absent; runtime checks allow none. The NVIDIA runtime capability request is
+compute,utility. Driver search paths include the WSL directory and conventional
+/usr/local/nvidia/lib and lib64 directories. The real CUDA probe runs before
+model downloads even with an explicit backend override. A no-GPU test failed
+with a clear message and left its empty model mount untouched. A GPU-enabled
+test returned OK from /health and answered the arithmetic API check with 42.
+Docker/Desktop driver injection itself remains untested on this notebook.

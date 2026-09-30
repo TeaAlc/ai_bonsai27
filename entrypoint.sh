@@ -43,14 +43,18 @@ validate_settings() {
 
 validate_settings
 
+# Use one library search path for preflight and the server. CUDA driver files
+# come from the host GPU runtime, never from a stub or bundled host driver.
+backend_dir="/opt/bonsai/$gpu_backend"
+export LD_LIBRARY_PATH="/usr/lib/wsl/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:$backend_dir/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+if ! query_cuda_capability >/dev/null; then
+    fail 'CUDA driver/GPU access is unavailable. Docker requires --gpus all and NVIDIA_DRIVER_CAPABILITIES=compute,utility; Podman requires NVIDIA CDI or the WSL /dev/dxg and /usr/lib/wsl mounts. No models were downloaded.'
+fi
+
 # Populate the writable model mount before loading the server. Reuse cached
 # files; missing files are downloaded from pinned revisions and SHA256-checked.
 download_missing_model "$MODEL_REPO/$MODEL_FILE" "$model" "$MODEL_SHA"
 download_missing_model "$VISION_REPO/$VISION_FILE" "$vision_projector" "$VISION_SHA"
-
-# Load the selected CUDA bundle and, on WSL2, the mounted host driver libraries.
-backend_dir="/opt/bonsai/$gpu_backend"
-export LD_LIBRARY_PATH="/usr/lib/wsl/lib:$backend_dir/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 # Keep the BF16 vision encoder/projector on CPU and in system RAM.
 model_args=(

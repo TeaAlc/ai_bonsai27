@@ -168,6 +168,7 @@ the tested configuration is direct Podman inside WSL2.
 | `BONSAI_REASONING_EFFORT` | `medium` | No | Official accepted values: `low`, `medium`, `xhigh`; `high` is invalid |
 | `BONSAI_MODEL` | `/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf` | No | Language-model path **inside** the container |
 | `BONSAI_MMPROJ` | `/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf` | No | BF16 vision-projector path **inside** the container |
+| `NVIDIA_DRIVER_CAPABILITIES` | `compute,utility` | No; keep `compute` enabled | NVIDIA runtime driver features; CUDA needs `compute`, GPU tools need `utility` |
 | `GGML_CUDA_BATCH_INVARIANT` | `1` | No | Preserve the bundled CUDA batch-invariant setting |
 
 Supported GPU families and examples:
@@ -211,6 +212,27 @@ They require no extra environment variables. Optional container command
 arguments are appended to llama-server, for example `--log-verbose`; preserve
 the default entrypoint and the project's GPU/vision settings.
 
+### CUDA driver access errors
+
+`libcuda.so.1: cannot open shared object file` means the host CUDA driver is
+missing from the container or outside its library search path. Successful
+model downloads or `nvidia-smi` output alone do not prove CUDA compute access.
+The image includes both CUDA runtime bundles (CUDA runtime, cuBLAS/cuBLASLt,
+llama/ggml, OpenMP), the C/C++ runtime, download tools, CA certificates, and the
+GPU probe. Builds check every backend shared library and llama-server for
+missing dependencies, allowing only the host-provided CUDA driver to be absent.
+The image requests `NVIDIA_DRIVER_CAPABILITIES=compute,utility` and searches
+standard NVIDIA runtime and WSL driver directories. It checks CUDA access
+before downloading models, including when a backend is explicitly selected.
+
+For Docker, recreate the container with `--gpus all` and keep
+`NVIDIA_DRIVER_CAPABILITIES=compute,utility`; for Podman, use the CDI device or
+the WSL device/driver mounts shown below. These settings must be applied at
+container creation. A backend override cannot enable GPU access. Do not copy a
+CUDA stub library into the image. Existing downloaded GGUF files can be reused
+through the same model mount. See
+[NVIDIA's driver capability documentation](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/docker-specialized.html).
+
 ### Docker Desktop: direct start
 
 Docker Desktop's NVIDIA GPU support requires **Windows with the WSL2 backend**.
@@ -224,7 +246,7 @@ It uses a persistent named volume; the container detects the GPU backend:
 
 ```bash
 docker volume create bonsai-models
-docker run -d --name bonsai2-27b --gpus all -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
+docker run -d --name bonsai2-27b --gpus all -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
 docker logs -f bonsai2-27b
 ```
 
@@ -441,6 +463,7 @@ python3 -B tests/test-coding.py    # three Python tasks, 23 assertions
 ./tests/test-model-download.sh    # cache, integrity, locking, and directory fixtures
 ./tests/test-gpu-backend.sh       # backend detection and overrides
 ./tests/test-cuda-probe.sh        # driver probe fixtures; requires a host C compiler
+./tests/test-runtime.sh           # both backend dependencies and early CUDA failure; needs Podman/GPU
 ```
 
 `tests/test-api.py` accepts `BONSAI_BASE_URL` and `BONSAI_CTX_SIZE`; its long-context test requires a window of at least 16k. The vision and coding scripts currently use port 8080. The coding script executes generated programs in restricted, network-disabled Python containers. Outputs are written to the local, Git-ignored `results/` directory. Project test scripts disable Python bytecode caching, and `simple_request.sh` invokes Python with `-B`, so these entry points do not create `__pycache__` directories. Use `python3 -B` or `PYTHONDONTWRITEBYTECODE=1` for any additional Python commands in the project; avoid `py_compile` and `compileall`, which explicitly write bytecode files.

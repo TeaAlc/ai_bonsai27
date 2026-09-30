@@ -6,13 +6,20 @@ RUN gcc -O2 -Wall -Wextra -Werror /src/compute-capability.c -ldl -o /cuda-comput
 
 FROM docker.io/library/ubuntu:24.04
 # HTTPS downloads are needed only when a mounted model file is missing.
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates util-linux && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash coreutils curl ca-certificates util-linux libc-bin libstdc++6 libgcc-s1 \
+    && rm -rf /var/lib/apt/lists/*
 COPY data/backends/blackwell/runtime/ /opt/bonsai/blackwell/
 COPY data/backends/ampere-ada/runtime/ /opt/bonsai/ampere-ada/
 COPY entrypoint.sh /usr/local/bin/bonsai-server
 COPY data/models/download.sh /opt/bonsai/download-models.sh
 COPY data/gpu/detect.sh /opt/bonsai/detect-gpu.sh
+COPY data/gpu/check-runtime.sh /opt/bonsai/check-runtime.sh
 COPY --from=gpu-probe-build /cuda-compute-capability /opt/bonsai/cuda-compute-capability
 ENV BONSAI_CTX_SIZE=16384 BONSAI_MODEL=/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf GGML_CUDA_BATCH_INVARIANT=1
+# Docker's NVIDIA runtime must inject CUDA compute libraries, not just NVML tools.
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+# Builds have no GPU driver mount. Every other runtime dependency must resolve.
+RUN bash /opt/bonsai/check-runtime.sh --allow-missing-driver
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/bonsai-server"]
