@@ -159,6 +159,54 @@ Desktop application's engine selected, then manage the resulting container in
 Desktop. These Desktop configurations have not been runtime-tested here;
 the tested configuration is direct Podman inside WSL2.
 
+### Hyper-V: GPU passthrough is a VM prerequisite
+
+A standard **Podman Desktop Hyper-V machine does not provide supported NVIDIA
+GPU access**. Podman Desktop's Windows GPU instructions explicitly require
+WSL2 and exclude Hyper-V. Installing additional CUDA libraries inside this
+container does not expose the Windows GPU to its Linux VM. See
+[Podman Desktop's GPU prerequisites](https://podman-desktop.io/docs/podman/gpu).
+
+The same image can be used in an independently configured **Hyper-V Linux
+VM with working NVIDIA CUDA passthrough**. This is conditional compatibility,
+not a tested Podman Desktop Hyper-V configuration. Hyper-V GPU assignment is
+configured outside the image: Windows host → Linux guest GPU/driver → NVIDIA
+Container Toolkit/CDI → container. Windows driver DLLs cannot replace Linux
+`libcuda.so.1`, and a normal Hyper-V guest does not use the WSL `/dev/dxg` mount.
+
+Microsoft documents DDA/GPU-P for qualifying Windows Server configurations;
+DDA/GPU-P are not supported on desktop-class hardware or Windows 10/11 client
+hosts in that documented deployment. Linux guest support, GPU models, drivers,
+and licensing depend on the selected assignment method. Do not assume that
+a GeForce laptop GPU qualifies. See
+[Microsoft's GPU passthrough prerequisites](https://learn.microsoft.com/en-us/troubleshoot/windows-server/virtualization/troubleshoot-hyper-v-gpu-assignment-partitioning-passthrough-issues)
+and [NVIDIA's Hyper-V passthrough guidance](https://docs.nvidia.com/vgpu/latest/grid-vgpu-user-guide/using-gpu-pass-through.html).
+
+For a GPU-provisioned Podman machine, check the guest before starting the model
+(these commands work from PowerShell or a Linux shell):
+
+```bash
+podman machine list
+podman machine ssh nvidia-smi
+podman machine ssh nvidia-ctk cdi list
+podman run --rm --device nvidia.com/gpu=all --entrypoint bash ghcr.io/teaalc/ai_bonsai27:latest /opt/bonsai/check-runtime.sh
+podman run --rm --device nvidia.com/gpu=all --entrypoint /opt/bonsai/cuda-compute-capability ghcr.io/teaalc/ai_bonsai27:latest
+```
+
+Use an image containing the runtime checks. For a separate Linux VM rather
+than a Podman-managed machine, execute the guest checks inside that VM and the
+container checks against its Podman engine. All dependency checks must pass,
+and the CUDA probe must report 8.6, 8.9, or 12.0. Then use the CDI start command
+below with a persistent named model volume. If the guest has no CUDA GPU,
+switch Podman Desktop to a WSL2-backed machine or connect to a GPU-enabled Linux
+engine. Host/guest driver and passthrough setup requires administrator access
+and is not performed by this project.
+
+The image already includes both CUDA backend runtimes, C/C++ runtime libraries,
+CUDA detection, model downloads, HTTPS certificates, and dependency checks.
+No additional Hyper-V-specific library inside the application image replaces
+the missing VM GPU assignment. Hyper-V execution has not been tested here.
+
 ### Container environment variables
 
 | Variable | Default in image/entrypoint | Required to set? | Meaning |

@@ -15,6 +15,9 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   K/V cache types are `q8_0`.
 - Context defaults to 16,384 tokens. The API model ID is `bonsai2-27b`, and the
   host API is published only on localhost, port 8080 by default.
+- Do not claim stock Podman Desktop Hyper-V supports NVIDIA CUDA. A separately
+  GPU-provisioned Hyper-V Linux guest is conditional on working guest drivers,
+  NVIDIA CDI, and actual CUDA checks; it has not been tested here.
 - Native Linux uses NVIDIA CDI. WSL2 uses `/dev/dxg` and a read-only mount of
   `/usr/lib/wsl`. No sudo rights are available; host drivers are prerequisites.
 - Bundled backends support compute capabilities 8.6/8.9 and 12.0. Only WSL2 with

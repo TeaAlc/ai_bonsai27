@@ -123,3 +123,49 @@ model downloads even with an explicit backend override. A no-GPU test failed
 with a clear message and left its empty model mount untouched. A GPU-enabled
 test returned OK from /health and answered the arithmetic API check with 42.
 Docker/Desktop driver injection itself remains untested on this notebook.
+
+## Podman Hyper-V GPU feasibility (2026-09-30)
+
+### Findings and primary sources
+
+- [Podman Desktop GPU access](https://podman-desktop.io/docs/podman/gpu):
+  Windows NVIDIA GPU support requires WSL2; the documented prerequisites
+  explicitly exclude Hyper-V. Installing NVIDIA Container Toolkit in a VM
+  does not itself assign a physical GPU to that VM.
+- [Microsoft Hyper-V GPU troubleshooting](https://learn.microsoft.com/en-us/troubleshoot/windows-server/virtualization/troubleshoot-hyper-v-gpu-assignment-partitioning-passthrough-issues):
+  supported DDA deployments require Windows Server 2016 or later; GPU-P
+  deployments require Windows Server 2025 or later. Microsoft excludes
+  desktop-class hardware and Windows 10/11 client hosts from supported
+  DDA/GPU-P deployments. GPU-P has specific supported GPU, driver, guest,
+  and licensing requirements. WSL2's GPU virtualization is a separate path.
+- [Microsoft GPU acceleration planning](https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/plan/plan-for-gpu-acceleration-in-windows-server):
+  DDA can give Linux guests GPU acceleration subject to support; both
+  assignment methods can expose CUDA where the vendor configuration supports it.
+- [NVIDIA GPU passthrough guide](https://docs.nvidia.com/vgpu/latest/grid-vgpu-user-guide/using-gpu-pass-through.html):
+  Hyper-V passthrough is documented through DDA on supported Windows Server
+  versions. Hardware and guest-driver compatibility must be established
+  outside the application container.
+
+### Image implications and supported boundary
+
+The regular Podman Desktop Hyper-V provider cannot be claimed as a supported
+CUDA deployment from these sources. A separately GPU-provisioned Hyper-V
+Linux guest can use this Linux image through NVIDIA CDI, conditional on its
+CUDA probe and full dependency checks passing. This is an architectural
+inference, not a measured Hyper-V test. No Hyper-V environment is available
+in this session; the only live GPU checks were on WSL2.
+
+The image's CUDA runtime/cuBLAS, llama/ggml/OpenMP, C/C++ libraries, HTTPS
+download tools, and CUDA probe are already present and audited. A Hyper-V
+Linux guest additionally needs a compatible GPU assignment, a working Linux
+NVIDIA guest driver, and NVIDIA Container Toolkit/CDI in the guest OS. These
+are VM/kernel/runtime prerequisites, not files to install in this image.
+A bundled host driver or CUDA stub would not create GPU access. The WSL
+libcuda projection and /dev/dxg mounts do not apply to an ordinary Hyper-V VM.
+
+README now includes guest-level nvidia-smi/CDI checks and container-level
+shared-library and CUDA-probe checks. Existing pre-download CUDA validation
+prevents downloading models into a guest without usable GPU compute access.
+No unsupported VM modifications, driver installation, or CPU offloading were
+introduced. For Windows client notebooks, the documented working alternatives
+remain WSL2-backed Podman or a remote GPU-enabled Linux engine.
