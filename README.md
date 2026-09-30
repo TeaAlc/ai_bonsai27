@@ -16,14 +16,55 @@ The scripts themselves do not require `sudo`. Host driver and CDI installation, 
 
 ## Prepare, build, and run
 
-Run these commands from the project directory:
+Run all commands below from the project directory inside Linux or WSL2.
+
+### Start the published image
+
+Prepare the model files, pull the image, and start the container with explicit
+settings:
+
+```bash
+./prepare.sh
+podman pull ghcr.io/teaalc/ai_bonsai27:latest
+BONSAI_IMAGE=ghcr.io/teaalc/ai_bonsai27:latest \
+BONSAI_CTX_SIZE=16384 \
+BONSAI_REASONING_EFFORT=medium \
+BONSAI_PORT=8080 \
+./run.sh
+```
+
+**Required:** the GPU prerequisites above, both GGUF files in `models/`, an
+available image, and an unused container name `bonsai2-27b`. To use the published
+image, set `BONSAI_IMAGE` as shown; otherwise `run.sh` selects the local build.
+The other three variables are optional and are shown explicitly for clarity.
+GPU devices, driver mounts, model mounts, and backend selection are configured
+automatically by `run.sh`; no additional GPU flags are needed.
+
+The container starts in the background. Follow its startup logs, then check
+readiness once model loading has completed:
+
+```bash
+podman logs -f bonsai2-27b
+# Press Ctrl+C to stop following logs; the container keeps running.
+curl --fail http://localhost:8080/health
+./simple_request.sh localhost:8080
+```
+
+If you change `BONSAI_PORT`, use that port in the health check and request.
+The model files are not included in the image; `prepare.sh` also downloads
+backend bundles used for local builds.
+
+### Build and start locally
 
 ```bash
 ./prepare.sh
 ./build.sh
-BONSAI_CTX_SIZE=16384 BONSAI_REASONING_EFFORT=medium ./run.sh
-curl http://127.0.0.1:8080/health
+./run.sh
 ```
+
+No environment variables are mandatory for a local build: `run.sh` defaults to
+`localhost/bonsai2-27b:latest`, a 16,384-token context, `medium` reasoning, and
+host port `8080`.
 
 `prepare.sh` downloads and SHA256-verifies the PTQ1_0 MTP Lean model, the official BF16 vision projector, and both CUDA backend bundles. The GGUF files stay in `models/`. Backend archives and extracted binaries live under `data/backends/{blackwell,ampere-ada}/`; research inputs live under `data/research/`. The downloads and image need several gigabytes of disk space.
 
@@ -39,16 +80,20 @@ podman rm bonsai2-27b
 BONSAI_CTX_SIZE=32768 BONSAI_PORT=8081 ./run.sh
 ```
 
-The public startup variables are:
+### Startup parameters
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `BONSAI_CTX_SIZE` | `16384` | Context window in tokens |
-| `BONSAI_REASONING_EFFORT` | `medium` | Reasoning effort: `low`, `medium`, or `xhigh` |
-| `BONSAI_PORT` | `8080` | Host port, bound to localhost |
-| `BONSAI_IMAGE` | `localhost/bonsai2-27b:latest` | Image to start; set a versioned tag to pin a build |
+These are all environment variables read by `run.sh`:
 
-`BONSAI_CTX_SIZE` must be an integer of at least 512. `BONSAI_REASONING_EFFORT` accepts `low`, `medium`, or `xhigh` (default: `medium`). The official model default is `xhigh`; `medium` gives shorter reasoning. The model accepts `low` but it may behave much like `xhigh`; `high` is invalid and can cause an HTTP 500. Larger contexts need more VRAM; 32k has not been validated on the test notebook. See the [official model card](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf) and [known issues](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/blob/main/KNOWN_ISSUES.md). Extra arguments passed to `run.sh` are forwarded to `llama-server`. For status and logs, use `podman ps` and `podman logs -f bonsai2-27b`.
+| Variable | Default | Required? | Purpose |
+| --- | --- | --- | --- |
+| `BONSAI_CTX_SIZE` | `16384` | No | Context window in tokens; integer ≥ 512 |
+| `BONSAI_REASONING_EFFORT` | `medium` | No | Reasoning effort: `low`, `medium`, or `xhigh` |
+| `BONSAI_PORT` | `8080` | No | Available host TCP port, 1–65535; bound to localhost |
+| `BONSAI_IMAGE` | `localhost/bonsai2-27b:latest` | For the GHCR image | Image to start, e.g. `ghcr.io/teaalc/ai_bonsai27:latest`; use a versioned tag to pin a build |
+
+`BONSAI_CTX_SIZE` must be an integer of at least 512. `BONSAI_REASONING_EFFORT` accepts `low`, `medium`, or `xhigh` (default: `medium`). The official model default is `xhigh`; `medium` gives shorter reasoning. The model accepts `low` but it may behave much like `xhigh`; `high` is invalid and can cause an HTTP 500. Larger contexts need more VRAM; 32k has not been validated on the test notebook. See the [official model card](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf) and [known issues](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/blob/main/KNOWN_ISSUES.md).
+
+Optional positional arguments passed to `run.sh` are forwarded to `llama-server`, for example `./run.sh --log-verbose`. Additional server flags can override the defaults, so preserve the GPU-only language-model and CPU vision settings. `BONSAI_BASE_URL` configures request scripts; it does not change the container binding. `BONSAI_GPU_BACKEND` is detected automatically; `BONSAI_MODEL` and `BONSAI_MMPROJ` are container entrypoint settings and are not forwarded from the host environment by `run.sh`. For status and logs, use `podman ps` and `podman logs -f bonsai2-27b`.
 
 ## Image versions and build tools
 
@@ -93,19 +138,6 @@ To allow anonymous pulls, the package owner can open
 select **Package settings**, and set **Change visibility** to **Public**.
 Package visibility is separate from repository visibility. See
 [GitHub's package access documentation](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility).
-
-### Podman Desktop: disk artifact errors
-
-`wrong manifest type for disk artifact: application/vnd.oci.image.manifest.v1+json`
-comes from Podman's VM disk-image loader. This project publishes a container
-image, not a Podman machine operating-system image. Do not enter its GHCR URL
-as the custom image when creating a Podman machine. Use the default machine
-image, then pull the container through `podman pull` or the container image
-pull dialog. See [Podman's machine initialization documentation](https://docs.podman.io/en/latest/markdown/podman-machine-init.1.html).
-
-For this project's GPU setup, run the scripts and `podman pull` directly inside
-your GPU-enabled Linux or WSL2 distribution, as described in Requirements.
-GPU execution through a separate Podman Desktop machine has not been validated.
 
 `./image_push.sh` publishes the last successful local build as both
 `ghcr.io/teaalc/ai_bonsai27:<version>` and
