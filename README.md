@@ -627,6 +627,18 @@ Attention and q8 caches, and CPU vision. Evidence:
 (marked dirty during development). These observations are separate from the
 older measurements above and from a later clean release verification.
 
+The final **clean 1.4.0 release image** also passed **18/18 QA checks**, all 23
+coding assertions, vision and the unicorn image, 16k/8k context verification,
+both backend dependency checks, download stop/read-only-cache tests, and a
+warm-cache OpenAI request with networking disabled. Its source is
+`de4b8edccb4940c9d005f89a77ae199fa142c5a8`, with local release tag `v1.4.0`;
+image ID `f39b06302ab6b70df04157cc8729a121eb4adf31f0dec52af31701b376f81c6b`.
+Evidence: `results/runs/20260930T154315Z-510298/`. It measured **703.9 prompt
+tokens/s** on 15,009 tokens and **67.0, 66.9, and 64.6 generated tokens/s** on the
+three coding cases. The release workflow built both `1.4.0` and `latest` locally;
+GHCR publication of this release remains a separate step. Subsequent documentation
+commits do not change this built image's source identity or release tag.
+
 ## Moving to another computer
 
 On the target system, copy the project and run `./prepare.sh`, `./build.sh`, and `./run.sh`. Alternatively, export the built image and transfer it alongside `run.sh`. For offline startup, also transfer **both** GGUF files into a model directory:

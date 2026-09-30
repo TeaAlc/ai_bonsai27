@@ -31,7 +31,16 @@ marked dirty. Fresh model files downloaded into the ignored validation cache
 were SHA256-verified. The suite recorded 18 passing QA checks, 23 coding
 assertions, two vision shapes, the full unicorn image, and a related 8k context
 run. Final clean builds are recorded separately by `results/last-build.json`.
-All runtime changes must also pass the suite on the final clean image.
+Final clean verification also passed: version **1.4.0**, local tag `v1.4.0`,
+source `de4b8edccb4940c9d005f89a77ae199fa142c5a8`, image
+`f39b06302ab6b70df04157cc8729a121eb4adf31f0dec52af31701b376f81c6b`.
+Evidence `results/runs/20260930T154315Z-510298/` passed 18/18 QA checks and all
+23 coding assertions, with actual 16k/8k, vision, MTP/FA/q8/GPU-only allocation
+checks. Both backend dependencies, real download stop/read-only-cache behavior,
+restricted coding failure handling, and warm-cache offline API startup passed.
+The successful build receipt records the exact release identity and 109 package
+rows. The code and available-host acceptance work are complete; the environment
+and live-publication checks below remain open.
 
 ### Outstanding environment checks
 

@@ -287,3 +287,28 @@ promises. The final clean build and subsequent suite are separately identified
 in local receipts/results. Native Linux/CDI, real Ampere/Ada inference, the
 reported Windows shared mount, Docker Desktop GPU execution, a provisioned
 Hyper-V guest, and live publication/anonymous pull remain explicit pending rows.
+
+
+### Final clean release verification
+
+The online `create_realease.sh` workflow reconciled public release history,
+created local `v1.4.0`, and called `build.sh` successfully for both version/latest
+tags. The release image is
+`f39b06302ab6b70df04157cc8729a121eb4adf31f0dec52af31701b376f81c6b`, source
+`de4b8edccb4940c9d005f89a77ae199fa142c5a8`, `io.bonsai.git.dirty=false`.
+Its receipt inventories 109 installed package rows and the pinned inputs.
+`results/runs/20260930T154315Z-510298/` passed 18/18 QA checks, both vision shapes,
+the full-size unicorn image, 23 coding assertions, the 16k long-context request,
+and a related 8k /props request. Coding generation measured 67.0, 66.9, and 64.6
+tokens/s; the 15,009-token prompt measured 703.9 prompt tokens/s. Actual MTP draft
+counters again recorded 68/72, 76/88, and 66/78 accepted/drafted coding tokens.
+Both bundled dependency checks, real PID 1 cancellation and read-only-cache
+checks, coding harness early-exit/timeout checks, and warm-cache offline API
+startup passed on this clean image. Test containers were removed afterward.
+
+No new image or Git tag was published remotely. A read-only anonymous metadata
+check found the existing public latest release at 1.2.1, source
+`ceb9aa25a94a834f213c85777d84e94371a836d2`; this is separate from the local 1.4.0
+build. Live publication/pull validation and the unavailable hardware rows remain
+pending. Later documentation commits retain the release image's actual source
+revision and do not manufacture another semrel version.
