@@ -20,23 +20,26 @@ Run all commands below from the project directory inside Linux or WSL2.
 
 ### Start the published image
 
-Prepare the model files, pull the image, and start the container with explicit
-settings:
+Pull the image and start the container with an explicit persistent model cache:
 
 ```bash
-./prepare.sh
 podman pull ghcr.io/teaalc/ai_bonsai27:latest
 BONSAI_IMAGE=ghcr.io/teaalc/ai_bonsai27:latest \
+BONSAI_MODEL_DIR="$HOME/bonsai-models" \
 BONSAI_CTX_SIZE=16384 \
 BONSAI_REASONING_EFFORT=medium \
 BONSAI_PORT=8080 \
 ./run.sh
 ```
 
-**Required:** the GPU prerequisites above, both GGUF files in `models/`, an
-available image, and an unused container name `bonsai2-27b`. To use the published
+**Required:** the GPU prerequisites above, an available image, an unused
+container name `bonsai2-27b`, and enough disk space in a writable model cache.
+Missing language-model and BF16 vision files are downloaded by the container
+from pinned revisions and SHA256-verified before llama-server starts. The first
+start therefore needs internet access; later starts reuse nonempty readable
+files without downloading or rechecking their checksum. To use the published
 image, set `BONSAI_IMAGE` as shown; otherwise `run.sh` selects the local build.
-The other three variables are optional and are shown explicitly for clarity.
+The other four variables are optional and are shown explicitly for clarity.
 GPU devices, driver mounts, model mounts, and backend selection are configured
 automatically by `run.sh`; no additional GPU flags are needed.
 
@@ -51,8 +54,32 @@ curl --fail http://localhost:8080/health
 ```
 
 If you change `BONSAI_PORT`, use that port in the health check and request.
-The model files are not included in the image; `prepare.sh` also downloads
-backend bundles used for local builds.
+The model files are not included in the image. `BONSAI_MODEL_DIR` defaults to
+the caller’s current directory and is mounted read/write at `/models`. Downloads use
+`.part` files, resume after interruption, and are renamed only after checksum
+verification; per-file locks prevent simultaneous downloads. An invalid
+download is deleted and startup fails. Existing files can also be supplied
+through this directory; remove a corrupt cached file to download it again.
+`prepare.sh` remains available for preparing models and backends on the host.
+
+### Download models separately
+
+The host download script uses the same pinned artifacts as the container and
+requires Bash, `curl`, `sha256sum`, and `flock` (usually provided by util-linux):
+
+```bash
+./download_models.sh                      # save in the current directory
+BONSAI_MODEL_DIR="$HOME/bonsai-models" ./download_models.sh
+BONSAI_MODEL_DIR="$HOME/bonsai-models" ./run.sh
+```
+
+Use the same `BONSAI_MODEL_DIR` for download and startup. Relative paths are
+resolved against the directory from which you invoke the scripts, even when
+the scripts themselves are elsewhere. The directory can contain previously
+downloaded files with these exact names:
+
+- `Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf`
+- `Ternary-Bonsai-2-27B-mmproj-BF16.gguf`
 
 ### Build and start locally
 
@@ -66,11 +93,11 @@ No environment variables are mandatory for a local build: `run.sh` defaults to
 `localhost/bonsai2-27b:latest`, a 16,384-token context, `medium` reasoning, and
 host port `8080`.
 
-`prepare.sh` downloads and SHA256-verifies the PTQ1_0 MTP Lean model, the official BF16 vision projector, and both CUDA backend bundles. The GGUF files stay in `models/`. Backend archives and extracted binaries live under `data/backends/{blackwell,ampere-ada}/`; research inputs live under `data/research/`. The downloads and image need several gigabytes of disk space.
+`prepare.sh` downloads missing PTQ1_0 MTP Lean and official BF16 vision files with SHA256 verification, reuses existing model files, and downloads and verifies both CUDA backend bundles. The GGUF files stay in `BONSAI_MODEL_DIR`, defaulting to the caller’s current directory; existing files are reused. Backend archives and extracted binaries live under `data/backends/{blackwell,ampere-ada}/`; research inputs live under `data/research/`. The downloads and image need several gigabytes of disk space.
 
-`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. Every successful build produces both the calculated version tag and `localhost/bonsai2-27b:latest` from the same image; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Only backend runtime files and `entrypoint.sh` are copied into the image; model files are mounted read-only when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
+`build.sh` installs the pinned `semrel` build tool locally under `tools/` if needed, calculates a version from Git history, checks the extracted backend files again, and builds `localhost/bonsai2-27b:<version>`. Every successful build produces both the calculated version tag and `localhost/bonsai2-27b:latest` from the same image; `run.sh` uses that alias by default. The calculated version is independent of the pinned llama-server backend commit. Only backend runtime files and `entrypoint.sh` are copied into the image; model files are mounted read/write as a persistent download cache when the container starts. The Bash entrypoint groups and comments model, server, GPU, MTP, and generation options, validates its settings before loading, and uses `exec` so the server receives container stop signals. Temporary build files use `/tmp/bonsai27` by default (or an explicitly set `TMPDIR`). See [data/README.md](data/README.md) for the directory layout and [RECHERCHE.md](RECHERCHE.md) for pinned revisions and checksums.
 
-`run.sh` checks both GGUF files, detects WSL2 versus native Linux, selects the backend from the first GPU's compute capability, and starts the `bonsai2-27b` container in the background. Its default API base URL is **`http://127.0.0.1:8080/v1`**, with model ID **`bonsai2-27b`**. No API key is configured for local access.
+`run.sh` creates the model cache directory, detects WSL2 versus native Linux, selects the backend from the first GPU's compute capability, and starts the `bonsai2-27b` container in the background. Its default API base URL is **`http://127.0.0.1:8080/v1`**, with model ID **`bonsai2-27b`**. No API key is configured for local access.
 
 To change the context size or host port, stop and remove the existing named container before starting another:
 
@@ -86,6 +113,7 @@ These are all environment variables read by `run.sh`:
 
 | Variable | Default | Required? | Purpose |
 | --- | --- | --- | --- |
+| `BONSAI_MODEL_DIR` | Caller’s current directory | No | Host directory mounted read/write at `/models`; created if missing |
 | `BONSAI_CTX_SIZE` | `16384` | No | Context window in tokens; integer ≥ 512 |
 | `BONSAI_REASONING_EFFORT` | `medium` | No | Reasoning effort: `low`, `medium`, or `xhigh` |
 | `BONSAI_PORT` | `8080` | No | Available host TCP port, 1–65535; bound to localhost |
@@ -178,7 +206,7 @@ podman pull ghcr.io/teaalc/ai_bonsai27:latest
 BONSAI_IMAGE=ghcr.io/teaalc/ai_bonsai27:latest ./run.sh
 ```
 
-The two GGUF files and GPU host setup remain required. Run
+The GPU host setup remains required; missing GGUF files are downloaded at startup. Run
 `python3 -B tests/test-image-push.py` to check engine selection, prompt and token
 parameter handling, Docker import, and failure behavior without publishing.
 
@@ -244,6 +272,7 @@ With the server running on the default port:
 python3 -B tests/test-api.py       # model list, chat, and ~15k-token prompt
 python3 -B tests/test-vision.py    # two known-shape image requests
 python3 -B tests/test-coding.py    # three Python tasks, 23 assertions
+./tests/test-model-download.sh    # cache, integrity, locking, and directory fixtures
 ```
 
 `tests/test-api.py` accepts `BONSAI_BASE_URL` and `BONSAI_CTX_SIZE`; its long-context test requires a window of at least 16k. The vision and coding scripts currently use port 8080. The coding script executes generated programs in restricted, network-disabled Python containers. Outputs are written to the local, Git-ignored `results/` directory. Project test scripts disable Python bytecode caching, and `simple_request.sh` invokes Python with `-B`, so these entry points do not create `__pycache__` directories. Use `python3 -B` or `PYTHONDONTWRITEBYTECODE=1` for any additional Python commands in the project; avoid `py_compile` and `compileall`, which explicitly write bytecode files.
@@ -258,13 +287,13 @@ The recorded server log showed **66/66 language-model layers on CUDA0**, a 5,995
 
 ## Moving to another computer
 
-On the target system, copy the project and run `./prepare.sh`, `./build.sh`, and `./run.sh`. Alternatively, export the built image and transfer it alongside `run.sh` and **both** GGUF files in `models/`:
+On the target system, copy the project and run `./prepare.sh`, `./build.sh`, and `./run.sh`. Alternatively, export the built image and transfer it alongside `run.sh`. For offline startup, also transfer **both** GGUF files into a model directory:
 
 ```bash
 podman save -o bonsai2-27b.tar localhost/bonsai2-27b:latest
 # On the target system:
 podman load -i bonsai2-27b.tar
-BONSAI_CTX_SIZE=16384 ./run.sh
+BONSAI_MODEL_DIR=/path/to/models BONSAI_CTX_SIZE=16384 ./run.sh
 ```
 
 The target still needs working NVIDIA GPU access and a supported compute capability. WSL2 with sm120 was tested; native Linux and sm86/sm89 are packaged but have not had runtime validation here. The image contains CUDA runtime libraries and Bonsai-compatible binaries, while NVIDIA driver libraries come from the target host. See [RECHERCHE.md](RECHERCHE.md) for model variants, server forks, and the choice of artifacts.

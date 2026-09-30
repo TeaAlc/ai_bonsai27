@@ -4,6 +4,8 @@
 !data
 data/*
 !data/backends
+!data/models
+!data/models/download.sh
 data/backends/*
 !data/backends/blackwell
 !data/backends/ampere-ada

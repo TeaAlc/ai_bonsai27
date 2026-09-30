@@ -31,9 +31,16 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   Prompt for a token unless `--token` was supplied, use password-stdin, and clean
   up temporary credential files. Never commit credentials.
 - `run.sh`: validate startup settings, prepare GPU access, and start the container.
-- `entrypoint.sh`: validate container settings and assemble readable, commented
+- `data/models/download.sh`: shared pinned model metadata and locked, resumable,
+  SHA256-verified downloads for missing model files. Keep pins shared with
+  `prepare.sh`. Existing nonempty readable model files are reused.
+- `entrypoint.sh`: validate settings, download missing models into the writable
+  cache, and assemble readable, commented
   argument groups before replacing itself with llama-server using `exec`.
-- `models/`: downloaded GGUF files mounted read-only, excluded from Git.
+- `download_models.sh`: download missing models on the host with the shared helper.
+- `BONSAI_MODEL_DIR`: writable persistent model cache, defaulting to the caller’s
+  current directory; resolve relative paths before changing directories. GGUF,
+  partial-download, and model lock files are excluded from Git.
 - `data/backends/<backend>/`: downloaded archives and runtime binaries/libraries.
   Put additional project-supplied build/runtime dependencies in suitable `data/`
   subdirectories. Do not recreate a top-level `vendor/` directory.
@@ -57,7 +64,7 @@ short functions, commented option groups, and Bash arrays for argument lists.
 Quote variables and preserve the boundaries of forwarded arguments.
 
 Project-specific environment variables use the `BONSAI_` prefix:
-`BONSAI_CTX_SIZE`, `BONSAI_REASONING_EFFORT`, `BONSAI_PORT`, and
+`BONSAI_CTX_SIZE`, `BONSAI_REASONING_EFFORT`, `BONSAI_MODEL_DIR`, `BONSAI_PORT`, and
 `BONSAI_BASE_URL`, `BONSAI_IMAGE`, `BONSAI_GHCR_USER`, and
 `BONSAI_PUSH_ENGINE`. Container settings also include `BONSAI_GPU_BACKEND`,
 `BONSAI_MODEL`, and `BONSAI_MMPROJ`. Keep standard external variables such as
@@ -83,6 +90,7 @@ authorized registry publication. Determine the push version from the built
 image label, not newly committed but unbuilt changes. Test push logic with
 `tests/test-image-push.py`; Docker fallback needs separate storage or an import.
 Run `tests/test-version.sh` when changing versioning or build-tool behavior.
+Run `tests/test-model-download.sh` when changing model downloads or cache paths.
 `BONSAI_IMAGE` pins a runtime image; its default is the last successful local
 build through `localhost/bonsai2-27b:latest`.
 

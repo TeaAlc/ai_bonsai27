@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Preserve the caller's model directory while keeping backend paths in the repo.
+export BONSAI_MODEL_DIR=${BONSAI_MODEL_DIR:-"$PWD"}
+mkdir -p -- "$BONSAI_MODEL_DIR"
+BONSAI_MODEL_DIR=$(cd -- "$BONSAI_MODEL_DIR" && pwd)
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 # Keep temporary files for Podman and helper tools outside the project.
 export TMPDIR="${TMPDIR:-/tmp/bonsai27}"
 mkdir -p "$TMPDIR"
 
-# Pin artifact revisions for reproducible downloads.
-readonly MODEL_REVISION=f04a3bd22b7b482675663e99efaba6719347b419
-readonly VISION_REVISION=b072e1d3b35a0a630cece372c2127528e0994386
-readonly MODEL_REPO=https://huggingface.co/sudoingx/Ternary-Bonsai-2-27B-PTQ1_0-MTP-GGUF/resolve/$MODEL_REVISION
-readonly VISION_REPO=https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/$VISION_REVISION
-readonly MODEL_FILE=Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf
-readonly VISION_FILE=Ternary-Bonsai-2-27B-mmproj-BF16.gguf
+# Share pinned model metadata with the container download helper.
+source data/models/download.sh
 
 # -C - resumes interrupted downloads; SHA256 catches stale or corrupt files.
 download_checked() {
@@ -30,12 +29,8 @@ extract_backend() {
     (cd "$destination" && sha256sum -c SHA256SUMS)
 }
 
-mkdir -p models data/backends/blackwell data/backends/ampere-ada results
-
-download_checked "$MODEL_REPO/$MODEL_FILE" "models/$MODEL_FILE" \
-    1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685
-download_checked "$VISION_REPO/$VISION_FILE" "models/$VISION_FILE" \
-    e287342d92332fa3577ed1d42e921dac9370c08da58ba9337fa450f6cc76cfd7
+mkdir -p data/backends/blackwell data/backends/ampere-ada results
+./download_models.sh
 
 # sm120: Blackwell/RTX 50. sm86/sm89: supported Ampere/Ada GPUs.
 download_checked "$MODEL_REPO/bonsai2-small-gpu-linux-x64-cuda12.8-sm120-ff41412.tar.gz" \

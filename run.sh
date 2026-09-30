@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# The writable cache holds downloaded models across container restarts.
+# Resolve relative paths against the caller's directory before changing directories.
+model_dir=${BONSAI_MODEL_DIR:-"$PWD"}
+mkdir -p -- "$model_dir"
+model_dir=$(cd -- "$model_dir" && pwd)
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 # Context size must be an integer >= 512. Reasoning values accepted by the
@@ -21,18 +26,6 @@ case "$reasoning_effort" in
         exit 2
         ;;
 esac
-
-# GGUF files stay on the host and are mounted read-only.
-model_files=(
-    Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf
-    Ternary-Bonsai-2-27B-mmproj-BF16.gguf
-)
-for model in "${model_files[@]}"; do
-    if [[ ! -r "models/$model" ]]; then
-        echo "Missing model: models/$model. Run ./prepare.sh first." >&2
-        exit 2
-    fi
-done
 
 # WSL2 provides CUDA through /dev/dxg and Windows driver libraries;
 # native Linux uses the already configured NVIDIA CDI device.
@@ -60,14 +53,14 @@ case "$cap" in
         exit 2
         ;;
 esac
-# Publish only on localhost and mount model files read-only. Arguments after
+# Publish only on localhost and mount the persistent model cache. Arguments after
 # the image name are forwarded to the container's llama-server entrypoint.
 exec podman run \
     -d \
     --name bonsai2-27b \
     "${gpu_args[@]}" \
     -p "127.0.0.1:${BONSAI_PORT:-8080}:8080" \
-    -v "$PWD/models:/models:ro" \
+    -v "$model_dir:/models:rw" \
     -e "BONSAI_CTX_SIZE=$ctx_size" \
     -e "BONSAI_GPU_BACKEND=$backend" \
     -e "BONSAI_REASONING_EFFORT=$reasoning_effort" \

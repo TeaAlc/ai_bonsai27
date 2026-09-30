@@ -8,6 +8,7 @@ model=${BONSAI_MODEL:-/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf}
 vision_projector=${BONSAI_MMPROJ:-/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf}
 gpu_backend=${BONSAI_GPU_BACKEND:-blackwell}
 reasoning_effort=${BONSAI_REASONING_EFFORT:-medium}
+source /opt/bonsai/download-models.sh
 
 fail() {
     echo "Error: $*" >&2
@@ -23,9 +24,6 @@ validate_settings() {
         fail 'BONSAI_CTX_SIZE must be at least 512'
     fi
 
-    [[ -r "$model" ]] || fail "Missing model: $model"
-    [[ -r "$vision_projector" ]] || fail "Missing vision projector: $vision_projector"
-
     case "$gpu_backend" in
         blackwell|ampere-ada) ;;
         *) fail "Unknown BONSAI_GPU_BACKEND: $gpu_backend" ;;
@@ -40,6 +38,11 @@ validate_settings() {
 }
 
 validate_settings
+
+# Populate the writable model mount before loading the server. Reuse cached
+# files; missing files are downloaded from pinned revisions and SHA256-checked.
+download_missing_model "$MODEL_REPO/$MODEL_FILE" "$model" "$MODEL_SHA"
+download_missing_model "$VISION_REPO/$VISION_FILE" "$vision_projector" "$VISION_SHA"
 
 # Load the selected CUDA bundle and, on WSL2, the mounted host driver libraries.
 backend_dir="/opt/bonsai/$gpu_backend"

@@ -1,5 +1,8 @@
 # Downloaded models and CUDA backends
-models/
+/models/
+*.gguf
+*.gguf.part
+*.gguf.lock
 data/backends/*/runtime/
 data/backends/*/archive.tar.gz
 

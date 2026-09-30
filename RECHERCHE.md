@@ -44,7 +44,7 @@ The [official Bonsai 2 model card](https://huggingface.co/prism-ml/Ternary-Bonsa
 | Official vision repository revision | `b072e1d3b35a0a630cece372c2127528e0994386` |
 | `Ternary-Bonsai-2-27B-mmproj-BF16.gguf` | `e287342d92332fa3577ed1d42e921dac9370c08da58ba9337fa450f6cc76cfd7` |
 
-`prepare.sh` downloads and verifies these files. CUDA archives and extracted libraries reside under `data/backends/blackwell/` and `data/backends/ampere-ada/`; retained source/metadata are under `data/research/`. `build.sh` rechecks internal backend checksums and creates the image. GGUF files stay in `models/` on the host and are mounted read-only by `run.sh`. License files for the prebuilt backends are copied into the image under `/opt/bonsai/<backend>/LICENSES/`.
+`prepare.sh` downloads and verifies these files. CUDA archives and extracted libraries reside under `data/backends/blackwell/` and `data/backends/ampere-ada/`; retained source/metadata are under `data/research/`. `build.sh` rechecks internal backend checksums and creates the image. GGUF files stay in `BONSAI_MODEL_DIR` on the host (default: the caller’s current directory) and are mounted read/write at `/models` by `run.sh`. The container downloads missing files using the shared pins in `data/models/download.sh`; `download_models.sh` provides the same download on the host. Downloads are locked, resumable, and SHA256-verified before atomic publication; existing nonempty readable files are reused without re-verification. License files for the prebuilt backends are copied into the image under `/opt/bonsai/<backend>/LICENSES/`.
 
 ## GPU placement and platform behavior
 
@@ -73,3 +73,16 @@ The saved `tests/qa.py` audit reported **14/14 checks passed**. It reads recorde
 Image builds now calculate their project version through the pinned [greatliontech/semrel 0.7.0](https://github.com/greatliontech/semrel/releases/tag/0.7.0) binary, installed and cached under `tools/`. This project version is separate from the fixed Bonsai CUDA backend commits. `build.sh` labels the image with its version and source revision, tags it as `localhost/bonsai2-27b:<version>`, and updates the local `latest` alias after success. `run.sh` defaults to that alias and accepts `BONSAI_IMAGE` for a specific tag.
 
 The version wrapper supports annotated and lightweight stable tags by dereferencing tag objects in a temporary local snapshot before invoking semrel. Versioning tests confirmed initial version `1.0.0`, patch/minor/major changes, no bump for docs-only changes, rejection of shallow history, and exclusion of tags on unrelated branches. Version calculation and image building create no Git release tags and perform no remote publication. See [tools/README.md](tools/README.md) for the policy and checksummed artifacts.
+
+## Model-cache startup validation (2026-09-30)
+
+The image was rebuilt with curl, CA certificates, util-linux, and the shared
+model download helper. Container startup using the existing host GGUF cache
+passed; a small container-local fixture exercised actual curl transfer, SHA256
+verification, atomic publication, and offline reuse. Host fixtures verified
+checksum failure, concurrent download locking, and caller-relative directories.
+The large models were reused, rather than downloaded again during this check.
+Fresh API checks passed: the 1080p unicorn scene was described correctly, the
+16k context test processed 15,009 prompt tokens at 666.3 tokens/s, and all three
+coding tasks passed their assertions at 58.6–62.5 decoded tokens/s. These are
+measurements from the same WSL2 notebook; other hosts remain untested.
