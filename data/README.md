@@ -22,3 +22,8 @@ libcuda.so.1 to be absent; the GPU-enabled runtime check permits no missing
 libraries. Distribution runtime packages are explicitly installed in the image.
 The host's CUDA driver is injected through Docker GPU support, NVIDIA CDI, or
 the WSL driver mount rather than bundled with a mismatched kernel driver.
+
+Model download serialization uses atomic `<filename>.lock.d` directory creation
+on the shared model mount rather than flock. Locks are cleaned on normal exit
+and handled signals. Stale locks after forced shutdown are not automatically
+stolen across container PID namespaces; waiters fail after ten minutes.

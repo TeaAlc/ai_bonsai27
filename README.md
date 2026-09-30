@@ -59,15 +59,25 @@ If you change `BONSAI_PORT`, use that port in the health check and request.
 The model files are not included in the image. `BONSAI_MODEL_DIR` defaults to
 the caller’s current directory and is mounted read/write at `/models`. Downloads use
 `.part` files, resume after interruption, and are renamed only after checksum
-verification; per-file locks prevent simultaneous downloads. An invalid
+verification; atomic per-file `.lock.d` directories prevent simultaneous
+downloads without requiring `flock` support on the model filesystem. An invalid
 download is deleted and startup fails. Existing files can also be supplied
 through this directory; remove a corrupt cached file to download it again.
 `prepare.sh` remains available for preparing models and backends on the host.
 
+A shared Windows/network model mount can reject `flock` with “Function not
+implemented”. Model downloads now use directory locks instead. Waiting for
+another download is limited to ten minutes; retry if that transfer is still
+running. Normal exits release the lock. After a forced container/VM shutdown,
+a stale `<filename>.lock.d` may remain: remove that empty directory only once
+all downloads using the cache have stopped, then restart. Existing `.part`
+files are retained for resumable transfers. Old `.lock` files from previous
+images are not used by the new downloader.
+
 ### Download models separately
 
 The host download script uses the same pinned artifacts as the container and
-requires Bash, `curl`, `sha256sum`, and `flock` (usually provided by util-linux):
+requires Bash, `curl`, `sha256sum`, and standard coreutils:
 
 ```bash
 ./download_models.sh                      # save in the current directory

@@ -41,7 +41,8 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   up temporary credential files. Never commit credentials.
 - `run.sh`: validate startup settings, prepare GPU access, and start the container.
 - `data/models/download.sh`: shared pinned model metadata and locked, resumable,
-  SHA256-verified downloads for missing model files. Keep pins shared with
+  SHA256-verified downloads for missing model files. Use atomic directory locks,
+  not flock on model mounts; shared filesystems may not implement it. Keep pins shared with
   `prepare.sh`. Existing nonempty readable model files are reused.
 - `data/gpu/detect.sh`: detect CUDA device 0 through the bundled libcuda probe,
   with nvidia-smi as a fallback; map

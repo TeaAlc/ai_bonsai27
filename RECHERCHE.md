@@ -169,3 +169,31 @@ prevents downloading models into a guest without usable GPU compute access.
 No unsupported VM modifications, driver installation, or CPU offloading were
 introduced. For Windows client notebooks, the documented working alternatives
 remain WSL2-backed Podman or a remote GPU-enabled Linux engine.
+
+## Model-mount flock failure (2026-09-30)
+
+The user reported `flock: 9: Function not implemented` while starting the
+Ampere/Ada backend on an RTX 4070 Ti Super system. File descriptor 9 came from
+our shared model-download lock, not GPU initialization. ENOSYS indicates that
+the lock operation is unavailable; the exact filesystem on that host has not
+been inspected. Shared/virtual filesystems are a plausible cause.
+
+[Linux flock documentation](https://man7.org/linux/man-pages/man2/flock.2.html)
+describes filesystem-dependent locking behavior. A
+[Hugging Face upstream report](https://github.com/huggingface/huggingface_hub/issues/2399)
+records the same ENOSYS failure when downloading to storage without flock
+support. The downloader now serializes using atomic directory creation,
+relying on mkdir's existing-directory exclusion instead of a flock syscall.
+See [mkdir documentation](https://man7.org/linux/man-pages/man2/mkdir.2.html).
+
+The directory lock is shared by containers mounting the same cache; putting
+a lock only in each container's /tmp would not provide that protection.
+Normal exit and handled signals remove the owned lock. Waiters time out after
+600 seconds; crashed-owner locks must be removed after downloads are stopped.
+Cross-container PIDs are not used to guess stale ownership. Interrupted .part
+files remain resumable, and SHA256 verification precedes atomic publication.
+Regression fixtures deliberately make flock fail with ENOSYS and check
+download success, concurrent serialization, waiting, and lock cleanup.
+The user's actual Windows/shared filesystem is not available for live tests.
+The regression fixtures passed on the host and inside the rebuilt image;
+a WSL2 GPU container also passed /health and the arithmetic API check (42).

@@ -3,6 +3,7 @@
 *.gguf
 *.gguf.part
 *.gguf.lock
+*.gguf.lock.d/
 data/backends/*/runtime/
 data/backends/*/archive.tar.gz
 

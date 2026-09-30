@@ -18,8 +18,27 @@ download_missing_model() (
     local url=$1 destination=$2 expected_sha=$3
     [[ -s "$destination" && -r "$destination" ]] && exit 0
     mkdir -p -- "$(dirname -- "$destination")"
-    exec 9>"$destination.lock"
-    flock 9
+    # Windows/shared mounts may reject flock() with ENOSYS. Use an atomic
+    # directory creation on the shared cache instead, visible to all containers.
+    # Never infer ownership from a PID: containers have separate PID namespaces.
+    local lock_dir="$destination.lock.d" deadline=$((SECONDS + 600))
+    while ! mkdir -- "$lock_dir" 2>/dev/null; do
+        [[ -s "$destination" && -r "$destination" ]] && exit 0
+        if [[ ! -d "$lock_dir" ]]; then
+            echo "Error: cannot create download lock in $(dirname -- "$destination"). Check write access." >&2
+            exit 2
+        fi
+        if (( SECONDS >= deadline )); then
+            echo "Error: timed out waiting for $lock_dir. Remove it only after confirming no download is active." >&2
+            exit 2
+        fi
+        sleep 1
+    done
+    # Normal exits and handled signals release our lock. A forced kill or VM
+    # crash can leave it behind; do not risk deleting another downloader's lock.
+    trap 'rmdir -- "$lock_dir"' EXIT
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
     [[ -s "$destination" && -r "$destination" ]] && exit 0
     echo "Downloading missing model: $destination"
     curl --fail --location --retry 4 --continue-at - \
