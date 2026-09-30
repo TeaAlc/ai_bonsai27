@@ -141,7 +141,7 @@ feature; older published images require both GGUF files to exist already.
 | GPU access | Docker: `--gpus all`; Podman with CDI: `--device nvidia.com/gpu=all` | Required; environment variables alone do not enable GPU access |
 | Models volume | Writable host directory or named volume mounted at `/models` | Required for persistent downloads; an empty writable directory is sufficient |
 | Published port | Host `127.0.0.1:8080` → container `8080/tcp` | Required for the documented host API access; choose another free host port if needed |
-| Backend | Automatically detected; optional `BONSAI_GPU_BACKEND` override | No manual selection required when `nvidia-smi` is available in the container |
+| Backend | Automatically detected; optional `BONSAI_GPU_BACKEND=blackwell` or `BONSAI_GPU_BACKEND=ampere-ada` | Allowed override values: `blackwell` (compute capability 12.0), `ampere-ada` (8.6/8.9). Unset or empty enables automatic detection |
 | Entrypoint | Keep the image default | Required for downloads and configured server startup |
 
 Missing models are downloaded before the API becomes ready. Provide internet
