@@ -68,11 +68,44 @@ The pinned executable, cached download, installer, release policy, and tool lice
 
 The published image is available at
 [ghcr.io/teaalc/ai_bonsai27](https://ghcr.io/teaalc/ai_bonsai27).
-Pull the latest image with:
+For a public package, pull the latest image without authentication:
 
 ```bash
 podman pull ghcr.io/teaalc/ai_bonsai27:latest
 ```
+
+For a private package, first log in with your GitHub username and a personal
+access token (classic) with `read:packages` permission. Your account must have
+read access to the package. Enter the token at the password prompt:
+
+```bash
+podman login ghcr.io --username YOUR_GITHUB_USERNAME
+podman pull ghcr.io/teaalc/ai_bonsai27:latest
+```
+
+An `unauthorized` or `invalid username/password` error can mean the package is
+private, credentials are missing or expired, or the account lacks access.
+Run `podman login` again to replace stale credentials. Publication through
+`image_push.sh` uses temporary credentials and does not log in future pulls.
+
+To allow anonymous pulls, the package owner can open
+[the package page](https://github.com/users/TeaAlc/packages/container/package/ai_bonsai27),
+select **Package settings**, and set **Change visibility** to **Public**.
+Package visibility is separate from repository visibility. See
+[GitHub's package access documentation](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility).
+
+### Podman Desktop: disk artifact errors
+
+`wrong manifest type for disk artifact: application/vnd.oci.image.manifest.v1+json`
+comes from Podman's VM disk-image loader. This project publishes a container
+image, not a Podman machine operating-system image. Do not enter its GHCR URL
+as the custom image when creating a Podman machine. Use the default machine
+image, then pull the container through `podman pull` or the container image
+pull dialog. See [Podman's machine initialization documentation](https://docs.podman.io/en/latest/markdown/podman-machine-init.1.html).
+
+For this project's GPU setup, run the scripts and `podman pull` directly inside
+your GPU-enabled Linux or WSL2 distribution, as described in Requirements.
+GPU execution through a separate Podman Desktop machine has not been validated.
 
 `./image_push.sh` publishes the last successful local build as both
 `ghcr.io/teaalc/ai_bonsai27:<version>` and
