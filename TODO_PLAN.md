@@ -11,10 +11,14 @@ release; P2 means follow-up reliability or maintainability work.
 Items 1–9 have been implemented with regression checks. Item 10 is complete for
 available WSL2 hardware and documentation, with other deployment rows pending.
 The detailed original findings below explain why the changes were needed.
+The subsequent user requirement supersedes the original publication restrictions:
+every successful build must be pushable, including dirty builds and rebuilds
+with unchanged SemVer. Registry version/latest tags are mutable; Git tags remain
+unchanged. Item 1 below reflects this revised policy.
 
 | Item | Implementation and validation |
 | --- | --- |
-| 1 | Atomic build receipt; exact image selection/import; clean/source/tag checks; remote conflict and rollback guards; exact manifest promotion and digest verification. Isolated engine and registry fixtures pass. Live new publication is pending. |
+| 1 | Atomic build receipt; exact image selection/import and label checks; every successful build publishable without Git-tag or cleanliness gates; version/latest overwritten and exact manifest verified. Engine and registry fixtures pass. Live new publication is pending. |
 | 2 | Shared project lock; committed source/backend snapshots; final label verification; contradictory tag aliases rejected; semrel retained. Version/release/tag/snapshot/concurrency fixtures pass. |
 | 3 | Wrapper configures GPU access; container selects CUDA device 0 and validates overrides. CUDA detection/override fixtures and WSL2 inference pass. |
 | 4 | Disappearing lock retry; supervised download workers; configurable waits/timeouts; conservative stale-lock policy. Signal/Range/timeout fixtures and real container stop/read-only-cache checks pass. |
@@ -52,8 +56,8 @@ and live-publication checks below remain open.
 - [ ] Independently GPU-provisioned Hyper-V guest, only when such a host is
   available. Stock Podman Desktop Hyper-V is not claimed as supported.
 - [ ] Live authorized publication and anonymous pull of both new GHCR tags;
-  current registry guards/promotion are covered by isolated tests. Serialize
-  independent publishers because registry preflight is not a global transaction.
+  current publication verification/promotion is covered by isolated tests. Serialize
+  independent publishers because separate tag updates are not a global transaction.
 
 ## Scope and results
 
@@ -112,31 +116,30 @@ does not establish support for a stock Podman Desktop Hyper-V GPU machine.
 
 ## P1 — Before the next published release
 
-### 1. Protect published versions and select the correct image store
+### 1. Publish every successful build from the correct image store
 
-- [x] Harden `image_push.sh` before its first registry mutation.
+- [x] Select the exact successful build and allow it to update both registry tags.
 
-**Finding (code inspection):** only the local image's version is validated.
-Dirty builds, wrong source/revision labels, and a different image under an
-already published version are not rejected. The Docker path imports from Podman
-only when Docker lacks `localhost/bonsai2-27b:latest`; an older copy already in
-Docker can therefore be published instead of the latest Podman build.
+**Finding (reproduced):** a documentation commit retained SemVer `1.4.0`, but
+its rebuilt image had a different source commit from `v1.4.0`. Requiring release
+tag correspondence prevented a valid build from being pushed. Earlier remote
+conflict, rollback, and clean-only gates also contradicted the user's requirement
+that every successful image build remain publishable. Docker's separate image
+store can contain a stale `latest`, so exact image selection is still required.
 
 **Changes:** record the successful build's immutable image ID, source revision,
-version, and engine in a local ignored receipt. Validate clean/source/revision
-labels and their release-tag correspondence. Select or import that exact build,
-not whichever engine happens to own a `latest` alias. Before pushing, inspect
-the remote version: allow an identical publication and reject a conflicting
-one. Compare registry manifest digests using a consistent transport format;
-local image IDs and registry manifest digests are not interchangeable. Prevent
-accidental rollback of `latest`; document recovery after a partial push. Verify
-both remote tags after publication for Docker as well as Podman. Preserve hidden
-token prompting, the requested `--token` option, password-stdin, and cleanup.
+version, dirty status, and engine in a local ignored receipt. Validate image
+labels against that receipt and select or import that exact build. Do not require
+a Git release tag or a clean working tree. Always push the version tag, replacing
+its existing contents, then verify its image ID and labels and promote that
+exact manifest to `latest`. Verify the remote digests and preserve all Git refs.
+Keep hidden token prompting, `--token`, password-stdin, and credential cleanup.
 
-**Acceptance:** extend `tests/test-image-push.py` for dirty/wrong-project images,
-conflicting published versions, idempotent retries, stale Docker storage,
-`latest` rollback, and failure after the version push. No conflicting case may
-mutate the registry. Live publication remains a separate authorized action.
+**Acceptance:** fixtures cover dirty builds, missing release tags, documentation
+rebuilds with different tag/source commits, stale Docker storage, wrong-project
+images, failed version push, failed promotion, and replacement of older or newer
+`latest` versions. Successful cases push every time. Live publication remains a
+separate authorized action.
 
 ### 2. Make release/build provenance consistent across all entry points
 
@@ -158,8 +161,9 @@ from an immutable snapshot. Include verified backend artifact identities in
 the build record. Coordinate scripts that mutate release/build state; a lock
 alone cannot prevent an editor from modifying the working tree. After the
 build, verify image version/revision/cleanliness against the intended release
-before declaring success. Keep development builds possible but ineligible for
-release publication. Continue to use semrel exclusively for version analysis;
+before declaring success. Keep development builds publishable with their dirty
+label; require clean contents only when creating a Git release through the release
+helpers. Continue to use semrel exclusively for version analysis;
 do not force a bump for every commit. Preserve existing release refs and rollback
 only a newly created, unpublished tag when the build fails.
 

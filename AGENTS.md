@@ -37,7 +37,11 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   Keep image creation in this script. Build immutable source/backend snapshots and atomically record results/last-build.json with image identity and dependency inventory.
 - `image_push.sh`: publish the last built image to the project GHCR package
   under its version and `latest` tags. Prefer Podman and support Docker fallback.
-  Publish the exact clean image from the receipt, require matching release tags, reject remote conflicts/rollback, and promote the exact version manifest to latest. Prompt for a token unless `--token` was supplied, use password-stdin, and clean
+  Publish the exact image from the receipt, including development and rebuilt
+  images. Do not require matching Git release tags or a clean build. Version and
+  latest registry tags are mutable and must be updated on every push; preserve
+  Git refs. Verify the newly published version and promote its exact manifest to
+  latest. Prompt for a token unless `--token` was supplied, use password-stdin, and clean
   up temporary credential files. Never commit credentials.
 - `run.sh`: validate startup settings, prepare GPU access, and start the container.
 - `data/models/download.sh`: shared pinned model metadata and locked, resumable,

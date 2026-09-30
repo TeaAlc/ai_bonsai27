@@ -1,5 +1,5 @@
 #!/usr/bin/env -S python3 -B
-"""Guard a GHCR publication and promote the exact version manifest to latest."""
+"""Verify a GHCR publication and promote the exact version manifest to latest."""
 import sys
 sys.dont_write_bytecode = True
 import argparse
@@ -27,10 +27,10 @@ def stable_version(value):
 
 def validate_receipt(receipt):
     stable_version(receipt['version'])
-    if (receipt.get('dirty') is not False or receipt.get('source') != SOURCE
+    if (not isinstance(receipt.get('dirty'), bool) or receipt.get('source') != SOURCE
             or not re.fullmatch(r'[0-9a-f]{40}', receipt.get('revision', ''))
             or not re.fullmatch(r'sha256:[0-9a-f]{64}', receipt.get('image_id', ''))):
-        raise ValueError('publication requires a clean project build receipt with valid source and image ID')
+        raise ValueError('publication requires a project build receipt with valid source, cleanliness metadata, and image ID')
 
 
 class Registry:
@@ -77,8 +77,8 @@ class Registry:
         if 'sha256:' + hashlib.sha256(config_raw).hexdigest() != config_id:
             raise ValueError('registry image config digest mismatch')
         labels = json.loads(config_raw).get('config', {}).get('Labels', {})
-        if labels.get('org.opencontainers.image.source') != SOURCE or labels.get('io.bonsai.git.dirty') != 'false':
-            raise ValueError('remote image is not a clean project release')
+        if labels.get('org.opencontainers.image.source') != SOURCE or labels.get('io.bonsai.git.dirty') not in ('false', 'true'):
+            raise ValueError('remote image is not a project build')
         version = labels.get('org.opencontainers.image.version', '')
         stable_version(version)
         revision = labels.get('org.opencontainers.image.revision', '')
@@ -87,25 +87,14 @@ class Registry:
                 'version': version, 'revision': revision,
                 'digest': 'sha256:' + hashlib.sha256(raw).hexdigest()}
 
-    def guard(self, receipt):
+    def promote(self, receipt):
+        # Validate the image that was actually pushed, then copy its manifest.
+        # Existing version/latest contents impose no publication policy gates.
         validate_receipt(receipt)
         version = self.image(receipt['version'])
-        if version and any(version[key] != receipt[key] for key in ('version', 'revision', 'image_id')):
-            raise ValueError('published version already contains a different build; create a new release')
-        latest = self.image('latest')
-        if latest:
-            if stable_version(latest['version']) > stable_version(receipt['version']):
-                raise ValueError('refusing to roll latest back to an older version')
-            if latest['version'] == receipt['version'] and latest['image_id'] != receipt['image_id']:
-                raise ValueError('latest already contains a different build of this version')
-        return 'existing' if version else 'new'
-
-    def promote(self, receipt):
-        # Recheck after the engine push. Copy the exact bytes of the version's
-        # manifest so engine-specific layer compression cannot split the tags.
-        self.guard(receipt)
-        version = self.image(receipt['version'])
         if not version: raise ValueError('version publication is missing')
+        if any(version[key] != receipt[key] for key in ('version', 'revision', 'image_id')):
+            raise ValueError('published image does not match the build just pushed')
         self.request('manifests/latest', version['raw'], version['manifest']['mediaType'])
         latest = self.image('latest')
         if latest['digest'] != version['digest']: raise ValueError('remote version/latest digests differ')
@@ -114,7 +103,7 @@ class Registry:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=('guard', 'promote'))
+    parser.add_argument('action', choices=('promote',))
     parser.add_argument('--receipt', required=True)
     parser.add_argument('--credentials', required=True)
     args = parser.parse_args()

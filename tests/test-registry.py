@@ -18,23 +18,12 @@ class RegistryTests(unittest.TestCase):
         self.images={}
         self.registry.image=lambda tag:self.images.get(tag)
 
-    def test_new_and_idempotent(self):
-        self.assertEqual(self.registry.guard(self.receipt),'new')
-        self.images['1.2.3']=dict(self.receipt)
-        self.assertEqual(self.registry.guard(self.receipt),'existing')
-
-    def test_published_conflicts_and_rollback(self):
-        for key,value in [('image_id','sha256:'+'c'*64),('revision','c'*40),('version','1.2.4')]:
-            self.images['1.2.3']=dict(self.receipt,**{key:value})
-            with self.assertRaises(ValueError):self.registry.guard(self.receipt)
-        self.images={'latest':dict(self.receipt,version='2.0.0')}
-        with self.assertRaises(ValueError):self.registry.guard(self.receipt)
-        self.images={'latest':dict(self.receipt,image_id='sha256:'+'c'*64)}
-        with self.assertRaises(ValueError):self.registry.guard(self.receipt)
-
     def test_dirty_invalid_wrong_source(self):
-        for key,value in [('dirty',True),('version','invalid'),('source','wrong'),('image_id','wrong')]:
+        for key,value in [('dirty','invalid'),('version','invalid'),('source','wrong'),('image_id','wrong')]:
             with self.assertRaises(ValueError):module.validate_receipt(dict(self.receipt,**{key:value}))
+
+    def test_dirty_receipt_is_publishable(self):
+        module.validate_receipt(dict(self.receipt,dirty=True))
 
     def test_exact_manifest_promotion_and_verification(self):
         image=dict(self.receipt,raw=b'fixture',manifest={'mediaType':'fixture'},digest='sha256:manifest')
@@ -44,6 +33,20 @@ class RegistryTests(unittest.TestCase):
             self.images['latest']=image
         self.registry.request=request
         self.assertEqual(self.registry.promote(self.receipt),'sha256:manifest')
+
+    def test_replacing_published_version_and_older_latest_is_allowed(self):
+        version=dict(self.receipt,raw=b'new-build',manifest={'mediaType':'fixture'},digest='sha256:new-manifest')
+        # The engine has replaced the version. Older/newer latest contents do
+        # not prevent promoting that exact freshly published build.
+        for latest_version in ('1.0.0','2.0.0'):
+            self.images={'1.2.3':version,'latest':dict(self.receipt,version=latest_version,image_id='old-build')}
+            def request(path,data,content_type):self.images['latest']=version
+            self.registry.request=request
+            self.assertEqual(self.registry.promote(self.receipt),'sha256:new-manifest')
+
+    def test_wrong_image_after_push_is_rejected(self):
+        self.images={'1.2.3':dict(self.receipt,image_id='sha256:'+'c'*64)}
+        with self.assertRaises(ValueError):self.registry.promote(self.receipt)
 
     def test_manifest_config_digest_and_labels(self):
         labels={'org.opencontainers.image.version':'1.2.3','org.opencontainers.image.revision':'a'*40,
@@ -58,6 +61,24 @@ class RegistryTests(unittest.TestCase):
         self.assertEqual(image['digest'],'sha256:'+hashlib.sha256(raw).hexdigest())
         responses['blobs/'+digest]=b'tampered'
         with self.assertRaises(ValueError):module.Registry.image(self.registry,'1.2.3')
+
+    def test_dirty_remote_image_can_be_promoted(self):
+        labels={'org.opencontainers.image.version':'1.2.3','org.opencontainers.image.revision':'a'*40,
+                'org.opencontainers.image.source':module.SOURCE,'io.bonsai.git.dirty':'true'}
+        config=json.dumps({'config':{'Labels':labels}}).encode()
+        image_id='sha256:'+hashlib.sha256(config).hexdigest()
+        raw=json.dumps({'mediaType':'application/vnd.oci.image.manifest.v1+json','config':{'digest':image_id}}).encode()
+        responses={'manifests/1.2.3':raw,'blobs/'+image_id:config}
+        def request(path, data=None, content_type=None):
+            if data is not None:
+                self.assertEqual((path,data,content_type),('manifests/latest',raw,'application/vnd.oci.image.manifest.v1+json'))
+                responses[path]=data
+                return b''
+            return responses[path]
+        self.registry.request=request
+        self.registry.image=lambda tag:module.Registry.image(self.registry,tag)
+        receipt=dict(self.receipt,dirty=True,image_id=image_id)
+        self.assertEqual(self.registry.promote(receipt),'sha256:'+hashlib.sha256(raw).hexdigest())
 
     def test_index_preserves_top_manifest(self):
         labels={'org.opencontainers.image.version':'1.2.3','org.opencontainers.image.revision':'a'*40,

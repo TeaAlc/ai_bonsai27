@@ -225,15 +225,17 @@ Release/build/preparation/push operations now share a checkout-local lock;
 committed sources and verified backend trees are snapshotted before building.
 A successful build atomically records its exact image ID, source, semrel version,
 cleanliness, pinned inputs, Containerfile/base digest, and apt package inventory.
-The push workflow validates this receipt and its release tag, selects that exact
-image across Podman/Docker stores, rejects remote conflicts and rollback, and
-promotes the exact published version manifest to latest. These client checks
-are not a cross-machine registry transaction. Live publication is separate.
+The initial push policy required matching release tags and rejected dirty builds,
+remote conflicts, and rollback. That policy was superseded by the user's request
+that every successful build must be pushable; see the follow-up below. The current
+workflow selects the receipt's exact image across Podman/Docker stores and updates
+both registry aliases. Live publication is separate.
 The manifest promotion follows the
 [Distribution HTTP API V2](https://distribution.github.io/distribution/spec/api/)
 manifest PUT operation. Config and child-manifest digests are validated before
 using remote labels. Isolated tests cover both engines, stale Docker storage,
-credential cleanup, conflicting/idempotent publication, rollback, and promotion.
+credential cleanup and exact manifest promotion. The follow-up fixtures replace
+the original conflict/rollback rejection tests with successful overwrite cases.
 
 GPU generation is selected inside the container using CUDA device 0; an override
 must match it. Configuration checks reject context overflow and accept 512–262144
@@ -312,3 +314,23 @@ check found the existing public latest release at 1.2.1, source
 build. Live publication/pull validation and the unavailable hardware rows remain
 pending. Later documentation commits retain the release image's actual source
 revision and do not manufacture another semrel version.
+
+
+## Publishable rebuilds (2026-09-30 follow-up)
+
+A standalone build at documentation commit
+`e18216113fd9bc394ec9579c358ad6cebb40cac3` correctly retained version `1.4.0`
+while the Git release tag still identified
+`de4b8edccb4940c9d005f89a77ae199fa142c5a8`. The recorded image ID was
+`sha256:9b032691b79578c938796713c71d48bac87bc56690e5a879a47c7e5c712c3094`.
+The former tag correspondence check incorrectly blocked publication of this build.
+
+The revised policy permits every successful project build, including dirty builds
+and builds without matching release tags. Pushing always replaces the version
+tag and `latest`; Git release refs remain unchanged. Receipt/image label checks,
+exact Podman-to-Docker transfer, post-push image identity verification, exact
+manifest promotion, and private temporary credentials remain in place. Isolated
+engine and registry fixtures validate these paths, including documentation
+rebuilds, dirty builds, absent tags, and replacement of older or newer `latest`.
+These fixture results do not establish a fresh live GHCR publication. Runtime
+settings are unchanged, so previous GPU/API measurements remain historical.

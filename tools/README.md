@@ -66,10 +66,12 @@ locking. `backend-artifacts.sh` pins archives and manifest identities;
 successful build and collecting its installed package inventory. Source snapshots
 and temporary backend copies live under `/tmp/bonsai27/` (or `TMPDIR`).
 
-`registry.py` validates that receipt, checks existing GHCR versions/`latest`, and
-promotes the exact version manifest after the selected engine publishes it.
-Matching published versions are reused; conflicting contents and version
-rollback are rejected. Credentials come from a private temporary file, never
+`registry.py` validates that receipt, verifies the newly pushed version against
+its exact image ID and source labels, and promotes the exact manifest to `latest`.
+Every successful build is publishable, including dirty builds and builds without
+matching Git release tags. Every push replaces the version and `latest` aliases;
+existing registry contents do not block publication. Git refs remain unchanged.
+Credentials come from a private temporary file, never
 from command arguments to this helper. Registry checks do not constitute a
 transaction across independent publishing machines; publication must be
 serialized. `image_push.sh` imports the receipt's exact Podman image into Docker

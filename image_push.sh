@@ -48,7 +48,8 @@ source tools/project.sh
 lock_project
 readonly receipt_file=results/last-build.json
 [[ -r "$receipt_file" ]] || { echo 'Error: missing build receipt; run build.sh.' >&2; exit 2; }
-# Validate the receipt and corresponding Git release tag before asking for secrets.
+# The last successful build is publishable independently of Git release tags.
+# Keep its exact identity even when HEAD or local tags changed after building.
 read -r source_id version revision < <(python3 -B - "$receipt_file" <<'PYCODE'
 import json, sys
 sys.path.insert(0, 'tools')
@@ -58,10 +59,6 @@ validate_receipt(receipt)
 print(receipt['image_id'], receipt['version'], receipt['revision'])
 PYCODE
 )
-assert_tag_aliases "$version" "$revision"
-git show-ref --verify --quiet "refs/tags/v$version" \
-    || git show-ref --verify --quiet "refs/tags/$version" \
-    || { echo 'Error: build source needs its release tag; use create_realease.sh or tools/tag-release.sh.' >&2; exit 2; }
 readonly local_image="$source_id"
 
 engine_ready() {
@@ -123,9 +120,10 @@ image = json.load(open(sys.argv[2]))[0]
 labels = image['Config']['Labels']
 expected = {'org.opencontainers.image.version': receipt['version'],
             'org.opencontainers.image.revision': receipt['revision'],
-            'org.opencontainers.image.source': receipt['source'], 'io.bonsai.git.dirty': 'false'}
+            'org.opencontainers.image.source': receipt['source'],
+            'io.bonsai.git.dirty': str(receipt['dirty']).lower()}
 if 'sha256:' + image['Id'].removeprefix('sha256:') != receipt['image_id'] or any(labels.get(k) != v for k,v in expected.items()):
-    raise ValueError('local image does not match the clean build receipt')
+    raise ValueError('local image does not match the build receipt')
 PYCODE
 
 # Prompt when no token parameter was supplied. Registry login receives the
@@ -154,19 +152,16 @@ fi
 # through command arguments. The EXIT trap removes it and engine credentials.
 printf '%s' "$token" | python3 -B -c 'import json,sys; json.dump({"username":sys.argv[2],"token":sys.stdin.read()},open(sys.argv[1],"w"))' "$work_dir/credentials.json" "$username"
 unset token
-publication=$(python3 -B tools/registry.py guard --receipt "$receipt_file" --credentials "$work_dir/credentials.json")
-
-# Publish an absent version with the selected engine. An identical publication
-# is reused; published version manifests are never replaced by this script.
-if [[ "$publication" == new ]]; then
-    destination="$registry_image:$version"
-    "${engine_command[@]}" tag "$source_id" "$destination"
-    echo "Pushing $destination with $engine"
-    if [[ "$engine" == podman ]]; then
-        podman push "${auth_args[@]}" "$source_id" "docker://$destination"
-    else
-        "${engine_command[@]}" push "$destination"
-    fi
+# Every successful build can be published. Version and latest are mutable
+# registry aliases, including rebuilds and builds with uncommitted changes.
+# Git release tags remain unchanged; they describe commit history for semrel.
+destination="$registry_image:$version"
+"${engine_command[@]}" tag "$source_id" "$destination"
+echo "Pushing $destination with $engine"
+if [[ "$engine" == podman ]]; then
+    podman push "${auth_args[@]}" "$source_id" "docker://$destination"
+else
+    "${engine_command[@]}" push "$destination"
 fi
 # Promote the exact version manifest via the registry API. This keeps the two
 # tags identical for both engines and supports retry after a partial push.

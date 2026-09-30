@@ -370,9 +370,9 @@ BONSAI_IMAGE=localhost/bonsai2-27b:1.0.0 ./run.sh
 Version calculation uses committed history and locally available stable tags. Builds do not fetch, create Git tags, push, or publish a release. Use a full Git checkout with release tags; shallow checkouts are rejected. Repeated builds can reuse the same version until release history changes, and uncommitted changes do not influence semrel's version calculation. OCI labels record the calculated version and source commit; `io.bonsai.git.dirty` identifies builds that include uncommitted project changes. The `latest` alias tracks the last successful local build. A successful build
 atomically records `results/last-build.json`: immutable image ID, engine, source
 revision, version, cleanliness, backend manifest/archive pins, model and semrel
-pins, the Containerfile/base digest, and installed package versions. Development
-builds remain runnable but cannot be published. Different `vX.Y.Z` and `X.Y.Z`
-source commits are rejected before semrel analysis.
+pins, the Containerfile/base digest, and installed package versions. Every successful
+build can be published, including development builds; their dirty label is
+preserved. Different `vX.Y.Z` and `X.Y.Z` source commits are rejected before semrel analysis.
 
 A published registry image does not automatically create a Git release tag.
 Record each published release with its source commit and push that Git tag;
@@ -404,8 +404,10 @@ bundles with `prepare.sh` beforehand. The online workflow:
 If the build fails, the newly created release tag is removed; recovered tags
 for already published releases remain. Existing tags are never moved. Repeating
 at the same release commit rebuilds the same version. A docs-only commit after
-an existing release is rejected rather than overwriting its versioned image.
-The script does not manufacture patch bumps for non-releasable commits.
+an existing release is rejected because it cannot create a new Git release tag
+at the same version. To build and publish that commit anyway, use `./build.sh`
+and `./image_push.sh`. The release script does not manufacture patch bumps for
+non-releasable commits.
 
 A network/authentication error or a conflict between Git tags and registry
 metadata stops the online workflow. The image must have valid project source,
@@ -463,18 +465,22 @@ Package visibility is separate from repository visibility. See
 `ghcr.io/teaalc/ai_bonsai27:<version>` and
 `ghcr.io/teaalc/ai_bonsai27:latest`. The version comes from the semrel-generated
 label of the actual local image. The source is pinned by `results/last-build.json`, independently of mutable
-`latest` aliases or newer Git commits. A clean project image and matching release
-tag are required. An absent version is pushed with the selected engine; an
-identical existing version is reused, and a conflicting one is rejected. The
-exact published version manifest is then promoted to `latest` through the
-registry API, and both remote manifest digests are verified. Older versions
-cannot roll `latest` back. Retry the script after a failed promotion; the valid
-version publication is retained. These preflight checks do not provide a
-registry-wide transaction across independent publishers; serialize release
-publication across machines.
+`latest` aliases or newer Git commits. Every successful project build can be
+published, including uncommitted development builds and rebuilds whose source
+commit differs from the existing Git release tag. No Git release tag is required
+or changed by pushing.
+
+Each push updates both the version tag and `latest`, replacing any existing
+images under those tags. Documentation-only changes can retain the same SemVer;
+this does not prevent publication. The selected engine pushes the recorded image,
+then the script verifies the published version's image ID and source labels,
+copies its exact manifest to `latest`, and verifies both remote manifest digests.
+Retry after a failed promotion; the already pushed version remains available.
+Use a registry digest when you need an immutable image reference. Serialize
+publication across machines because the two tag updates are separate operations.
 
 ```bash
-./create_realease.sh                     # clean committed release + build
+./build.sh                              # build the image to publish
 ./image_push.sh                          # ask for the token with hidden input
 ./image_push.sh --token 'YOUR_GHCR_TOKEN' # alternatively pass the token explicitly
 ```
