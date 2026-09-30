@@ -403,3 +403,22 @@ image's real wrapper, which supplies that path. This validates device/library
 access through the API, not a new inference benchmark or the Windows Desktop UI.
 The remote engine must itself expose `/dev/dxg` and `/usr/lib/wsl`; the settings
 do not provision GPU passthrough for a stock Hyper-V machine.
+
+
+## Simpler Desktop GPU configuration (2026-09-30 follow-up)
+
+Released-source checks of Podman **v6.0.0** and **v6.1.1** confirmed both the
+CDI-aware `DockerDeviceMappingString` helper and its call from the Docker-compatible
+container-create handler. For example, see the
+[v6.0.0 helper](https://github.com/containers/podman/blob/v6.0.0/pkg/api/handlers/utils/docker_device.go)
+and [v6.0.0 handler](https://github.com/containers/podman/blob/v6.0.0/pkg/api/handlers/compat/containers_create.go).
+This establishes released versions containing the fix, without claiming the
+first fixed release or diagnosing the unknown remote engine version conclusively.
+
+The preferred Desktop route is therefore a fixed engine plus working NVIDIA
+Toolkit/CDI: one Host Device selector `nvidia.com/gpu=all`, blank Container Device,
+and an empty Basic Command. CDI supplies the GPU device and driver-library mounts.
+Manual `/dev/dxg` and WSL driver mounts are a fallback, not an intrinsic application
+requirement. Updating the Windows client alone does not update the Linux service
+inside an existing Podman machine, nor does an engine upgrade configure CDI.
+No new Desktop runtime test was performed for this source verification.

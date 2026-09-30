@@ -175,9 +175,19 @@ the tested configuration is direct Podman inside WSL2.
 
 ### Podman Desktop: configure the GPU entirely in the UI
 
-The device fields are under **Advanced**, not the **Basic** tab shown in the
-screenshot. For a **WSL2-backed engine**, the real WSL device can avoid CDI
-selector handling in the Desktop/Docker-compatible API. Use these settings:
+The simplest GPU setup is a single CDI device selector in **Advanced → Devices**;
+NVIDIA Container Toolkit/CDI supplies the driver mounts automatically. The
+selected engine must support CDI selectors in its Docker-compatible API. This
+was verified in released source for **Podman 6.0.0 and 6.1.1**. Update the actual
+engine inside the Podman machine, not only the Windows client or Desktop app,
+when the device form fails with `stat nvidia.com/gpu=all`. The CDI form below
+then needs no manual WSL driver/device mounts, provided the engine's NVIDIA
+Toolkit/CDI setup is already working. Upgrading does not itself install or
+configure that setup. The reported engine version remains unknown.
+
+The following manual mount setup is a **WSL2 fallback for engines affected by
+that API conversion issue**, not the preferred setup. The device fields are
+under **Advanced**, not the **Basic** tab shown in the screenshot. Use:
 
 | Tab / field | WSL2 value |
 | --- | --- |
@@ -230,8 +240,9 @@ selector as a file; changing the container's backend or adding image libraries
 cannot repair that API conversion. On WSL2, use the real-device settings above;
 otherwise update the engine to a version containing the
 [upstream CDI API fix](https://github.com/containers/podman/commit/f374f2c95bc8c7642a5a47d03298fe036f0f77c0)
-and verify its CDI setup. The exact installed version was not supplied, so no
-minimum release version is assumed. See the official
+and verify its CDI setup. Released-source checks confirm the fix and handler
+call in Podman 6.0.0 and 6.1.1; this is not a claim that 6.0.0 was the first
+release or that an unknown installed engine contains it. See the official
 [Desktop device form](https://github.com/podman-desktop/podman-desktop/blob/main/packages/renderer/src/lib/image/RunImage.svelte)
 and [Podman CDI mapping helper](https://github.com/containers/podman/blob/main/pkg/api/handlers/utils/docker_device.go).
 This recipe was checked against upstream source; it has not been runtime-tested
