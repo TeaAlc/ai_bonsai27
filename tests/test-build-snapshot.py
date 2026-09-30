@@ -13,7 +13,7 @@ from pathlib import Path
 PROJECT=Path(__file__).resolve().parents[1]
 with tempfile.TemporaryDirectory(dir='/tmp/bonsai27',prefix='snapshot-test.') as directory:
     root=Path(directory);repo=root/'repo';repo.mkdir()
-    for name in ('build.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','tools/build-receipt.py','tools/semrel/artifacts.sh','data/models/download.sh'):
+    for name in ('data/logging.sh','build.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','tools/build-receipt.py','tools/semrel/artifacts.sh','data/models/download.sh'):
         destination=repo/name;destination.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(PROJECT/name,destination)
     (repo/'tools/version.sh').write_text('#!/bin/sh\necho 1.0.0\n');(repo/'tools/version.sh').chmod(0o755)
     (repo/'Containerfile').write_text('FROM fixture\n')

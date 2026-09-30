@@ -9,6 +9,15 @@ readonly VISION_FILE=Ternary-Bonsai-2-27B-mmproj-BF16.gguf
 readonly MODEL_SHA=1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685
 readonly VISION_SHA=e287342d92332fa3577ed1d42e921dac9370c08da58ba9337fa450f6cc76cfd7
 
+# Standalone download tests also use this helper without the script logger.
+_download_log() {
+    if declare -F bonsai_log >/dev/null; then
+        bonsai_log INFO "$*"
+    else
+        printf '[model-cache] [INFO] %s\n' "$*" >&2
+    fi
+}
+
 # A directory lock works on shared filesystems without flock. Existing files
 # are reused by default; verify/repair modes are explicit host operations.
 _download_artifact() {
@@ -23,8 +32,9 @@ _download_artifact() {
             || { echo 'Error: download wait/timeout must be integers from 1 to 86400 seconds.' >&2; exit 2; }
     done
     case "$mode" in reuse|verify|repair) ;; *) echo 'Error: invalid cache mode.' >&2; exit 2 ;; esac
-    if [[ "$mode" == reuse && -s "$destination" && -r "$destination" ]]; then exit 0; fi
+    if [[ "$mode" == reuse && -s "$destination" && -r "$destination" ]]; then _download_log "Reusing readable cache file: $destination"; exit 0; fi
     mkdir -p -- "$(dirname -- "$destination")" || exit 2
+    _download_log "Acquiring cache lock: $lock_dir (wait limit=${wait_seconds}s)."
     deadline=$((SECONDS + 10#$wait_seconds))
     while ! mkdir -- "$lock_dir" 2>/dev/null; do
         if [[ "$mode" == reuse && -s "$destination" && -r "$destination" ]]; then exit 0; fi
@@ -65,7 +75,7 @@ _download_artifact() {
         [[ -r "$1" ]] && printf '%s  %s\n' "$expected_sha" "$1" | sha256sum --status -c -
     }
     if [[ -s "$destination" && -r "$destination" ]]; then
-        if [[ "$mode" == reuse ]] || checksum_matches "$destination"; then exit 0; fi
+        if [[ "$mode" == reuse ]] || checksum_matches "$destination"; then _download_log "Cache ready: $destination (mode=$mode)."; exit 0; fi
         if [[ "$mode" == verify ]]; then
             echo "Error: cached file failed pinned checksum: $destination. Use --repair only for pinned artifacts." >&2
             exit 2
@@ -76,7 +86,7 @@ _download_artifact() {
     fi
     # A complete verified partial file needs no Range request, including offline.
     if ! checksum_matches "$destination.part"; then
-        echo "Downloading missing or damaged pinned model: $destination"
+        _download_log "Downloading missing or damaged pinned model: $destination (timeout=${download_timeout}s)."
         curl --fail --location --retry 4 --connect-timeout 30 \
             --max-time "$download_timeout" --speed-limit 1024 --speed-time 60 \
             --continue-at - --write-out '%{http_code}' \
@@ -96,6 +106,7 @@ _download_artifact() {
         fi
         ((curl_status == 0)) || exit "$curl_status"
     fi
+    _download_log "Verifying SHA256 before publishing: $destination"
     if ! checksum_matches "$destination.part"; then
         rm -f -- "$destination.part"
         echo "Error: model checksum failed: $destination" >&2
@@ -103,6 +114,7 @@ _download_artifact() {
     fi
     # Repair preserves the previous destination until verified replacement.
     mv -- "$destination.part" "$destination" || exit 2
+    _download_log "Verified artifact ready: $destination"
 }
 
 # The worker uses a function body rather than an extra subshell layer. The

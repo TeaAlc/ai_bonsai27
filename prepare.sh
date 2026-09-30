@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname -- "${BASH_SOURCE[0]}")/data/logging.sh"
+bonsai_init_logging prepare
+bonsai_step configuration "Reading options and validating prerequisites."
 # Resolve the model cache before switching to project-relative backend paths.
 export BONSAI_MODEL_DIR=${BONSAI_MODEL_DIR:-"$PWD"}
 mkdir -p -- "$BONSAI_MODEL_DIR"
@@ -9,13 +12,16 @@ export TMPDIR=${TMPDIR:-/tmp/bonsai27}
 source tools/project.sh
 source tools/backend-artifacts.sh
 source data/models/download.sh
+bonsai_step project-lock "Waiting for the checkout lock."
 lock_project
+bonsai_step models "Preparing the persistent model cache."
 ./download_models.sh
 
 # Download/verify with the same resumable, locked helper as the model cache.
 # Extract into a fresh directory; the project lock protects builds and prepares.
 prepare_backend() {
     local backend=$1 archive_name=$2 expected_sha=$3 directory staging backup
+    bonsai_step "backend-$backend" "Downloading, verifying, and extracting the pinned backend."
     directory="data/backends/$backend"
     mkdir -p "$directory"
     backup="$directory/runtime.previous"

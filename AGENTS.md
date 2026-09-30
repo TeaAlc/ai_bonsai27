@@ -52,8 +52,11 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   with nvidia-smi as a fallback; map
   8.6/8.9 to ampere-ada and 12.0 to blackwell. An explicit BONSAI_GPU_BACKEND
   must match the detected device; run.sh leaves selection to the container. Fail clearly on query errors or unsupported GPUs.
-- `entrypoint.sh`: detect the backend, validate settings, download missing models into the writable
-  cache, and assemble readable, commented
+- `data/logging.sh`: timestamped stderr logs with component, stage, and level.
+  Error traps report exit status and line, never command text or credentials.
+- `entrypoint.sh`: validate settings, preflight model cache paths, check actual
+  CUDA access and the selected backend dependencies, then download missing models
+  and assemble readable, commented
   argument groups before replacing itself with llama-server using `exec`.
 - `download_models.sh`: download missing models on the host with the shared helper.
 - `BONSAI_MODEL_DIR`: writable persistent model cache, defaulting to the caller’s

@@ -2,6 +2,9 @@
 # Disable shell tracing before handling credentials, even when invoked with -x.
 set +x
 set -euo pipefail
+source "$(dirname -- "${BASH_SOURCE[0]}")/data/logging.sh"
+bonsai_init_logging image_push
+bonsai_step configuration "Reading options and validating prerequisites."
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 readonly registry_image=ghcr.io/teaalc/ai_bonsai27
@@ -45,6 +48,7 @@ fail() {
 }
 
 source tools/project.sh
+bonsai_step build-selection "Reading the last successful build receipt."
 lock_project
 readonly receipt_file=results/last-build.json
 [[ -r "$receipt_file" ]] || { echo 'Error: missing build receipt; run build.sh.' >&2; exit 2; }
@@ -111,6 +115,7 @@ else
     engine_command=(podman)
 fi
 
+bonsai_step image-verification "Checking exact image identity and source labels."
 # Check inspected labels against the build receipt, independent of mutable aliases.
 "${engine_command[@]}" image inspect "$source_id" > "$work_dir/image.json"
 python3 -B - "$receipt_file" "$work_dir/image.json" <<'PYCODE'
@@ -129,6 +134,7 @@ PYCODE
 # Prompt when no token parameter was supplied. Registry login receives the
 # token through stdin; credentials never enter the repository or permanent
 # registry configuration. Temporary authentication is removed on exit.
+bonsai_step registry-login "Obtaining temporary registry credentials."
 if [[ "$token_parameter" == false ]]; then
     printf 'GHCR token for %s (input hidden): ' "$username" >&2
     if ! IFS= read -r -s token; then
@@ -155,6 +161,7 @@ unset token
 # Every successful build can be published. Version and latest are mutable
 # registry aliases, including rebuilds and builds with uncommitted changes.
 # Git release tags remain unchanged; they describe commit history for semrel.
+bonsai_step version-push "Publishing $registry_image:$version with $engine."
 destination="$registry_image:$version"
 "${engine_command[@]}" tag "$source_id" "$destination"
 echo "Pushing $destination with $engine"
@@ -165,5 +172,6 @@ else
 fi
 # Promote the exact version manifest via the registry API. This keeps the two
 # tags identical for both engines and supports retry after a partial push.
+bonsai_step latest-promotion "Verifying the pushed image and updating latest to the same manifest."
 digest=$(python3 -B tools/registry.py promote --receipt "$receipt_file" --credentials "$work_dir/credentials.json")
 printf 'Published %s:%s and latest; registry digest: %s\n' "$registry_image" "$version" "$digest"

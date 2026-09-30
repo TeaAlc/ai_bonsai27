@@ -12,6 +12,8 @@ export fixture_build_fail=false
 new_repository() {
     repository="$work_dir/$1"
     mkdir -p "$repository/tools"
+    mkdir -p "$repository/data"
+    cp "$project_dir/data/logging.sh" "$repository/data/"
     cp "$project_dir/create_realease.sh" "$repository/"
     cp "$project_dir/tools/project.sh" "$repository/tools/"
     cat > "$repository/tools/version.sh" <<'SH'

@@ -13,7 +13,7 @@ from pathlib import Path
 PROJECT=Path(__file__).resolve().parents[1]
 with tempfile.TemporaryDirectory(prefix='prepare-test.',dir='/tmp/bonsai27') as directory:
     root=Path(directory);repo=root/'repo';repo.mkdir()
-    for name in ('prepare.sh','download_models.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','data/models/download.sh'):
+    for name in ('data/logging.sh','prepare.sh','download_models.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','data/models/download.sh'):
         destination=repo/name;destination.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(PROJECT/name,destination)
     cache=root/'cache';cache.mkdir()
     for name in ('Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf','Ternary-Bonsai-2-27B-mmproj-BF16.gguf'):(cache/name).write_text('existing fixture')

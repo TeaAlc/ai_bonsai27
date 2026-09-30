@@ -8,6 +8,9 @@ query_cuda_capability() {
 
 select_gpu_backend() {
     local requested=${BONSAI_GPU_BACKEND:-} smi capability
+    if [[ -n "$requested" ]] && declare -F bonsai_log >/dev/null; then
+        bonsai_log INFO "Explicit backend requested: $requested; validating it against the actual GPU."
+    fi
     # Prefer the driver query: it uses CUDA device ordering, honors visibility,
     # and needs only the driver libraries already required by llama-server.
     if capability=$(query_cuda_capability); then
@@ -24,7 +27,7 @@ select_gpu_backend() {
             return 2
         fi
     else
-        echo 'Error: CUDA driver/GPU access is unavailable; detection failed through CUDA and nvidia-smi. Check GPU passthrough and driver libraries, or set BONSAI_GPU_BACKEND explicitly.' >&2
+        echo 'Error: CUDA driver/GPU access is unavailable; detection failed through CUDA and nvidia-smi. Check GPU passthrough and host driver-library injection. BONSAI_GPU_BACKEND only selects a bundle and cannot fix missing CUDA access. No model downloads were started.' >&2
         return 2
     fi
     capability=${capability//[[:space:]]/}

@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 COPY data/backends/blackwell/runtime/ /opt/bonsai/blackwell/
 COPY data/backends/ampere-ada/runtime/ /opt/bonsai/ampere-ada/
+COPY data/logging.sh /opt/bonsai/logging.sh
 COPY entrypoint.sh /usr/local/bin/bonsai-server
 COPY data/models/download.sh /opt/bonsai/download-models.sh
 COPY data/gpu/settings.sh /opt/bonsai/settings.sh

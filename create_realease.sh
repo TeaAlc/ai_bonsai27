@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname -- "${BASH_SOURCE[0]}")/data/logging.sh"
+bonsai_init_logging create_realease
+bonsai_step configuration "Reading options and validating prerequisites."
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 # Keep the requested filename. Online mode synchronizes public release history;
@@ -20,6 +23,7 @@ esac
 
 fail() { echo "Error: $*" >&2; exit 2; }
 source tools/project.sh
+bonsai_step release-validation "Checking the working tree and release baseline."
 lock_project
 [[ -z $(git status --porcelain --untracked-files=normal) ]] \
     || fail 'Commit or remove local changes before creating a release.'
@@ -28,6 +32,7 @@ lock_project
 revision=$(git rev-parse HEAD)
 if [[ "$offline" == false ]]; then
     # Public HTTPS also works when the configured SSH remote has no local key.
+    bonsai_step release-history "Fetching public tags and checking published metadata."
     git fetch --tags https://github.com/TeaAlc/ai_bonsai27.git
     published=$(python3 -B tools/published-release.py)
     if [[ -n "$published" ]]; then
@@ -56,6 +61,7 @@ fi
 
 # semrel alone determines the next version. No artificial bump or parallel
 # commit parser is used. A docs-only update cannot replace an existing release.
+bonsai_step version "Calculating the release version with semrel."
 version=$(./tools/version.sh)
 tag="v$version"
 created_tag=false
@@ -92,4 +98,5 @@ export BONSAI_RELEASE_REVISION="$revision"
 export BONSAI_RELEASE_VERSION="$version"
 # Tagging establishes the same version as the build baseline. This final action
 # builds both the versioned image and latest through the existing build script.
+bonsai_step image-build "Building release $version through build.sh."
 ./build.sh

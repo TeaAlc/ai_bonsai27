@@ -389,6 +389,43 @@ They require no extra environment variables. Optional container command
 arguments are appended to llama-server, for example `--log-verbose`; preserve
 the default entrypoint and the project's GPU/vision settings.
 
+### Startup stages and diagnostics
+
+The container logs timestamped messages with component, stage, and severity:
+
+```text
+[2026-09-30T17:30:00Z] [startup] [gpu-access] [INFO] Checking CUDA device 0...
+[2026-09-30T17:30:00Z] [startup] [gpu-access] [ERROR] CUDA driver/GPU access is unavailable...
+```
+
+Startup follows this order:
+
+1. **configuration** — validate context, reasoning, backend, and download limits.
+2. **model-cache** — report reusable files and check write access for missing files.
+3. **gpu-access** — report requested backend, visible GPU/WSL paths, check CUDA,
+   and validate the selected bundle against the actual GPU.
+4. **runtime-dependencies** — check the server executable and shared libraries.
+5. **models** — reuse cached models or download missing pinned artifacts with
+   locking, resumability, and checksum verification.
+6. **server** — print inference settings and replace the entrypoint with llama-server.
+
+The API becomes ready only when `/health` returns HTTP 200. View the container's
+**Logs** tab in Desktop to find the last stage and its error. Host preparation,
+build, release, download, start, and push scripts use the same log format;
+failed commands identify the stage and exit status without printing secrets.
+
+`BONSAI_GPU_BACKEND=blackwell` or `ampere-ada` selects a backend, and does not
+supply `libcuda.so.1` or expose a GPU. It is checked against the actual device.
+Startup deliberately fails before downloading several gigabytes when CUDA
+access is missing. Earlier builds that downloaded first could still fail when
+loading the server; download progress did not establish a working GPU setup.
+Use `download_models.sh` to prepare models independently of container GPU access.
+
+The updated image passed fresh WSL2 API, 16k/8k, vision, coding, and failure-path
+checks, including a working explicit `blackwell` override. The measured build
+was a development image; see [RECHERCHE.md](RECHERCHE.md) for its exact identity
+and evidence. This does not validate GPU injection on another Desktop machine.
+
 ### CUDA driver access errors
 
 `libcuda.so.1: cannot open shared object file` means the host CUDA driver is

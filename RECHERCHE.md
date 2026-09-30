@@ -422,3 +422,43 @@ Manual `/dev/dxg` and WSL driver mounts are a fallback, not an intrinsic applica
 requirement. Updating the Windows client alone does not update the Linux service
 inside an existing Podman machine, nor does an engine upgrade configure CDI.
 No new Desktop runtime test was performed for this source verification.
+
+
+## Startup stages and failure diagnostics (2026-09-30 follow-up)
+
+The supplied machine diagnostics establish that both Windows client and server
+are Podman 6.0.2, the machine is WSL2, and its projected `nvidia-smi` sees the
+GPU. `nvidia-ctk` is not available through its shell. This supersedes the earlier
+suggestion that upgrading an old server would necessarily fix this machine.
+The user's exact Desktop create-path failure is not reproduced here; usable
+CUDA inside the application container still requires GPU/driver injection.
+
+Container startup now validates settings, checks cache paths and write access
+for missing models, checks actual CUDA access/backend selection, checks selected
+server dependencies, prepares pinned models, then starts llama-server. An
+explicit backend remains subject to actual GPU validation. The incorrect
+suggestion that setting BONSAI_GPU_BACKEND repairs missing CUDA was removed.
+Missing CUDA deliberately stops before model transfers; downloading first would
+not make GPU inference possible. Host prefetch remains available independently.
+
+The shared logger emits UTC timestamps, component, stage, and severity to stderr.
+Host preparation/build/release/run/download/push scripts use the same format.
+Unexpected command failures include exit status and line without logging command
+text or credentials. Model logs identify reuse, lock acquisition, transfer,
+checksum verification, and readiness. A first build caught the new logger being
+excluded by the build-context allowlist; adding the explicit exception fixed it.
+
+Validation: the complete offline regression runner passed. Rebuilt development
+image `sha256:2c86832ab20c948a17ec152fe817a662157b3979e081d41c3663278bf84d1a28`
+(version 1.4.1, dirty label true) passed real missing-CUDA checks for auto,
+blackwell, and ampere-ada, pre-GPU invalid configuration/read-only-cache checks,
+both backend dependency checks, download stop/lock cleanup, and retained partial
+checks. Fresh API evidence at `results/runs/20260930T173438Z-564966/` passed all
+18 QA checks: 16k long-context, 8k configuration, GPU-only language inference,
+CPU BF16 vision, Flash Attention, q8 main/draft cache, active MTP, both vision
+fixtures, unicorn image request, and three coding tasks. These are measurements
+on this WSL2 host; Desktop/CDI on the remote machine remains untested. A separate
+16k start with explicit `BONSAI_GPU_BACKEND=blackwell` also passed an actual
+OpenAI API request (answer `42`); its local evidence is
+`results/startup-override.log` and `results/startup-override-response.json`.
+No GHCR publication was performed.

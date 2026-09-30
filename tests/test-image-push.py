@@ -40,7 +40,8 @@ def run_case(name, changes=None, parameter=False, success=True, dirty=False, inv
     with tempfile.TemporaryDirectory(dir='/tmp/bonsai27', prefix='push-test.') as directory:
         root = Path(directory)
         repo=root/'repo'; (repo/'tools').mkdir(parents=True); (repo/'results').mkdir()
-        for filename in ('image_push.sh','tools/project.sh','tools/registry.py'):
+        for filename in ('data/logging.sh','image_push.sh','tools/project.sh','tools/registry.py'):
+            (repo/filename).parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(PROJECT/filename, repo/filename)
         def git(*args): return subprocess.check_output(['git','-C',str(repo),*args],text=True).strip()
         git('init','--quiet','--initial-branch=main');git('config','user.name','Test');git('config','user.email','test@example.invalid');git('add','.');git('commit','--quiet','-m','feat: fixture')

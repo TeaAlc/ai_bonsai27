@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source /opt/bonsai/logging.sh
+bonsai_init_logging startup
+bonsai_step configuration "Validating container settings."
 
 # Read container settings. run.sh supplies these values through environment
 # variables; defaults also allow the image to be started directly with Podman.
@@ -14,9 +17,39 @@ source /opt/bonsai/detect-gpu.sh
 source /opt/bonsai/settings.sh
 validate_bonsai_settings
 ctx_size=$((10#$ctx_size))
-fail() { echo "Error: $*" >&2; exit 2; }
-gpu_backend=$(select_gpu_backend)
-echo "Selected GPU backend: $gpu_backend"
+fail() { bonsai_log ERROR "$*"; exit 2; }
+bonsai_log INFO "Context=$ctx_size; reasoning=$reasoning_effort; requested backend=${BONSAI_GPU_BACKEND:-auto}."
+
+# Check cache paths before GPU initialization, without starting any transfer.
+bonsai_step model-cache "Checking model paths and write access for missing files."
+for artifact_path in "$model" "$vision_projector"; do
+    if [[ -s "$artifact_path" && -r "$artifact_path" ]]; then
+        bonsai_log INFO "Reusable cache file: $artifact_path"
+        continue
+    fi
+    cache_parent=$(dirname -- "$artifact_path")
+    mkdir -p -- "$cache_parent" || fail "Cannot create model directory: $cache_parent"
+    cache_probe=$(mktemp "$cache_parent/.bonsai-write-check.XXXXXX") \
+        || fail "Model cache is not writable: $cache_parent. Check write access."
+    rm -- "$cache_probe"
+done
+
+bonsai_step gpu-access "Checking CUDA device 0; a backend override does not supply driver libraries or GPU devices."
+bonsai_log INFO "Driver library search: /usr/lib/wsl/lib, /usr/local/nvidia/lib, /usr/local/nvidia/lib64, system loader paths."
+for gpu_path in /dev/dxg /dev/nvidia0 /usr/lib/wsl/lib/libcuda.so.1; do
+    if [[ -e "$gpu_path" ]]; then
+        bonsai_log INFO "GPU runtime path present: $gpu_path"
+    else
+        bonsai_log INFO "GPU runtime path absent: $gpu_path"
+    fi
+done
+# Capture diagnostics separately from the backend name written to stdout.
+if gpu_backend=$(select_gpu_backend); then
+    :
+else
+    fail 'CUDA driver/GPU access is unavailable. Podman Desktop needs NVIDIA Toolkit/CDI in its machine, or the WSL device and driver mount. Docker needs GPU runtime injection. BONSAI_GPU_BACKEND cannot provide GPU access. No models were downloaded.'
+fi
+bonsai_log INFO "Selected GPU backend: $gpu_backend"
 
 # Use one library search path for preflight and the server. CUDA driver files
 # come from the host GPU runtime, never from a stub or bundled host driver.
@@ -26,12 +59,21 @@ if ! query_cuda_capability >/dev/null; then
     fail 'CUDA driver/GPU access is unavailable. Docker requires --gpus all and NVIDIA_DRIVER_CAPABILITIES=compute,utility; Podman requires NVIDIA CDI or the WSL /dev/dxg and /usr/lib/wsl mounts. No models were downloaded.'
 fi
 
+bonsai_step runtime-dependencies "Checking the selected $gpu_backend server and shared libraries."
+[[ -x "$backend_dir/bin/llama-server" ]] || fail "Missing executable: $backend_dir/bin/llama-server"
+runtime_dependencies=$(ldd "$backend_dir/bin/llama-server")
+if [[ "$runtime_dependencies" == *'not found'* ]]; then
+    printf '%s\n' "$runtime_dependencies" >&2
+    fail 'Selected backend has unresolved shared libraries.'
+fi
+
 # Populate the writable model mount before loading the server. Reuse cached
 # files; missing files are downloaded from pinned revisions and SHA256-checked.
 # While downloading, PID 1 forwards stop signals and waits for child cleanup.
 download_pid=''
 stop_download() {
     local status=$1
+    bonsai_log WARN "Stop requested during model preparation; cancelling the downloader (exit=$status)."
     if [[ -n "$download_pid" ]]; then
         kill -TERM "$download_pid" 2>/dev/null || true
         wait "$download_pid" 2>/dev/null || true
@@ -40,6 +82,7 @@ stop_download() {
 }
 trap 'stop_download 143' TERM
 trap 'stop_download 130' INT
+bonsai_step models "Preparing pinned language and BF16 vision models; existing readable files are reused."
 for artifact in model vision; do
     if [[ "$artifact" == model ]]; then
         download_missing_model "$MODEL_REPO/$MODEL_FILE" "$model" "$MODEL_SHA" &
@@ -47,7 +90,12 @@ for artifact in model vision; do
         download_missing_model "$VISION_REPO/$VISION_FILE" "$vision_projector" "$VISION_SHA" &
     fi
     download_pid=$!
-    wait "$download_pid"
+    if wait "$download_pid"; then
+        bonsai_log INFO "$artifact model ready."
+    else
+        download_status=$?
+        fail "$artifact model preparation failed (exit=$download_status). Partial files remain resumable."
+    fi
     download_pid=''
 done
 trap - TERM INT
@@ -105,6 +153,8 @@ generation_args=(
 
 # Replace the entrypoint process so llama-server receives container stop signals.
 # Forward additional arguments last, preserving each argument's quoting.
+bonsai_step server "Starting llama-server: backend=$gpu_backend; context=$ctx_size; reasoning=$reasoning_effort; GPU-only LLM; CPU vision; MTP=2; Flash Attention=on; KV=q8_0."
+bonsai_log INFO 'Loading the model may take time. The API is ready only when /health returns HTTP 200.'
 exec "$backend_dir/bin/llama-server" \
     "${model_args[@]}" \
     "${server_args[@]}" \
