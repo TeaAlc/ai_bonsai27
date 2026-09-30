@@ -66,6 +66,14 @@ The pinned executable, cached download, installer, release policy, and tool lice
 
 ## Publishing to GitHub Container Registry
 
+The published image is available at
+[ghcr.io/teaalc/ai_bonsai27](https://ghcr.io/teaalc/ai_bonsai27).
+Pull the latest image with:
+
+```bash
+podman pull ghcr.io/teaalc/ai_bonsai27:latest
+```
+
 `./image_push.sh` publishes the last successful local build as both
 `ghcr.io/teaalc/ai_bonsai27:<version>` and
 `ghcr.io/teaalc/ai_bonsai27:latest`. The version comes from the semrel-generated
