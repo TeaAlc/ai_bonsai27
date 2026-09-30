@@ -27,6 +27,10 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
 
 - `prepare.sh`: download pinned models and backend bundles, verify SHA256, and
   extract backends. Do not build the image here.
+- `create_realease.sh`: reconcile public Git/GHCR release history, calculate the
+  version through semrel, create a local annotated release tag, then call
+  build.sh as the final action. Roll back the new tag on build failure; never
+  move existing tags or push implicitly. --offline uses only local tags.
 - `build.sh`: verify extracted backend files and build the image using
   `Containerfile`. Determine the image version through `tools/version.sh` and
   semrel, then tag the successful build with its SemVer version and `latest`.
@@ -100,7 +104,8 @@ Keep Git tagging and publication disabled for builds; use `image_push.sh` for
 authorized registry publication. Determine the push version from the built
 image label, not newly committed but unbuilt changes. Test push logic with
 `tests/test-image-push.py`; Docker fallback needs separate storage or an import.
-Run `tests/test-version.sh` when changing versioning or build-tool behavior.
+Run `tests/test-version.sh`, `tests/test-create-release.sh`, and
+`tests/test-release-tag.sh` when changing versioning or release tooling.
 Run `tests/test-model-download.sh` when changing model downloads or cache paths.
 Run `tests/test-gpu-backend.sh` and `tests/test-cuda-probe.sh` when changing
 backend detection; `tests/test-runtime.sh` checks dependencies with real GPU

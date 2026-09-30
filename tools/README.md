@@ -47,3 +47,11 @@ BONSAI_IMAGE. The image must come from a clean commit present in this checkout.
 Existing tags are never moved; a conflicting source revision is an error.
 The helper does not build, push, or publish. Tag the completed build before
 starting work on the next release so semrel has the correct baseline.
+
+The root `create_realease.sh` orchestrates release creation before its final
+`build.sh` invocation. `published-release.py` reads public GHCR manifest/config
+metadata, validates the project's source labels, and reports the latest release
+version and source commit without downloading image layers. Python runs with
+bytecode disabled. Online releases recover missing published baseline tags;
+offline releases rely only on existing local tags. Build failures roll back
+only the new release tag, and existing release tags are never moved.

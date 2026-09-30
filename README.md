@@ -360,23 +360,51 @@ example, after `v1.2.0` exists, subsequent `fix` commits produce `1.2.1`.
 Documentation commits alone do not increase it. Keep release tags available
 in every checkout that builds images.
 
-Release tags must identify the source commit of the built image. After a clean
-build, use the local release helper:
+### Create a release and build its images
+
+Use the release script instead of a standalone build when preparing a release:
 
 ```bash
-./build.sh
-./tools/tag-release.sh
-# Publish only when intended:
-./image_push.sh
-git push origin v1.2.0             # substitute the version printed by the helper
+./create_realease.sh
 ```
 
-`tag-release.sh` reads the image's version, source revision, and clean-build
-label. It creates an annotated tag at that revision, rejects dirty builds and
-conflicting existing tags, and never pushes or moves a tag. Release tags and
-registry version tags are separate: neither rebuilding nor pushing an image
-alone records a Git release. New `feat` commits after `v1.1.0` produce `1.2.0`;
-`fix`/`perf` alone produce `1.1.1`. Published release tags must remain stable.
+The filename intentionally follows the project's `create_realease.sh` spelling.
+A clean working tree, complete Git history, Git, Python 3, curl, sha256sum,
+flock, and a working Podman build environment are required. Prepare backend
+bundles with `prepare.sh` beforehand. The online workflow:
+
+1. Fetches public project Git tags over HTTPS without overwriting conflicts.
+2. Reads the published GHCR `latest` image's OCI labels without downloading its
+   layers, restoring a missing release tag at the image's actual source commit.
+3. Uses the pinned semrel tool to calculate the next version from Git history.
+4. Creates an annotated local release tag at HEAD, then calls `build.sh` as its
+   final action to build the versioned image and `latest`.
+
+If the build fails, the newly created release tag is removed; recovered tags
+for already published releases remain. Existing tags are never moved. Repeating
+at the same release commit rebuilds the same version. A docs-only commit after
+an existing release is rejected rather than overwriting its versioned image.
+The script does not manufacture patch bumps for non-releasable commits.
+
+A network/authentication error or a conflict between Git tags and registry
+metadata stops the online workflow. The image must have valid project source,
+version, revision, and clean-build labels; its source must be an ancestor of
+HEAD. For intentionally offline work, use `./create_realease.sh --offline`;
+that mode relies only on local release tags and cannot verify registry history.
+
+Publication remains explicit. After the script succeeds, publish both the
+image and the printed Git release tag so other checkouts get the same baseline:
+
+```bash
+./image_push.sh
+git push origin v1.3.0             # substitute the version printed by the script
+```
+
+`tools/tag-release.sh` remains available for tagging an already built clean
+local image from its OCI labels. It rejects dirty builds and conflicting tags.
+Neither release helper creates a GitHub Release page or pushes automatically.
+Run `./tests/test-create-release.sh` to check bumps, rollback, baseline recovery,
+and rejection of dirty or docs-only release attempts with isolated fixtures.
 
 The pinned executable, cached download, installer, release policy, and tool license all live in [tools/](tools/README.md). Subsequent builds use the verified cached binary without downloading again. Git, Podman, and basic shell utilities remain host prerequisites. Downloaded tool files are excluded from Git and the container image.
 
