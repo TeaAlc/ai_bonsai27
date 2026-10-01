@@ -462,3 +462,22 @@ on this WSL2 host; Desktop/CDI on the remote machine remains untested. A separat
 OpenAI API request (answer `42`); its local evidence is
 `results/startup-override.log` and `results/startup-override-response.json`.
 No GHCR publication was performed.
+
+### Confirmed remote image selection (2026-10-01)
+
+`run.sh` now checks Podman image availability before GPU routing. A missing
+selected local image prompts for a remote reference, defaulting to
+`ghcr.io/teaalc/ai_bonsai27:latest`; Enter confirms it and another answer replaces
+it. Engine errors, EOF, invalid input, and failed pulls stop startup. Container
+creation uses `--pull=never` to prevent an additional implicit pull.
+
+Validation: `tests/test-run-image.sh` exercises cached images, both prompt
+answers, forwarded arguments, and failure cases using a mock engine. The full
+offline regression suite passed. An actual WSL2 GPU container started through
+`run.sh` with the existing local image, a 16,384-token context, and closed stdin;
+its OpenAI-compatible API correctly answered 19 + 23 with 42. The owned test
+container was removed. Logs are saved locally in
+`/tmp/bonsai27/run-image-regressions.log` and `/tmp/bonsai27/run-image-api.log`.
+The remote download branches were fixture-tested; no fresh registry download
+or publication was performed. These changes affect the host launcher only;
+the existing image was reused without rebuilding the container runtime.

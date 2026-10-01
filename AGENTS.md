@@ -43,7 +43,10 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   Git refs. Verify the newly published version and promote its exact manifest to
   latest. Prompt for a token unless `--token` was supplied, use password-stdin, and clean
   up temporary credential files. Never commit credentials.
-- `run.sh`: validate startup settings, prepare GPU access, and start the container.
+- `run.sh`: validate startup settings, check the selected local image, and prompt
+  for a remote reference if missing (Enter accepts ghcr.io/teaalc/ai_bonsai27:latest).
+  Pull only after confirmation; engine errors and closed stdin stop startup.
+  Prepare GPU access and start the container with --pull=never.
 - `data/models/download.sh`: shared pinned model metadata and locked, resumable,
   SHA256-verified downloads for missing model files. Use atomic directory locks,
   not flock on model mounts; shared filesystems may not implement it. Keep pins shared with

@@ -41,6 +41,12 @@ from pinned revisions and SHA256-verified before llama-server starts. The first
 start therefore needs internet access; later starts reuse nonempty readable
 files without downloading or rechecking their checksum. To use the published
 image, set `BONSAI_IMAGE` as shown; otherwise `run.sh` selects the local build.
+If that image is absent locally, the script asks for a remote image reference,
+with `ghcr.io/teaalc/ai_bonsai27:latest` as the default. Press Enter to confirm
+or enter another registry path, tag, or digest. It pulls the confirmed image
+and starts it; failed pulls stop startup. Cached images need no prompt.
+An unattended first start must pre-pull the selected image; closed stdin
+stops the script without downloading.
 The other four variables are optional and are shown explicitly for clarity.
 GPU devices, driver mounts, model mounts, and backend selection are configured
 automatically by `run.sh`; no additional GPU flags are needed.
@@ -129,7 +135,7 @@ These are all environment variables read by `run.sh`:
 | `BONSAI_CTX_SIZE` | `16384` | No | Context window in tokens; integer 512–262144 (VRAM permitting) |
 | `BONSAI_REASONING_EFFORT` | `medium` | No | Reasoning effort: `low`, `medium`, or `xhigh` |
 | `BONSAI_PORT` | `8080` | No | Available host TCP port, 1–65535; bound to localhost |
-| `BONSAI_IMAGE` | `localhost/bonsai2-27b:latest` | For the GHCR image | Image to start; a versioned tag pins a build |
+| `BONSAI_IMAGE` | `localhost/bonsai2-27b:latest` | No | Preferred local image; if missing, prompts for a remote reference (default `ghcr.io/teaalc/ai_bonsai27:latest`) |
 | `BONSAI_GPU_BACKEND` | Automatic | No | Empty, `blackwell` (12.0), or `ampere-ada` (8.6/8.9); override must match CUDA device 0 |
 | `BONSAI_CONTAINER_NAME` | `bonsai2-27b` | No | Container name; select a unique name for independent instances |
 | `BONSAI_DOWNLOAD_WAIT_SECONDS` | `600` | No | Shared-cache lock wait, integer 1–86400 seconds |
