@@ -75,7 +75,7 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
 - `assets/`: committed assets, including `fairyland-unicorns-1080p.png`.
 - `tests/`: automated tests. The top-level request example `simple_request.sh`
   sends the existing image asset and prints indented JSON; it must not generate
-  an image. `simpe_text_benchmark.sh` is the user-requested text benchmark: 10
+  an image. `simple_text_benchmark.sh` is the user-requested text benchmark: 10
   exchanges / 20 messages, approximately 16k cumulative API usage tokens, with
   full history retained. Distinguish cumulative usage from unique context
   tokens and decode speed from wall-clock throughput. Save reports in results/.

@@ -484,7 +484,7 @@ the existing image was reused without rebuilding the container runtime.
 
 ### Text conversation benchmark (2026-10-01)
 
-Added `simpe_text_benchmark.sh` (spelling as requested). It sends ten sequential
+Added `simple_text_benchmark.sh`. It sends ten sequential
 OpenAI-compatible chat requests, giving twenty user/assistant messages, and
 retains the complete history. Neutral planning notes are budgeted using the
 pinned server's template/tokenizer endpoints. The endpoint contract was checked

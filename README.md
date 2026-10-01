@@ -728,12 +728,12 @@ An explicit argument overrides `BONSAI_BASE_URL`; without an argument, the envir
 
 ## Text conversation benchmark
 
-With a running server, use the requested script name `simpe_text_benchmark.sh`:
+With a running server, run `simple_text_benchmark.sh`:
 
 ```bash
-./simpe_text_benchmark.sh                 # localhost:8080
-./simpe_text_benchmark.sh notebook        # notebook:8080
-./simpe_text_benchmark.sh notebook:8081   # notebook:8081
+./simple_text_benchmark.sh                 # localhost:8080
+./simple_text_benchmark.sh notebook        # notebook:8080
+./simple_text_benchmark.sh notebook:8081   # notebook:8081
 ```
 
 It simulates **20 messages: 10 user prompts and 10 assistant answers**, retaining

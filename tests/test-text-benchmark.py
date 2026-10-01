@@ -76,7 +76,7 @@ class BenchmarkTests(unittest.TestCase):
         result_path = Path(self.work.name) / 'report.json'
         environment = dict(os.environ, BONSAI_BASE_URL=f'http://127.0.0.1:{self.server.server_port}{base_suffix}',
                            BONSAI_BENCHMARK_RESULT=str(result_path))
-        args = ['bash', str(PROJECT / 'simpe_text_benchmark.sh')]
+        args = ['bash', str(PROJECT / 'simple_text_benchmark.sh')]
         if argument is not None:
             args.append(argument)
         process = subprocess.run(args, env=environment, text=True, capture_output=True, timeout=60)

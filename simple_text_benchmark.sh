@@ -4,7 +4,7 @@ set -euo pipefail
 # Simulate 10 user/assistant exchanges (20 messages), retaining full history.
 # The ~16k target is cumulative API input + output, including repeated history.
 if (( $# > 1 )); then
-    echo 'Usage: ./simpe_text_benchmark.sh [hostname[:port]]' >&2
+    echo 'Usage: ./simple_text_benchmark.sh [hostname[:port]]' >&2
     exit 2
 fi
 if (( $# == 1 )); then
