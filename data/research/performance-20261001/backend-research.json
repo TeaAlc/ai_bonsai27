@@ -1,0 +1,53 @@
+{
+  "checked_at": "2026-10-01",
+  "baseline_backend_revision": "285542d98d37d0f07f491cd206aefa31f1848f33",
+  "candidate_source_revision": "88c4bc60b9c9578f134385be9535e853f2db9b9f",
+  "source_url": "https://api.github.com/repos/PrismML-Eng/llama.cpp/tarball/88c4bc60b9c9578f134385be9535e853f2db9b9f",
+  "source_sha256": "cd55b6c23f1ef81c8bd9980ae148b66aeac1bc56b4eaed468b40d2a1247aed7b",
+  "sudoingx_bonsai2_head": "ff414120c343e6e6cb868013c99f1dde52b27e70",
+  "latest_prism_release": "prism-b10743-adfffbe",
+  "latest_prism_release_date": "2026-09-25T19:19:59Z",
+  "pull_requests": [
+    {
+      "number": 215,
+      "title": "cuda: PTQ1_0 decode on consumer Ampere/Ada: SoA q8 activations, warp-per-row small-K GEMV (+10.5% TG, +14.7% with #220)",
+      "html_url": "https://github.com/PrismML-Eng/llama.cpp/pull/215",
+      "state": "closed",
+      "merged": false,
+      "merged_at": null,
+      "updated_at": "2026-09-29T20:44:05Z",
+      "merge_commit_sha": null
+    },
+    {
+      "number": 218,
+      "title": "CUDA: fast, batch-invariant small-batch PTQ1_0 mat-vec (1.5x decode on Ampere)",
+      "html_url": "https://github.com/PrismML-Eng/llama.cpp/pull/218",
+      "state": "open",
+      "merged": false,
+      "merged_at": null,
+      "updated_at": "2026-09-26T15:12:54Z",
+      "merge_commit_sha": null
+    },
+    {
+      "number": 221,
+      "title": "cuda: Bonsai 2 27B at the full 262k window with the MTP head on 12 GB Ada: #218 + #215 hybrid PTQ1_0 dispatch, in-place q4_0/q8_0 K/V flash attention (integration checkpoint)",
+      "html_url": "https://github.com/PrismML-Eng/llama.cpp/pull/221",
+      "state": "closed",
+      "merged": true,
+      "merged_at": "2026-09-29T18:59:41Z",
+      "updated_at": "2026-09-29T22:11:03Z",
+      "merge_commit_sha": "5244ceade1f1b63e0ba785ac6dcf5c36e01195f0"
+    }
+  ],
+  "additional_research": [
+    "https://github.com/professorpalmer/bonsai-ada-surgery",
+    "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/blob/main/KNOWN_ISSUES.md",
+    "https://github.com/sudoingX/bonsai2-small-gpu/blob/main/results/KERNEL_REPORT.md"
+  ],
+  "experience_sources": [
+    "https://github.com/ggml-org/llama.cpp/discussions/29387",
+    "https://www.reddit.com/r/LocalLLM/comments/1wlsaoq/ternary_bonsai_2_27b_near_top_performance_while/",
+    "https://www.reddit.com/r/LocalLLM/comments/1wk6982/bonsai_2_27b_quantized_38_27b_98_intelligence_of/",
+    "https://www.reddit.com/r/LocalLLaMA/comments/1wkwz69/ternarybonsai227bpq2_0_is_not_completely/"
+  ]
+}

@@ -7,6 +7,13 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 export TMPDIR=${TMPDIR:-/tmp/bonsai27}
 source tools/project.sh
 source tools/backend-artifacts.sh
+# Keep the published bundles as the default; opt in to the researched SM89 build.
+ada_source=false
+case "${1:-}" in
+    '') (( $# == 0 )) || exit 2 ;;
+    --ada-source) (( $# == 1 )) || exit 2; ada_source=true ;;
+    *) echo 'Usage: build.sh [--ada-source]' >&2; exit 2 ;;
+esac
 bonsai_step project-lock "Waiting for the checkout lock."
 lock_project
 bonsai_step version "Calculating the image version with semrel."
@@ -56,6 +63,16 @@ for backend in blackwell ampere-ada; do
     [[ "$backend" != ampere-ada ]] || expected=$AMPERE_ADA_MANIFEST_SHA
     [[ "$actual" == "$expected" ]] || { echo "Error: unpinned $backend manifest." >&2; exit 2; }
 done
+# Include the optional source backend without changing either upstream bundle.
+mkdir -p "$staging/data/backends/ada-source/runtime"
+if [[ "$ada_source" == true ]]; then
+    source_dir=data/backends/ada-source/runtime
+    [[ -f "$source_dir/SHA256SUMS" ]] \
+        || { echo 'Error: missing Ada source backend; run tools/build-ada-backend.sh.' >&2; exit 2; }
+    python3 -B tools/verify-ada-source.py "$source_dir"
+    cp -a --reflink=auto "$source_dir/." "$staging/data/backends/ada-source/runtime/"
+    python3 -B tools/verify-ada-source.py "$staging/data/backends/ada-source/runtime"
+fi
 image="localhost/bonsai2-27b:$version"
 echo "Building $image from Git revision $revision (dirty=$dirty)"
 bonsai_step image-build "Building $image and latest (revision=$revision; dirty=$dirty)."

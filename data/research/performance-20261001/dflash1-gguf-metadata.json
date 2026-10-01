@@ -1,0 +1,37 @@
+{
+  "id": "spiritbuun/Qwen3.5-27B-DFlash-GGUF",
+  "sha": "3fa59f082214838d36d01d5d1276758efb1f3b3c",
+  "author": "spiritbuun",
+  "lastModified": "2026-04-23T20:30:41.000Z",
+  "cardData": {
+    "license": "mit",
+    "library_name": "gguf",
+    "base_model": "z-lab/Qwen3.5-27B-DFlash",
+    "tags": [
+      "gguf",
+      "speculative-decoding",
+      "dflash",
+      "drafter",
+      "llama.cpp",
+      "quantized"
+    ]
+  },
+  "config": {},
+  "siblings": [
+    {
+      "rfilename": "README.md",
+      "blobId": "e717d9f7241c8f94e8d112e7072830aad6e92d6b",
+      "size": 7207
+    },
+    {
+      "rfilename": "dflash-draft-q4_k_m.gguf",
+      "blobId": "0d111525a7dafb42e1617ece31c38d282c43dd1f",
+      "size": 1033066912,
+      "lfs": {
+        "sha256": "e3adbef5d972993175c086d92e8bdb6391feb90b7ef01e480c6e82197ea6929b",
+        "size": 1033066912,
+        "pointerSize": 135
+      }
+    }
+  ]
+}

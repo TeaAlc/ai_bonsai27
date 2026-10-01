@@ -20,22 +20,30 @@ def audit(directory):
         if envelope['recorded_at'] < metadata['started_at']:
             raise ValueError('evidence predates this test run')
         return envelope['data']
-    log = (root / 'server.log').read_text()
+    # Verbose token logs can contain individual bytes of a UTF-8 token.
+    # Decode only for ASCII runtime checks; bind evidence to the untouched bytes.
+    log_bytes = (root / 'server.log').read_bytes()
+    log = log_bytes.decode('utf-8', errors='replace')
     if any(identity[key] != small[key] for key in ('image_id', 'revision', 'suite_id', 'model_hashes')):
         raise ValueError('8k and 16k checks use different images')
-    if read('server-log')['sha256'] != hashlib.sha256((root / 'server.log').read_bytes()).hexdigest():
+    if read('server-log')['sha256'] != hashlib.sha256(log_bytes).hexdigest():
         raise ValueError('server log does not belong to this evidence set')
     models = read('models')
     chat = read('chat')
     vision = read('vision/summary')
     coding = read('coding/summary')
     props8 = read('props', root / 'context-8192', small)
+    # The published Ada bundle and newer Prism server report initialization
+    # differently. Both forms must identify an actually initialized MTP strategy.
+    mtp_initialized = ('speculative decoding enabled: draft-mtp' in log or
+                       ("adding speculative implementation 'draft-mtp'" in log and
+                        'speculative decoding context initialized' in log))
     checks = {
         'all_layers_cuda': 'offloaded 66/66 layers to GPU' in log,
         'all_model_buffers_cuda': bool(re.search(r'CUDA0 model buffer size', log)) and not re.search(r'(?:CPU|CPU_Mapped|CUDA_Host)\s+model buffer size', log),
         'flash_attention_main_and_mtp': log.count('flash_attn            = enabled') >= 2,
         'q8_main_and_mtp': len(re.findall(r'K \(q8_0\).*V \(q8_0\)', log)) >= 2,
-        'mtp_n2': 'n_max=2,' in log and 'speculative decoding enabled: draft-mtp' in log,
+        'mtp_n2': 'n_max=2,' in log and mtp_initialized,
         'gpu_draft': 'devices=[CUDA0]' in log,
         'no_cuda_init_error': 'failed to initialize CUDA' not in log,
         'context_16k': identity['context'] == 16384 and read('props')['default_generation_settings']['n_ctx'] == 16384,

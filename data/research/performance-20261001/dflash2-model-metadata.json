@@ -1,0 +1,47 @@
+{
+  "id": "ProCreations/Ternary-Bonsai-2-27B-DFlash2",
+  "sha": "4cfb6ad03268fed0f60ca96c1a659c0b1c77e50b",
+  "author": "ProCreations",
+  "lastModified": "2026-09-18T19:36:37.000Z",
+  "cardData": {
+    "license": "apache-2.0",
+    "base_model": [
+      "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "z-lab/Qwen3.8-27B-DFlash2"
+    ],
+    "tags": [
+      "speculative-decoding",
+      "dflash2",
+      "bonsai",
+      "gguf"
+    ]
+  },
+  "config": {
+    "architectures": [
+      "DFlash2DraftModel"
+    ],
+    "model_type": "qwen3"
+  },
+  "siblings": [
+    {
+      "rfilename": "Bonsai-2-27B-DFlash2-Q8_0.gguf",
+      "blobId": "f658eeb3a1fc5e14c550465167c11630cb81fd28",
+      "size": 2056415104,
+      "lfs": {
+        "sha256": "9dd11c8adb910058faf9fb77b10d90c1c048a4f3c2887a890f592cbd882deb9a",
+        "size": 2056415104,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "README.md",
+      "blobId": "9adb81daa24e2f68f490a3864c822ddc2916c74f",
+      "size": 5605
+    },
+    {
+      "rfilename": "config.json",
+      "blobId": "2d9d85ee25a1488cf513943242e3f43accd60e31",
+      "size": 1238
+    }
+  ]
+}

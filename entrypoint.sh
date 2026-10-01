@@ -54,6 +54,14 @@ bonsai_log INFO "Selected GPU backend: $gpu_backend"
 # Use one library search path for preflight and the server. CUDA driver files
 # come from the host GPU runtime, never from a stub or bundled host driver.
 backend_dir="/opt/bonsai/$gpu_backend"
+# The optional native SM89 build is selected only for an Ada device. Ampere
+# and Blackwell retain their pinned published bundles and CUDA architectures.
+if [[ "$gpu_backend" == ampere-ada && -x /opt/bonsai/ada-source/bin/llama-server ]]; then
+    if [[ $(query_cuda_capability) == 8.9 ]]; then
+        backend_dir=/opt/bonsai/ada-source
+        bonsai_log INFO 'Using the optional pinned Prism source backend for SM89.'
+    fi
+fi
 export LD_LIBRARY_PATH="/usr/lib/wsl/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:$backend_dir/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 if ! query_cuda_capability >/dev/null; then
     fail 'CUDA driver/GPU access is unavailable. Docker requires --gpus all and NVIDIA_DRIVER_CAPABILITIES=compute,utility; Podman requires NVIDIA CDI or the WSL /dev/dxg and /usr/lib/wsl mounts. No models were downloaded.'
@@ -153,7 +161,7 @@ generation_args=(
 
 # Replace the entrypoint process so llama-server receives container stop signals.
 # Forward additional arguments last, preserving each argument's quoting.
-bonsai_step server "Starting llama-server: backend=$gpu_backend; context=$ctx_size; reasoning=$reasoning_effort; GPU-only LLM; CPU vision; MTP=2; Flash Attention=on; KV=q8_0."
+bonsai_step server "Starting llama-server: backend=${backend_dir##*/}; context=$ctx_size; reasoning=$reasoning_effort; GPU-only LLM; CPU vision; MTP=2; Flash Attention=on; KV=q8_0."
 bonsai_log INFO 'Loading the model may take time. The API is ready only when /health returns HTTP 200.'
 exec "$backend_dir/bin/llama-server" \
     "${model_args[@]}" \

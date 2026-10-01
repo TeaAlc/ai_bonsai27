@@ -22,3 +22,8 @@ data/backends/ampere-ada/*
 !data/backends/ampere-ada/runtime/**
 
 !data/gpu/settings.sh
+
+!data/backends/ada-source
+data/backends/ada-source/*
+!data/backends/ada-source/runtime
+!data/backends/ada-source/runtime/**

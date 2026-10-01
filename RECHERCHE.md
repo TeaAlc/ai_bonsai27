@@ -536,3 +536,240 @@ container was removed. It supplements, rather than edits, the earlier recorded
 benchmark. Eight HTTP-fixture tests cover weighted aggregation, real zero hits,
 fallback counters, missing/partial/invalid counters, and the previous benchmark
 behaviors. Cache totals were also checked against the fresh API timing records.
+
+## 2026-10-01: RTX 4070 Ti SUPER performance investigation
+
+These are new measurements on an RTX 4070 Ti SUPER (16,376 MiB, SM89), driver
+595.91.07, in a Linux Mint KVM guest with eight Ryzen 9 5950X vCPUs and about
+16 GB of RAM. They do not replace the earlier WSL2 laptop measurements.
+The original default GHCR image was preserved by immutable image ID
+`ece87f5e0e34f91c5b77f9d333578922a6973403031a49469928f450ee5fc461`
+(version 1.4.2). No registry tags or model weights were changed.
+
+All speed trials used the unchanged `simple_text_benchmark.sh`: ten exchanges,
+full history, thinking disabled, greedy generation, and approximately 16k
+**cumulative** API usage tokens. The longest individual prompt is only about
+2.7k tokens. This measures repeated short conversation performance, not decoding
+against an already filled 16k or 128k context. First runs start with an empty
+prompt cache; second runs retain it. Decode rates use API decoding timings;
+wall time also includes prefill, sampling, and request overhead. Do not combine
+warm/cold figures or compare output throughput directly with decode throughput.
+
+### Versions, builds, and patches
+
+The existing Ada bundle uses `285542d98d37d0f07f491cd206aefa31f1848f33` with CUDA
+12.4; the newer sudoingX head remains `ff414120c343e6e6cb868013c99f1dde52b27e70`
+and its available bundle targets SM120. It is not an Ada binary upgrade. Prism's
+latest tagged release checked here, `prism-b10743-adfffbe` dated September 25,
+predates several useful changes.
+
+The tested source revision is
+[`88c4bc60b9c9578f134385be9535e853f2db9b9f`](https://github.com/PrismML-Eng/llama.cpp/commit/88c4bc60b9c9578f134385be9535e853f2db9b9f).
+It includes the September 29 merge of
+[PR #221](https://github.com/PrismML-Eng/llama.cpp/pull/221): hybrid Ada PTQ1
+kernels, native q4_0/q8_0 Flash Attention, and MTP catch-up/gather improvements.
+PR #218 is still open as a standalone proposal; #215 was closed without a merge.
+Their relevant work was integrated through #221, so stacking these patches again
+would duplicate changes. Stock upstream llama.cpp is not a verified replacement
+for this PTQ1 Bonsai image.
+
+The optional build uses CUDA 12.8.1, native SM89 machine code, CUDA graphs and
+Flash Attention, portable AVX2/FMA/F16C CPU support, and no model quantization
+changes. Source archive and compiler image pins, dependency/license packaging,
+and complete runtime inventories are recorded by the new preparation tool and
+image receipt. Native q8_0 attention is relevant to the eventual larger context
+because it avoids temporary F16 KV copies. The larger
+[ada-surgery fork](https://github.com/professorpalmer/bonsai-ada-surgery) also
+changes memory placement and generation behavior; its CPU-tiered caches and
+reasoning changes were not adopted in this GPU-only, quality-preserving setup.
+
+### Measured speed results
+
+The following rows show cold/warm runs. Main and draft K/V stay q8_0, Flash
+Attention stays enabled, and the LLM stays on CUDA0. BF16 vision stays on CPU.
+
+| Variant | Decode tokens/s, cold / warm | Wall seconds, cold / warm |
+| --- | ---: | ---: |
+| Original image, MTP=2 | 84.03 / 84.38 | 16.134 / 15.793 |
+| Original repeat, MTP=2 | 84.05 / 84.03 | 16.139 / 15.928 |
+| Original MTP=1 | 80.90 / 85.30 | 18.197 / 16.299 |
+| Original MTP=3 | 77.04 / 77.16 | 16.869 / 16.575 |
+| Original without speculation | 69.71 / 69.72 | 18.019 / 17.705 |
+| Prism source, MTP=2 | 87.30 / 87.91 | 15.904 / 15.507 |
+| Prism source repeat, MTP=2 | 87.01 / 87.56 | 15.886 / 15.577 |
+| Built optional image, MTP=2 | 87.43 / 87.86 | 16.041 / 15.455 |
+| Prism source, MTP=1 | 88.79 / 89.53 | 16.408 / 15.805 |
+| Prism source, MTP=3 | 80.63 / 80.22 | 16.395 / 15.882 |
+| Prism source without speculation | 73.51 / 73.65 | 17.383 / 17.203 |
+| DFlash1 Q4_K_M, n=3 | 73.93 / 75.79 | 19.536 / 17.299 |
+| DFlash1 Q4_K_M, n=7 | 54.95 / 56.03 | 22.659 / 20.546 |
+| DFlash2 ProCreations Q8_0, n=3 | 76.41 / 78.07 | 17.756 / 16.623 |
+| DFlash2 ProCreations Q8_0, n=7 | 63.97 / 64.97 | 19.351 / 18.309 |
+| DFlash2 NakliTechie Q4_K_M, n=3 | 79.09 / 80.77 | 18.020 / 16.952 |
+| DFlash2 NakliTechie Q4_K_M, n=7 | 63.16 / 62.99 | 20.849 / 21.251 |
+
+MTP=1 improves the new backend's isolated decode rate but loses on this
+benchmark's total wall time. MTP=2 remains the project default. The source
+backend gives approximately 4% higher decoding throughput than the original,
+with a smaller end-to-end benefit. Its ten benchmark answers, and those of both
+MTP depths, are byte-identical to the original. This is a measured small gain,
+not evidence for the much larger speedups reported on other setups.
+
+Actual API draft counters help explain the result: MTP=2 accepted 378 of 858
+proposed tokens (44.1%). DFlash2 Q4_K_M accepted 434/1,104 at n=3 (39.3%),
+but only 464/2,387 at n=7 (19.4%). More proposed work produced few additional
+accepted tokens in these conversations. DFlash also spent more time in prefill.
+These counters support the measured result on this workload; acceptance can
+change substantially for longer coding or math responses.
+
+Other trials included threads=1/2, polling=0, ubatch=128/256/1024, draft sampling
+on CPU, draft probability thresholds 0.25/0.5, CUDA graph optimization, main GPU
+sampling, and disabled batch invariance. None gave a convincing improvement in
+total wall time. Some altered greedy responses. Main GPU sampling on the new
+backend caused an illegal CUDA memory access during the third benchmark
+exchange; its partial timing is invalid and the option was rejected. Disabling
+batch invariance did not rescue DFlash performance, so the default remains 1.
+All repetitions, cache states, transcript comparisons, and failures are retained
+in `data/research/performance-20261001/measurements.json`; raw API reports,
+container inspections, and server logs are local evidence in
+`results/performance/`.
+
+The new backend also started successfully with `BONSAI_CTX_SIZE=131072`, all
+LLM state on CUDA0, and completed this same short-history benchmark at
+86.61/86.91 decode tokens/s. This checks 128k allocation/startup only. It does
+**not** validate 128k recall, latency at a filled window, or DFlash VRAM headroom
+at that context. The shipped default stays 16,384.
+
+### DFlash model compatibility and reported experience
+
+[DFlash1](https://huggingface.co/z-lab/Qwen3.5-27B-DFlash) and
+[DFlash2](https://huggingface.co/z-lab/Qwen3.8-27B-DFlash2) are different draft
+architectures. Prism uses `--spec-type draft-dflash` for both; model metadata
+selects the DFlash2 candidate-selector path. Merely using that flag does not
+make a DFlash2 trial a DFlash1 trial. Repeating `--spec-type` appends strategies
+in this backend, so the experiments explicitly removed the entrypoint's MTP
+strategy before selecting DFlash. Appending a DFlash override to `run.sh` alone
+would leave both selected and fail to initialize the draft as an MTP model.
+
+The first-generation spiritbuun GGUF used architecture `dflash-draft`, which
+Prism cannot load. The pinned
+[Anbeeld Q4_K_M conversion](https://huggingface.co/Anbeeld/Qwen3.5-27B-DFlash-GGUF)
+ran successfully. Its draft was trained for Qwen3.5, not specifically Bonsai2;
+this is a compatibility/performance experiment, not an optimal Bonsai drafter.
+Both tested DFlash2 drafts were Bonsai-specific:
+[ProCreations Q8_0](https://huggingface.co/ProCreations/Ternary-Bonsai-2-27B-DFlash2)
+and [NakliTechie Q4_K_M](https://huggingface.co/naklitechie/Qwen3.8-27B-DFlash2-ternary-bonsai2).
+Pinned revisions, SHA256s, and model configurations are retained under
+`data/research/performance-20261001/`. The target remains our original PTQ1
+model; no PQ2 target or alternative fine-tune was substituted.
+
+The most useful controlled firsthand report is
+[NakliTechie's L4 comparison](https://github.com/ggml-org/llama.cpp/discussions/29387):
+approximately 2.15–2.22x for code/math but 1.37x for conversation, against a
+no-speculation baseline. It used a PQ2 target and a different GPU. It also
+reports small accuracy changes in greedy batched verification and warns that
+reasoning loops can inflate tokens/s. Those details explain why its headline
+is not a promised gain over our already fast PTQ1+MTP backend.
+
+Consumer reports are mixed. The author's
+[RTX 4060 hobby benchmark](https://www.reddit.com/r/LocalLLM/comments/1wlsaoq/ternary_bonsai_2_27b_near_top_performance_while/)
+found good results with thinking disabled, while comments describe repetitions,
+hallucinations, and weaker practical rule following. An earlier
+[launch discussion](https://www.reddit.com/r/LocalLLM/comments/1wk6982/bonsai_2_27b_quantized_38_27b_98_intelligence_of/)
+contains useful coding and long-context anecdotes alongside very different
+throughput figures. Many omit backend revision, quantization, offload, cache
+state, or exact prompts, so they are leads for experiments rather than controlled
+comparisons. The
+[reconstruction/retrieval post](https://www.reddit.com/r/LocalLLaMA/comments/1wkwz69/ternarybonsai227bpq2_0_is_not_completely/)
+explicitly describes an informal test, not a general quality score. These
+reports motivated paired coding, recall, instruction, tool, and reasoning
+checks against the original image instead of judging quality by tokens/s.
+
+### Final paired quality evaluation
+
+Quality probes were run after all speed sweeps, against the exact original
+GHCR image and fourteen other configurations: original MTP=1/3, the optional
+image with MTP=2, Prism MTP=1/3, DFlash1 n=3/7, both DFlash2 drafts n=3/7, and
+Prism/DFlash2 batch-invariance controls. Each configuration passed:
+
+- Nine added reasoning, JSON/extraction, instruction-following, updated-fact,
+  unknown-fact, and tool-call probes. Three tasks explicitly enable thinking
+  with the unchanged `medium` reasoning effort.
+- All three coding tasks and their 23 trusted assertions, executed only in the
+  existing restricted Python container harness.
+- Both CPU BF16 vision fixtures, arithmetic chat, and recall from a prompt with
+  15,009 actual API prompt tokens in the 16,384-token window.
+
+All compared answer and reasoning text fields across sixteen responses per
+configuration were identical to the original on these probes. Tool-call names and parsed arguments
+were also correct; randomly generated call IDs are not compared. Some n=7
+DFlash benchmark conversations diverged from the original library plan. A
+qualitative review found alternative valid design/activity suggestions rather
+than a clear quality improvement; this does not establish equal quality beyond
+the checked cases. The controlled external DFlash2 report also documents small
+accuracy losses from near-tied greedy choices. DFlash is therefore not selected
+as a performance or quality upgrade here.
+
+The selected MTP=2 image also preserved all ten benchmark answers byte for byte.
+No response-quality deterioration or improvement was observed in these tests.
+This is a small regression evaluation, not a broad statistical assessment or a
+guarantee about future questions. Machine-readable paired results and limits are
+in `data/research/performance-20261001/quality-comparison.json`; the identified
+responses, runtime hashes, command/mount provenance, and checksummed logs remain
+in `results/performance/quality-final/`.
+
+The actual 15k recall probe took 10.523 seconds on the original and 10.087 seconds
+on the selected backend. API prefill rates were 1,445.83 versus 1,509.87 tokens/s;
+the reply is too short to use its decode rate as a speed benchmark. Final speed
+verification uses the unchanged text benchmark instead.
+
+The evidence auditor was corrected to decode verbose token-byte fragments only
+for text checks while hashing the original log bytes, and to recognize both
+published and current MTP initialization messages. Fixtures cover these formats,
+missing initialization, and tampered log bytes. The upstream bundles and saved
+logs were not edited to satisfy the audit.
+
+Fresh complete `tests/run-qa.sh` suites passed for the exact original image in
+`results/runs/20261001T191508Z-89813` and the selected image in
+`results/runs/20261001T191716Z-96420`. Both suites created owned 16k and 8k
+containers, used the existing unicorn image asset, and passed every checksum-bound
+QA audit check. The offline regression suite and actual CUDA dependency / missing
+driver runtime checks also passed. A default image build without the source
+option and the restored optional image build both succeeded.
+
+### Final simple_text_benchmark verification and running state
+
+The quality-validated optional image is running as `bonsai2-27b` on
+`http://localhost:8080`, at the unchanged 16,384-token context with MTP=2.
+Its immutable image ID is
+`5f327fa98e1474285f8e943f20eb9ca3d497b3d79f6d3261949db25d9deae6c0`.
+The stopped original container is preserved as `bonsai2-27b-original-20261001`.
+The image is a local development build; no image was published and no release
+or existing Git tag was moved. Existing unrelated installer work was preserved.
+
+Final verification used the unchanged `simple_text_benchmark.sh` twice:
+
+| Final run | Decode tokens/s | Wall seconds | Output tokens / wall second | Cache hits |
+| --- | ---: | ---: | ---: | ---: |
+| Cold first conversation | 87.57 | 15.806 | 50.99 | 87.09% |
+| Warm repeated conversation | 87.92 | 15.436 | 52.22 | 89.94% |
+
+Both runs completed all ten exchanges / twenty messages, with 15,162 prompt,
+806 completion, and 15,968 cumulative API usage tokens. All answers matched the
+original exactly. The cold run had zero cached tokens on the first exchange,
+13,205 cached prompt tokens overall, and 1,957 processed prompt tokens. The
+warm run started with 431 cached tokens; these figures must not be compared as
+if both runs started cold.
+
+Against the user's supplied 84.49 decode tokens/s and 16.069 seconds, the final
+cold run improves decode throughput by 3.6% and lowers wall time by 1.6%. Against
+the freshly measured cold baseline of 84.03 and 16.134 seconds, the improvements
+are 4.2% and 2.0%. The remaining end-to-end cost includes prompt processing and
+request overhead; the decode gain does not translate directly into the same
+percentage wall-time reduction.
+
+Raw reports are `results/performance/final-simple-text-benchmark-cold.json` and
+`results/performance/final-simple-text-benchmark-warm.json`, with final container
+inspection/log evidence beside them. Their SHA256 identities and compact
+measurements are retained in the research JSON. `results/last-build.json`
+identifies the exact built image and all three backend inventories.

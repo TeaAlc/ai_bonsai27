@@ -22,11 +22,16 @@ inputs = {}
 for backend in ('blackwell', 'ampere-ada'):
     manifest = root / 'data/backends' / backend / 'runtime/SHA256SUMS'
     inputs[backend] = hashlib.sha256(manifest.read_bytes()).hexdigest()
+optional_backend = root / 'data/backends/ada-source/runtime'
+optional_build = None
+if (optional_backend / 'SHA256SUMS').is_file():
+    inputs['ada-source'] = hashlib.sha256((optional_backend / 'SHA256SUMS').read_bytes()).hexdigest()
+    optional_build = json.loads((optional_backend / 'build.json').read_text())
 record = {'schema': 1, 'image_id': 'sha256:' + image['Id'].removeprefix('sha256:'), 'engine': 'podman',
           'version': version, 'revision': revision, 'dirty': dirty == 'true',
           'source': expected['org.opencontainers.image.source'],
           'built_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
-          'inputs': inputs, 'containerfile': (root / 'Containerfile').read_text(),
+          'inputs': inputs, 'ada_source_build': optional_build, 'containerfile': (root / 'Containerfile').read_text(),
           'backend_pins': (root / 'tools/backend-artifacts.sh').read_text(),
           'model_pins': (root / 'data/models/download.sh').read_text().split('# A directory lock')[0],
           'semrel_pins': (root / 'tools/semrel/artifacts.sh').read_text(),

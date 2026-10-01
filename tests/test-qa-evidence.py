@@ -52,6 +52,28 @@ Ternary-Bonsai-2-27B-mmproj-BF16.gguf
         path.write_text(json.dumps({'run_id':metadata['run_id'],'image_id':metadata['image_id'],'recorded_at':'2026-09-30T00:01:00+00:00','data':data}))
 
     def test_valid(self):self.assertTrue(all(qa.audit(self.root).values()))
+    def test_token_byte_log(self):
+        path = self.root / 'server.log'
+        raw = path.read_bytes() + b'\nverbose token fragment: \xe2\x80\n'
+        path.write_bytes(raw)
+        self.write('server-log', {'sha256': hashlib.sha256(raw).hexdigest()})
+        self.assertTrue(all(qa.audit(self.root).values()))
+        path.write_bytes(raw + b'tampered')
+        with self.assertRaises(ValueError):
+            qa.audit(self.root)
+
+    def test_published_backend_mtp_log(self):
+        path = self.root / 'server.log'
+        log = path.read_text().replace('speculative decoding enabled: draft-mtp',
+            "adding speculative implementation 'draft-mtp'\nspeculative decoding context initialized")
+        path.write_text(log)
+        self.write('server-log', {'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
+        self.assertTrue(all(qa.audit(self.root).values()))
+        path.write_text(log.replace('speculative decoding context initialized', ''))
+        self.write('server-log', {'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
+        with self.assertRaises(AssertionError):
+            qa.audit(self.root)
+
     def test_wrong_answer(self):
         self.write('chat',{'choices':[{'message':{'content':'142'}}]})
         with self.assertRaises(AssertionError):qa.audit(self.root)

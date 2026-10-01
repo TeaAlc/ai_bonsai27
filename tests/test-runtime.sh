@@ -5,7 +5,7 @@ mkdir -p /tmp/bonsai27
 work_dir=$(mktemp -d /tmp/bonsai27/runtime-test.XXXXXX)
 trap 'rm -rf -- "$work_dir"' EXIT
 
-# Check both packaged backends with the host's real CUDA driver attached.
+# Check all packaged backends with the host's real CUDA driver attached.
 if [[ -e /dev/dxg ]]; then
     gpu_args=(--device /dev/dxg -v /usr/lib/wsl:/usr/lib/wsl:ro)
 else
@@ -38,4 +38,4 @@ if podman run --rm -e BONSAI_CTX_SIZE=invalid "$image" > "$work_dir/settings.log
 if podman run --rm -v "$work_dir/models:/models:ro" "$image" > "$work_dir/cache.log" 2>&1; then exit 1; fi
 [[ $(< "$work_dir/cache.log") == *'[model-cache] [ERROR]'* ]]
 [[ $(< "$work_dir/cache.log") != *'[gpu-access]'* ]]
-echo 'Passed both backend dependency checks and pre-download CUDA failure check.'
+echo 'Passed packaged backend dependency checks and pre-download CUDA failure check.'

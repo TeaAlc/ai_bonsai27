@@ -1,0 +1,111 @@
+{
+  "id": "Anbeeld/Qwen3.5-27B-DFlash-GGUF",
+  "sha": "f5944a97b6ab2ccf493f153b854fca446d655fef",
+  "author": "Anbeeld",
+  "lastModified": "2026-08-29T23:36:06.000Z",
+  "cardData": {
+    "base_model": "z-lab/Qwen3.5-27B-DFlash",
+    "tags": [
+      "transformers",
+      "safetensors",
+      "qwen3",
+      "feature-extraction",
+      "dflash",
+      "speculative-decoding",
+      "speculative-decoding-draft",
+      "block-diffusion",
+      "draft-model",
+      "diffusion-language-model",
+      "efficiency",
+      "qwen",
+      "qwen3.5",
+      "sglang",
+      "text-generation",
+      "custom_code",
+      "arxiv:2602.06036",
+      "base_model:Qwen/Qwen3.5-27B",
+      "base_model:finetune:Qwen/Qwen3.5-27B",
+      "license:apache-2.0",
+      "text-generation-inference",
+      "region:us"
+    ]
+  },
+  "config": {},
+  "siblings": [
+    {
+      "rfilename": "Qwen3.5-27B-DFlash-Q2_K.gguf",
+      "blobId": "104b4e73c5712410c52391569c6699f8ef92ee4b",
+      "size": 784154944,
+      "lfs": {
+        "sha256": "2b41dd276d696051b84bd87314cc1ebd65b0bd5206b04ffc44447f44c052f25c",
+        "size": 784154944,
+        "pointerSize": 134
+      }
+    },
+    {
+      "rfilename": "Qwen3.5-27B-DFlash-Q3_K_M.gguf",
+      "blobId": "5c7b0c3e8cf30491b86281ea0e4efbd98315baa3",
+      "size": 1019101504,
+      "lfs": {
+        "sha256": "b5ecaf9439c5ba446cf1324e5c4cd9424a480b46fa9bb633fe9df9713d75d51a",
+        "size": 1019101504,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen3.5-27B-DFlash-Q4_K_M.gguf",
+      "blobId": "991aea5733739fc7046cc1775dfcfa243ae7530d",
+      "size": 1257242944,
+      "lfs": {
+        "sha256": "e66803c4e14daf9683f6422086133d77a1554d4fee1137fc5962529276a8db56",
+        "size": 1257242944,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen3.5-27B-DFlash-Q5_K_M.gguf",
+      "blobId": "16983010735be35c01ce847011f3f9d1bf3a99a3",
+      "size": 1499726144,
+      "lfs": {
+        "sha256": "5d39a798b83f68823a35eb6f63b95b8853744c300343fb3396bbda3f55af77dc",
+        "size": 1499726144,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen3.5-27B-DFlash-Q6_K.gguf",
+      "blobId": "d3eb7e5e181288a53538768403edbf6d02c151af",
+      "size": 1757364544,
+      "lfs": {
+        "sha256": "d2283133fbf0dc77afa94d630b9cfc51da519094d19002c843d0e1d79bddfcf8",
+        "size": 1757364544,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen3.5-27B-DFlash-Q8_0.gguf",
+      "blobId": "11f878b642687764aa87ca6cc2cfd11b8aec4a28",
+      "size": 2272887104,
+      "lfs": {
+        "sha256": "14a0cb7dd25b4427db44037ee291f835defa42c2bc05fb4be3e1519b6f4b644e",
+        "size": 2272887104,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen3.5-27B-DFlash-bf16.gguf",
+      "blobId": "25e3162400a4a63865c8e6681d9e99a1db2b6486",
+      "size": 4268458304,
+      "lfs": {
+        "sha256": "fabb5e8393004e6b85c0b84a06e0559dd33c650c1da1b22372269d79241ec239",
+        "size": 4268458304,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "README.md",
+      "blobId": "c4ad47eecf5ef911e05944faf0aee1d76c9bb35d",
+      "size": 7307
+    }
+  ]
+}

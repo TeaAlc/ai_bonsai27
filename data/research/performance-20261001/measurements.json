@@ -1,0 +1,773 @@
+{
+  "measured_on": "2026-10-01",
+  "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+  "vram_mib": 16376,
+  "compute_capability": "8.9",
+  "driver": "595.91.07",
+  "host": "Linux Mint KVM guest; 8 vCPU Ryzen 9 5950X; approximately 16 GB RAM",
+  "context_default": 16384,
+  "benchmark": "unchanged simple_text_benchmark.sh; 10 exchanges / 20 messages; approximately 16k cumulative API usage, not a filled 16k context",
+  "original_image_id": "sha256:ece87f5e0e34f91c5b77f9d333578922a6973403031a49469928f450ee5fc461",
+  "candidate_source_revision": "88c4bc60b9c9578f134385be9535e853f2db9b9f",
+  "runtime_manifest_sha256": "2a29849cac102e76591f82a9b1b93515bd14f0fab9dbb0003ca93e16112ac921",
+  "rows": [
+    {
+      "variant": "baseline",
+      "repetitions": 1,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/baseline-1.json"
+      ],
+      "parameters": [],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 84.85,
+      "first_wall_seconds": 15.796,
+      "second_decode_tokens_per_second": null,
+      "second_wall_seconds": null,
+      "first_exchange_cached_prompt_tokens": 431,
+      "first_run_prompt_cache_state": "warm-existing"
+    },
+    {
+      "variant": "baseline-repeat",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/baseline-repeat-1.json",
+        "results/performance/baseline-repeat-2.json"
+      ],
+      "parameters": [],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 84.05,
+      "first_wall_seconds": 16.139,
+      "second_decode_tokens_per_second": 84.03,
+      "second_wall_seconds": 15.928,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "built-ada",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/built-ada-1.json",
+        "results/performance/built-ada-2.json"
+      ],
+      "parameters": [],
+      "image_profile": "optional Ada source build",
+      "first_decode_tokens_per_second": 87.43,
+      "first_wall_seconds": 16.041,
+      "second_decode_tokens_per_second": 87.86,
+      "second_wall_seconds": 15.455,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "dflash1-anbeeld-3",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/dflash1-anbeeld-3-1.json",
+        "results/performance/dflash1-anbeeld-3-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "--spec-type",
+        "draft-dflash",
+        "--spec-draft-model",
+        "/models/results/performance/drafts/Qwen3.5-27B-DFlash-Q4_K_M.gguf",
+        "--spec-draft-n-max",
+        "3"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 73.93,
+      "first_wall_seconds": 19.536,
+      "second_decode_tokens_per_second": 75.79,
+      "second_wall_seconds": 17.299,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "dflash1-anbeeld-7",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": false,
+      "reports": [
+        "results/performance/dflash1-anbeeld-7-1.json",
+        "results/performance/dflash1-anbeeld-7-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "--spec-type",
+        "draft-dflash",
+        "--spec-draft-model",
+        "/models/results/performance/drafts/Qwen3.5-27B-DFlash-Q4_K_M.gguf",
+        "--spec-draft-n-max",
+        "7"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 54.95,
+      "first_wall_seconds": 22.659,
+      "second_decode_tokens_per_second": 56.03,
+      "second_wall_seconds": 20.546,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "dflash2-q4-3",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/dflash2-q4-3-1.json",
+        "results/performance/dflash2-q4-3-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "--spec-type",
+        "draft-dflash",
+        "--spec-draft-model",
+        "/models/results/performance/drafts/Qwen3.8-27B-DFlash2-r3-Q4_K_M.gguf",
+        "--spec-draft-n-max",
+        "3"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 79.09,
+      "first_wall_seconds": 18.02,
+      "second_decode_tokens_per_second": 80.77,
+      "second_wall_seconds": 16.952,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "dflash2-q4-3-invariant-off",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/dflash2-q4-3-invariant-off-1.json",
+        "results/performance/dflash2-q4-3-invariant-off-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "ENV:GGML_CUDA_BATCH_INVARIANT=0",
+        "--spec-type",
+        "draft-dflash",
+        "--spec-draft-model",
+        "/models/results/performance/drafts/Qwen3.8-27B-DFlash2-r3-Q4_K_M.gguf",
+        "--spec-draft-n-max",
+        "3"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 78.48,
+      "first_wall_seconds": 18.164,
+      "second_decode_tokens_per_second": 74.54,
+      "second_wall_seconds": 19.64,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "dflash2-q4-7",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": false,
+      "reports": [
+        "results/performance/dflash2-q4-7-1.json",
+        "results/performance/dflash2-q4-7-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "--spec-type",
+        "draft-dflash",
+        "--spec-draft-model",
+        "/models/results/performance/drafts/Qwen3.8-27B-DFlash2-r3-Q4_K_M.gguf",
+        "--spec-draft-n-max",
+        "7"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 63.16,
+      "first_wall_seconds": 20.849,
+      "second_decode_tokens_per_second": 62.99,
+      "second_wall_seconds": 21.251,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "dflash2-q4-7-invariant-off",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": false,
+      "reports": [
+        "results/performance/dflash2-q4-7-invariant-off-1.json",
+        "results/performance/dflash2-q4-7-invariant-off-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "ENV:GGML_CUDA_BATCH_INVARIANT=0",
+        "--spec-type",
+        "draft-dflash",
+        "--spec-draft-model",
+        "/models/results/performance/drafts/Qwen3.8-27B-DFlash2-r3-Q4_K_M.gguf",
+        "--spec-draft-n-max",
+        "7"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 63.5,
+      "first_wall_seconds": 21.763,
+      "second_decode_tokens_per_second": 64.93,
+      "second_wall_seconds": 19.485,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "dflash2-q8-3",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/dflash2-q8-3-1.json",
+        "results/performance/dflash2-q8-3-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "--spec-type",
+        "draft-dflash",
+        "--spec-draft-model",
+        "/models/results/performance/drafts/Bonsai-2-27B-DFlash2-Q8_0.gguf",
+        "--spec-draft-n-max",
+        "3"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 76.41,
+      "first_wall_seconds": 17.756,
+      "second_decode_tokens_per_second": 78.07,
+      "second_wall_seconds": 16.623,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "dflash2-q8-7",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": false,
+      "reports": [
+        "results/performance/dflash2-q8-7-1.json",
+        "results/performance/dflash2-q8-7-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "--spec-type",
+        "draft-dflash",
+        "--spec-draft-model",
+        "/models/results/performance/drafts/Bonsai-2-27B-DFlash2-Q8_0.gguf",
+        "--spec-draft-n-max",
+        "7"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 63.97,
+      "first_wall_seconds": 19.351,
+      "second_decode_tokens_per_second": 64.97,
+      "second_wall_seconds": 18.309,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "draft-cpu-sampling",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/draft-cpu-sampling-1.json",
+        "results/performance/draft-cpu-sampling-2.json"
+      ],
+      "parameters": [
+        "--no-spec-draft-backend-sampling"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 80.83,
+      "first_wall_seconds": 16.874,
+      "second_decode_tokens_per_second": 81.1,
+      "second_wall_seconds": 16.613,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "draft-pmin-025",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/draft-pmin-025-1.json",
+        "results/performance/draft-pmin-025-2.json"
+      ],
+      "parameters": [
+        "--spec-draft-p-min",
+        "0.25"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 79.93,
+      "first_wall_seconds": 17.035,
+      "second_decode_tokens_per_second": 80.39,
+      "second_wall_seconds": 16.593,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "draft-pmin-05",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/draft-pmin-05-1.json",
+        "results/performance/draft-pmin-05-2.json"
+      ],
+      "parameters": [
+        "--spec-draft-p-min",
+        "0.5"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 72.4,
+      "first_wall_seconds": 17.714,
+      "second_decode_tokens_per_second": 72.58,
+      "second_wall_seconds": 17.325,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "fresh-default",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/fresh-default-1.json",
+        "results/performance/fresh-default-2.json"
+      ],
+      "parameters": [],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 84.03,
+      "first_wall_seconds": 16.134,
+      "second_decode_tokens_per_second": 84.38,
+      "second_wall_seconds": 15.793,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "graph-opt",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": false,
+      "reports": [
+        "results/performance/graph-opt-1.json",
+        "results/performance/graph-opt-2.json"
+      ],
+      "parameters": [
+        "ENV:GGML_CUDA_GRAPH_OPT=1"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 82.95,
+      "first_wall_seconds": 16.318,
+      "second_decode_tokens_per_second": 82.87,
+      "second_wall_seconds": 15.908,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "main-gpu-sampling",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/main-gpu-sampling-1.json",
+        "results/performance/main-gpu-sampling-2.json"
+      ],
+      "parameters": [
+        "--backend-sampling"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 82.89,
+      "first_wall_seconds": 18.163,
+      "second_decode_tokens_per_second": 83.14,
+      "second_wall_seconds": 17.443,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "original-mtp-off",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/original-mtp-off-1.json",
+        "results/performance/original-mtp-off-2.json"
+      ],
+      "parameters": [
+        "--spec-type",
+        "none"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 69.71,
+      "first_wall_seconds": 18.019,
+      "second_decode_tokens_per_second": 69.72,
+      "second_wall_seconds": 17.705,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "original-mtp1",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/original-mtp1-1.json",
+        "results/performance/original-mtp1-2.json"
+      ],
+      "parameters": [
+        "--spec-draft-n-max",
+        "1"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 80.9,
+      "first_wall_seconds": 18.197,
+      "second_decode_tokens_per_second": 85.3,
+      "second_wall_seconds": 16.299,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "original-mtp3",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/original-mtp3-1.json",
+        "results/performance/original-mtp3-2.json"
+      ],
+      "parameters": [
+        "--spec-draft-n-max",
+        "3"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 77.04,
+      "first_wall_seconds": 16.869,
+      "second_decode_tokens_per_second": 77.16,
+      "second_wall_seconds": 16.575,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "poll-0",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/poll-0-1.json",
+        "results/performance/poll-0-2.json"
+      ],
+      "parameters": [
+        "--poll",
+        "0"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 83.72,
+      "first_wall_seconds": 16.199,
+      "second_decode_tokens_per_second": 84.13,
+      "second_wall_seconds": 15.819,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "prism-128k",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/prism-128k-1.json",
+        "results/performance/prism-128k-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "ENV:BONSAI_CTX_SIZE=131072"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 86.61,
+      "first_wall_seconds": 15.9,
+      "second_decode_tokens_per_second": 86.91,
+      "second_wall_seconds": 15.543,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "prism-current",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/prism-current-1.json",
+        "results/performance/prism-current-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 87.3,
+      "first_wall_seconds": 15.904,
+      "second_decode_tokens_per_second": 87.91,
+      "second_wall_seconds": 15.507,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "prism-invariant-off",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/prism-invariant-off-1.json",
+        "results/performance/prism-invariant-off-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "ENV:GGML_CUDA_BATCH_INVARIANT=0"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 87.11,
+      "first_wall_seconds": 15.858,
+      "second_decode_tokens_per_second": 87.57,
+      "second_wall_seconds": 15.476,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "prism-mtp-off",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/prism-mtp-off-1.json",
+        "results/performance/prism-mtp-off-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "--spec-type",
+        "none"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 73.51,
+      "first_wall_seconds": 17.383,
+      "second_decode_tokens_per_second": 73.65,
+      "second_wall_seconds": 17.203,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "prism-mtp1",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/prism-mtp1-1.json",
+        "results/performance/prism-mtp1-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "--spec-draft-n-max",
+        "1"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 88.79,
+      "first_wall_seconds": 16.408,
+      "second_decode_tokens_per_second": 89.53,
+      "second_wall_seconds": 15.805,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "prism-mtp3",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/prism-mtp3-1.json",
+        "results/performance/prism-mtp3-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime",
+        "--spec-draft-n-max",
+        "3"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 80.63,
+      "first_wall_seconds": 16.395,
+      "second_decode_tokens_per_second": 80.22,
+      "second_wall_seconds": 15.882,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "prism-repeat",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/prism-repeat-1.json",
+        "results/performance/prism-repeat-2.json"
+      ],
+      "parameters": [
+        "MOUNT:data/backends/ada-source/runtime"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 87.01,
+      "first_wall_seconds": 15.886,
+      "second_decode_tokens_per_second": 87.56,
+      "second_wall_seconds": 15.577,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "threads-1",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/threads-1-1.json",
+        "results/performance/threads-1-2.json"
+      ],
+      "parameters": [
+        "--threads",
+        "1",
+        "--threads-batch",
+        "4"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 82.45,
+      "first_wall_seconds": 16.618,
+      "second_decode_tokens_per_second": 82.73,
+      "second_wall_seconds": 16.703,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "threads-2",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/threads-2-1.json",
+        "results/performance/threads-2-2.json"
+      ],
+      "parameters": [
+        "--threads",
+        "2",
+        "--threads-batch",
+        "4"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 81.51,
+      "first_wall_seconds": 16.967,
+      "second_decode_tokens_per_second": 84.03,
+      "second_wall_seconds": 15.932,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "ubatch-1024",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": true,
+      "reports": [
+        "results/performance/ubatch-1024-1.json",
+        "results/performance/ubatch-1024-2.json"
+      ],
+      "parameters": [
+        "--ubatch-size",
+        "1024"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 83.29,
+      "first_wall_seconds": 16.422,
+      "second_decode_tokens_per_second": 83.65,
+      "second_wall_seconds": 15.888,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "ubatch-128",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": false,
+      "reports": [
+        "results/performance/ubatch-128-1.json",
+        "results/performance/ubatch-128-2.json"
+      ],
+      "parameters": [
+        "--ubatch-size",
+        "128"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 84.87,
+      "first_wall_seconds": 16.258,
+      "second_decode_tokens_per_second": 85.14,
+      "second_wall_seconds": 15.964,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    },
+    {
+      "variant": "ubatch-256",
+      "repetitions": 2,
+      "benchmark_answers_equal_baseline": false,
+      "reports": [
+        "results/performance/ubatch-256-1.json",
+        "results/performance/ubatch-256-2.json"
+      ],
+      "parameters": [
+        "--ubatch-size",
+        "256"
+      ],
+      "image_profile": "original image with the specified explicit overrides",
+      "first_decode_tokens_per_second": 83.29,
+      "first_wall_seconds": 16.328,
+      "second_decode_tokens_per_second": 83.64,
+      "second_wall_seconds": 16.129,
+      "first_exchange_cached_prompt_tokens": 0,
+      "first_run_prompt_cache_state": "cold"
+    }
+  ],
+  "failures": [
+    {
+      "variant": "prism-current-gpu-sampling",
+      "reason": "CUDA illegal memory access during third exchange; partial benchmark is invalid"
+    },
+    {
+      "variant": "dflash1-spiritbuun",
+      "reason": "GGUF architecture dflash-draft unsupported by Prism; alternate Anbeeld dflash packaging ran successfully"
+    }
+  ],
+  "final_container": "bonsai2-27b",
+  "final_image_id": "sha256:5f327fa98e1474285f8e943f20eb9ca3d497b3d79f6d3261949db25d9deae6c0",
+  "preserved_original_container": "bonsai2-27b-original-20261001",
+  "final_verification": [
+    {
+      "state": "cold",
+      "report": "results/performance/final-simple-text-benchmark-cold.json",
+      "sha256": "288ea414124fa49fb246cc94bb7a50a6cda68fa2e606453bda868a34396f28a4",
+      "recorded_at": "2026-10-01T19:20:13.745040+00:00",
+      "completed_exchanges": 10,
+      "message_count": 20,
+      "target_tokens": 16000,
+      "prompt_tokens": 15162,
+      "completion_tokens": 806,
+      "total_tokens": 15968,
+      "within_5_percent": true,
+      "cached_prompt_tokens": 13205,
+      "processed_prompt_tokens": 1957,
+      "cache_hit_rate_percent": 87.09,
+      "wall_seconds": 15.806,
+      "output_tokens_per_wall_second": 50.99,
+      "decode_tokens_per_second": 87.57,
+      "context_size": 16384,
+      "first_cached_prompt_tokens": 0,
+      "answers_equal_original": true
+    },
+    {
+      "state": "warm",
+      "report": "results/performance/final-simple-text-benchmark-warm.json",
+      "sha256": "984991dc9c6b0710acb79a97b959b30dcf17919d1536b9b5428f9bb83b27d30b",
+      "recorded_at": "2026-10-01T19:20:29.243436+00:00",
+      "completed_exchanges": 10,
+      "message_count": 20,
+      "target_tokens": 16000,
+      "prompt_tokens": 15162,
+      "completion_tokens": 806,
+      "total_tokens": 15968,
+      "within_5_percent": true,
+      "cached_prompt_tokens": 13636,
+      "processed_prompt_tokens": 1526,
+      "cache_hit_rate_percent": 89.94,
+      "wall_seconds": 15.436,
+      "output_tokens_per_wall_second": 52.22,
+      "decode_tokens_per_second": 87.92,
+      "context_size": 16384,
+      "first_cached_prompt_tokens": 431,
+      "answers_equal_original": true
+    }
+  ],
+  "user_supplied_baseline": {
+    "decode_tokens_per_second": 84.49,
+    "wall_seconds": 16.069,
+    "output_tokens_per_wall_second": 50.16,
+    "cache_hit_rate_percent": 87.09,
+    "prompt_tokens": 15162,
+    "completion_tokens": 806
+  }
+}

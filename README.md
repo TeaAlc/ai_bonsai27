@@ -917,3 +917,41 @@ project configuration variables. Keep temporary work under `/tmp/bonsai27/`
 and Python bytecode caches out of the project. Completed changes use English
 Conventional Commit messages compatible with semantic-release and end with
 `(by Codex)`.
+
+## Optional Ada source backend
+
+The published backend bundles remain the default. An optional source build of
+PrismML's fork at `88c4bc60b9c9578f134385be9535e853f2db9b9f` includes the merged
+Ada PTQ1, MTP, and native quantized Flash Attention changes researched on
+2026-10-01. Prepare it separately, then create the image through the usual build
+workflow (run `./prepare.sh` first if the published bundles are missing):
+
+```bash
+./tools/build-ada-backend.sh
+./build.sh --ada-source
+./run.sh
+```
+
+The compiler image and source archive are pinned by digest/SHA256. Compilation
+runs inside Podman and requires working CUDA injection for linking, Internet
+access for compiler packages, approximately 8 GB of temporary build space, and
+several minutes. `BONSAI_BUILD_JOBS` accepts 1–64 and defaults to 8; reduce it on
+hosts with little RAM. The prepared runtime, licenses, complete file inventory,
+and build provenance stay under `data/backends/ada-source/runtime/` and are
+excluded from Git. The build receipt includes the optional runtime identity and
+compiler inventory. Rebuilding `./build.sh` without the option uses the original
+bundles again.
+
+The optional image selects this backend only on compute capability 8.9. The
+original Ampere 8.6 and Blackwell 12.0 bundles remain available. Runtime testing
+of this optional build was performed only on an RTX 4070 Ti SUPER in a native
+Linux KVM guest with NVIDIA CDI. GPU-only language-model placement, CPU BF16
+vision, 16,384-token default context, MTP=2, q8_0 caches, and batch invariance
+remain unchanged.
+
+See [RECHERCHE.md](RECHERCHE.md) for the speed and final quality comparisons,
+including MTP=1/3 and DFlash/DFlash2. `python3 -B tests/test-quality.py` adds a
+small identified probe for reasoning, instruction following, and tool calls;
+use the same `BONSAI_TEST_*` identity variables as the other API tests. Its score
+is a regression check, not a general measure of model quality. Final speed
+verification always uses `./simple_text_benchmark.sh`.

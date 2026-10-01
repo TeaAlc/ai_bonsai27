@@ -1,0 +1,54 @@
+{
+  "id": "naklitechie/Qwen3.8-27B-DFlash2-ternary-bonsai2",
+  "sha": "0059b38aa255698b1a87305eb3fbb5a3cfd616e2",
+  "author": "naklitechie",
+  "lastModified": "2026-09-24T19:19:03.000Z",
+  "cardData": {
+    "license": "apache-2.0",
+    "base_model": "z-lab/Qwen3.8-27B-DFlash2",
+    "library_name": "mlx",
+    "pipeline_tag": "text-generation",
+    "tags": [
+      "speculative-decoding",
+      "dflash2",
+      "draft-model",
+      "mlx",
+      "ternary",
+      "bonsai",
+      "qwen3.8",
+      "gguf",
+      "llama.cpp"
+    ],
+    "language": [
+      "en"
+    ]
+  },
+  "config": {
+    "architectures": [
+      "DFlash2DraftModel"
+    ],
+    "model_type": "qwen3"
+  },
+  "siblings": [
+    {
+      "rfilename": "Qwen3.8-27B-DFlash2-r3-Q4_K_M.gguf",
+      "blobId": "2171134c3ef1f039c29dcf425b3481e325ed7778",
+      "size": 1143006912,
+      "lfs": {
+        "sha256": "6c11956fde5f52867e3255991b30405ae931d205a35caf3fc87a2c3865aa6530",
+        "size": 1143006912,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "README.md",
+      "blobId": "7669697c104ff1aaa16964104380702d34e397fe",
+      "size": 12314
+    },
+    {
+      "rfilename": "config.json",
+      "blobId": "79279cc5665bced6f3cdaa2095a2ffe819497b2e",
+      "size": 1239
+    }
+  ]
+}
