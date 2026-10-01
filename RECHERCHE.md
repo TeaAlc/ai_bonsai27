@@ -481,3 +481,30 @@ container was removed. Logs are saved locally in
 The remote download branches were fixture-tested; no fresh registry download
 or publication was performed. These changes affect the host launcher only;
 the existing image was reused without rebuilding the container runtime.
+
+### Text conversation benchmark (2026-10-01)
+
+Added `simpe_text_benchmark.sh` (spelling as requested). It sends ten sequential
+OpenAI-compatible chat requests, giving twenty user/assistant messages, and
+retains the complete history. Neutral planning notes are budgeted using the
+pinned server's template/tokenizer endpoints. The endpoint contract was checked
+against the [pinned backend server documentation](https://github.com/sudoingX/llama.cpp/blob/ff414120c343e6e6cb868013c99f1dde52b27e70/tools/server/README.md).
+The target is 16,000 cumulative chat API usage tokens, including repeatedly
+submitted history; template/tokenizer calls are not added to that usage total.
+Thinking is disabled, prompt caching enabled, and answers limited to 128 tokens.
+
+Fresh runtime validation used the existing local image on the RTX 5070 Ti Laptop
+GPU, context 16,384, and an owned container on port 18083, removed after the run:
+
+- Twenty messages completed, with 15,126 input and 823 output tokens: 15,949 total.
+- Wall time including budgeting requests: 33.091 seconds.
+- Generation throughput from summed server decode timing: 39.81 tokens/s.
+- Output throughput over wall time: 24.87 tokens/s.
+- Last request input: 2,654 tokens. This benchmark does not fill a 16k context.
+
+Local evidence: `results/text-benchmark/validation-20261001.json` contains the
+transcript, API usage and per-request timings; console output is retained in
+`/tmp/bonsai27/text-benchmark-api.log`. This standalone benchmark report is not
+an identified QA-suite audit. The container runtime was reused without a rebuild.
+Five HTTP-fixture tests cover history, token budgeting, endpoint overrides,
+context rejection, invalid hosts, and failed inference with a partial report.

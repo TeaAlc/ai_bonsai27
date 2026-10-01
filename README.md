@@ -726,6 +726,50 @@ Run `./simple_request.sh` to send the included [1920×1080 fairyland image](asse
 
 An explicit argument overrides `BONSAI_BASE_URL`; without an argument, the environment variable remains supported. Remote access requires the server's API to be reachable from your machine; `run.sh` binds to localhost by default.
 
+## Text conversation benchmark
+
+With a running server, use the requested script name `simpe_text_benchmark.sh`:
+
+```bash
+./simpe_text_benchmark.sh                 # localhost:8080
+./simpe_text_benchmark.sh notebook        # notebook:8080
+./simpe_text_benchmark.sh notebook:8081   # notebook:8081
+```
+
+It simulates **20 messages: 10 user prompts and 10 assistant answers**, retaining
+all previous messages in each request. The conversation develops a community
+library plan. It uses `/v1/chat/completions` with model `bonsai2-27b`, temperature
+zero, thinking disabled, prompt caching enabled, and at most 128 output tokens
+per answer. Python 3 is the only client dependency.
+
+The target is approximately **16,000 cumulative input + output tokens**, measured
+from the API's `usage` fields across the ten requests. Repeated history counts
+again on every request. This is not 16k distinct conversation tokens or a test
+that fills the entire context window. The script applies the server's chat
+template and tokenizer to budget neutral planning notes, adjusts after each
+response, and checks that each request fits the advertised context. A final
+total outside ±5% exits with an error.
+
+The terminal shows every answer and each request's usage, followed by an
+indented summary. `decode_tokens_per_second` uses the server's generation
+timings, when available; `output_tokens_per_wall_second` includes HTTP,
+template/tokenizer requests, and prompt processing. Missing decode timings
+produce `null`, rather than an estimated generation speed.
+
+`BONSAI_BASE_URL` can select the endpoint (with or without `/v1`); an explicit
+hostname argument overrides it. The full transcript, per-request timing and
+usage, and summary are saved to a unique JSON file under
+`results/text-benchmark/`. Set `BONSAI_BENCHMARK_RESULT=/path/report.json` to
+choose the output file. Failed inference saves the completed exchanges as a
+partial report. Start the server separately and wait for `/health` to return
+HTTP 200 before benchmarking.
+
+Measured on 2026-10-01 with the existing local image and the RTX 5070 Ti Laptop
+GPU at a 16,384-token context: **15,126 input + 823 output = 15,949 tokens**,
+**33.091 seconds**, **39.81 decode tokens/s**, and **24.87 output tokens/s over
+wall time**. The final request used 2,654 input tokens. This is one local
+measurement with prompt caching, not a guarantee for other GPUs or workloads.
+
 ## Tests and measured performance
 
 Run a fresh identified suite against its own containers on port 18080:

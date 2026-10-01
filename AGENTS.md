@@ -73,9 +73,12 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   installer, binary cache, license, and version policy. Host GPU runtime
   dependencies remain under `data/`. Do not install build tools globally.
 - `assets/`: committed assets, including `fairyland-unicorns-1080p.png`.
-- `tests/`: test scripts. The single top-level request example is
-  `simple_request.sh`, which sends the existing image asset and prints indented
-  JSON; it must not generate an image.
+- `tests/`: automated tests. The top-level request example `simple_request.sh`
+  sends the existing image asset and prints indented JSON; it must not generate
+  an image. `simpe_text_benchmark.sh` is the user-requested text benchmark: 10
+  exchanges / 20 messages, approximately 16k cumulative API usage tokens, with
+  full history retained. Distinguish cumulative usage from unique context
+  tokens and decode speed from wall-clock throughput. Save reports in results/.
 - `results/`: local test evidence, excluded from Git.
 - Use `/tmp/bonsai27/` for temporary work. Build scripts honor the standard
   `TMPDIR` variable, defaulting to that directory.
@@ -90,7 +93,8 @@ Quote variables and preserve the boundaries of forwarded arguments.
 Project-specific environment variables use the `BONSAI_` prefix:
 `BONSAI_CTX_SIZE`, `BONSAI_REASONING_EFFORT`, `BONSAI_MODEL_DIR`, `BONSAI_PORT`, and
 `BONSAI_BASE_URL`, `BONSAI_IMAGE`, `BONSAI_GHCR_USER`, and
-`BONSAI_PUSH_ENGINE`. Container settings also include `BONSAI_GPU_BACKEND`,
+`BONSAI_PUSH_ENGINE`. `BONSAI_BENCHMARK_RESULT` selects the text benchmark JSON
+report path. Container settings also include `BONSAI_GPU_BACKEND`,
 `BONSAI_MODEL`, and `BONSAI_MMPROJ`. Runtime controls also include
 `BONSAI_CONTAINER_NAME`, `BONSAI_DOWNLOAD_WAIT_SECONDS` (600), and
 `BONSAI_DOWNLOAD_TIMEOUT` (3600); download limits accept 1–86400 seconds. Keep standard external variables such as
