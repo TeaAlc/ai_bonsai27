@@ -508,3 +508,31 @@ transcript, API usage and per-request timings; console output is retained in
 an identified QA-suite audit. The container runtime was reused without a rebuild.
 Five HTTP-fixture tests cover history, token budgeting, endpoint overrides,
 context rejection, invalid hosts, and failed inference with a partial report.
+
+### Explicit prompt-cache metrics (2026-10-01)
+
+The text benchmark now reports reused and newly processed prompt tokens and a
+cache hit rate per exchange and in its summary. The pinned server documentation
+above defines `timings.cache_n` as reused input tokens; the benchmark uses that
+counter and falls back to `usage.prompt_tokens_details.cached_tokens` when it
+is absent. The total rate is `100 * sum(cached tokens) / sum(prompt tokens)`,
+including the first request and excluding generated tokens. Missing/invalid
+counters remain unknown (`null`); incomplete coverage suppresses aggregate
+cache totals and rates. The counter source and number of measured exchanges
+are recorded explicitly.
+
+A new real API run through all twenty messages produced:
+
+- Input tokens: 15,126; output tokens: 823; combined: 15,949.
+- Cached prompt tokens: 13,215; newly processed prompt tokens: 1,911.
+- Token-weighted cache hit rate: 87.37%; valid counters in all ten exchanges.
+- Wall time: 34.464 seconds; decoding: 38.81 tokens/s; output over wall time:
+  23.88 tokens/s.
+
+Evidence is in `results/text-benchmark/validation-cache-20261001.json` and
+`/tmp/bonsai27/text-benchmark-cache-api.log`. This fresh measurement used the
+existing local image, RTX 5070 Ti Laptop GPU, and 16,384-token context; the owned
+container was removed. It supplements, rather than edits, the earlier recorded
+benchmark. Eight HTTP-fixture tests cover weighted aggregation, real zero hits,
+fallback counters, missing/partial/invalid counters, and the previous benchmark
+behaviors. Cache totals were also checked against the fresh API timing records.

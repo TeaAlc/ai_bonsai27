@@ -756,6 +756,19 @@ timings, when available; `output_tokens_per_wall_second` includes HTTP,
 template/tokenizer requests, and prompt processing. Missing decode timings
 produce `null`, rather than an estimated generation speed.
 
+Prompt-cache results are printed per exchange and in the JSON summary:
+`cached_prompt_tokens` counts reused input tokens, `processed_prompt_tokens`
+counts input tokens that required processing, and `cache_hit_rate_percent`
+expresses the reused fraction. The total rate is token-weighted:
+`100 × sum(cached_prompt_tokens) / sum(prompt_tokens)`, including the first
+request. Output tokens are excluded; this is not the percentage of requests
+with a cache hit. The server's `timings.cache_n` supplies the counter, with
+`usage.prompt_tokens_details.cached_tokens` as a fallback. Each exchange records
+`cache_metrics_source`. Missing or invalid counters produce `null`; an
+incomplete set of counters also produces a `null` aggregate rather than a
+misleading partial rate. `cache_metrics_exchanges` shows how many completed
+requests provided valid counters.
+
 `BONSAI_BASE_URL` can select the endpoint (with or without `/v1`); an explicit
 hostname argument overrides it. The full transcript, per-request timing and
 usage, and summary are saved to a unique JSON file under
@@ -766,8 +779,10 @@ HTTP 200 before benchmarking.
 
 Measured on 2026-10-01 with the existing local image and the RTX 5070 Ti Laptop
 GPU at a 16,384-token context: **15,126 input + 823 output = 15,949 tokens**,
-**33.091 seconds**, **39.81 decode tokens/s**, and **24.87 output tokens/s over
-wall time**. The final request used 2,654 input tokens. This is one local
+**34.464 seconds**, **38.81 decode tokens/s**, and **23.88 output tokens/s over
+wall time**. Prompt cache reuse was **13,215 / 15,126 input tokens = 87.37%**,
+with **1,911 newly processed input tokens**, including the cold first request.
+All ten exchanges supplied valid counters. The final request used 2,654 input tokens. This is one local
 measurement with prompt caching, not a guarantee for other GPUs or workloads.
 
 ## Tests and measured performance

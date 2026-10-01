@@ -78,7 +78,9 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   an image. `simple_text_benchmark.sh` is the user-requested text benchmark: 10
   exchanges / 20 messages, approximately 16k cumulative API usage tokens, with
   full history retained. Distinguish cumulative usage from unique context
-  tokens and decode speed from wall-clock throughput. Save reports in results/.
+  tokens and decode speed from wall-clock throughput. Report per-exchange and
+  token-weighted total prompt cache hits from actual API counters, including
+  the first request; unknown counters must remain null. Save reports in results/.
 - `results/`: local test evidence, excluded from Git.
 - Use `/tmp/bonsai27/` for temporary work. Build scripts honor the standard
   `TMPDIR` variable, defaulting to that directory.

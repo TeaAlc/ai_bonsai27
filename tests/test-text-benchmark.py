@@ -21,6 +21,7 @@ class BenchmarkTests(unittest.TestCase):
         self.requests = []
         self.context = 16384
         self.fail_chat = False
+        self.cache_mode = 'timings'
         fixture = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -57,12 +58,25 @@ class BenchmarkTests(unittest.TestCase):
                     turn = len(fixture.requests)
                     answer = f'Exchange {turn}: retain the accessible entrance, quiet study area and durable library shelving.'
                     output_tokens = len(answer.split())
-                    self.reply({
-                        'usage': {'prompt_tokens': sum(len(message['content'].split()) for message in payload['messages']),
+                    prompt_tokens = sum(len(message['content'].split()) for message in payload['messages'])
+                    cached = 0 if turn == 1 else prompt_tokens * 3 // 4
+                    result = {
+                        'usage': {'prompt_tokens': prompt_tokens,
                                   'completion_tokens': output_tokens},
                         'choices': [{'message': {'content': answer}, 'finish_reason': 'stop'}],
                         'timings': {'predicted_n': output_tokens, 'predicted_ms': output_tokens * 20},
-                    })
+                    }
+                    if fixture.cache_mode == 'timings':
+                        result['timings'].update(cache_n=cached, prompt_n=prompt_tokens - cached)
+                    elif fixture.cache_mode == 'usage':
+                        result['usage']['prompt_tokens_details'] = {'cached_tokens': cached}
+                    elif fixture.cache_mode == 'zero':
+                        result['timings']['cache_n'] = 0
+                    elif fixture.cache_mode == 'partial' and turn != 2:
+                        result['timings']['cache_n'] = cached
+                    elif fixture.cache_mode == 'invalid':
+                        result['timings']['cache_n'] = prompt_tokens + 1
+                    self.reply(result)
                 else:
                     self.reply({}, 404)
 
@@ -97,6 +111,42 @@ class BenchmarkTests(unittest.TestCase):
             self.assertEqual(payload['max_tokens'], 128)
             self.assertFalse(payload['chat_template_kwargs']['enable_thinking'])
         self.assertIn('Message 20/20', process.stdout)
+        cached = sum(row['cached_prompt_tokens'] for row in report['exchanges'])
+        self.assertEqual(report['cached_prompt_tokens'], cached)
+        self.assertEqual(report['processed_prompt_tokens'], report['prompt_tokens'] - cached)
+        self.assertEqual(report['cache_hit_rate_percent'], round(100 * cached / report['prompt_tokens'], 2))
+        self.assertEqual(report['cache_metrics_exchanges'], 10)
+        self.assertEqual(report['exchanges'][0]['cache_hit_rate_percent'], 0)
+        self.assertIn('Prompt cache:', process.stdout)
+
+    def test_usage_cache_counter_fallback(self):
+        self.cache_mode = 'usage'
+        process, report = self.invoke()
+        self.assertEqual(process.returncode, 0, process.stderr)
+        self.assertGreater(report['cache_hit_rate_percent'], 0)
+        self.assertEqual(report['exchanges'][1]['cache_metrics_source'],
+                         'usage.prompt_tokens_details.cached_tokens')
+
+    def test_unknown_cache_counters_are_not_zero(self):
+        for mode, available in [('missing', 0), ('partial', 9), ('invalid', 0)]:
+            with self.subTest(mode=mode):
+                self.cache_mode = mode
+                self.requests.clear()
+                process, report = self.invoke()
+                self.assertEqual(process.returncode, 0, process.stderr)
+                self.assertIsNone(report['cached_prompt_tokens'])
+                self.assertIsNone(report['processed_prompt_tokens'])
+                self.assertIsNone(report['cache_hit_rate_percent'])
+                self.assertEqual(report['cache_metrics_exchanges'], available)
+                self.assertIn('hit rate unknown', process.stdout)
+
+    def test_actual_zero_cache_hits(self):
+        self.cache_mode = 'zero'
+        process, report = self.invoke()
+        self.assertEqual(process.returncode, 0, process.stderr)
+        self.assertEqual(report['cached_prompt_tokens'], 0)
+        self.assertEqual(report['processed_prompt_tokens'], report['prompt_tokens'])
+        self.assertEqual(report['cache_hit_rate_percent'], 0)
 
     def test_explicit_hostname_overrides_environment(self):
         process, report = self.invoke(f'127.0.0.1:{self.server.server_port}')

@@ -107,6 +107,28 @@ def padded_question(question, desired_prompt):
     return best, prompt_tokens(best)
 
 
+def cache_metrics(response):
+    # Count reused input tokens, not requests with any hit or generated tokens.
+    # Missing counters mean unknown; never report them as a zero-hit cache.
+    usage = response['usage']
+    timings = response.get('timings') or {}
+    details = usage.get('prompt_tokens_details') or {}
+    if 'cache_n' in timings:
+        cached = timings['cache_n']
+        source = 'timings.cache_n'
+    else:
+        cached = details.get('cached_tokens')
+        source = 'usage.prompt_tokens_details.cached_tokens'
+    total = usage['prompt_tokens']
+    valid = type(cached) is int and 0 <= cached <= total
+    return {
+        'cached_prompt_tokens': cached if valid else None,
+        'processed_prompt_tokens': total - cached if valid else None,
+        'cache_hit_rate_percent': round(100 * cached / total, 2) if valid else None,
+        'cache_metrics_source': source if valid else None,
+    }
+
+
 def summary(elapsed):
     input_tokens = sum(row['prompt_tokens'] for row in records)
     output_tokens = sum(row['completion_tokens'] for row in records)
@@ -117,6 +139,9 @@ def summary(elapsed):
         row['timings'].get('predicted_ms', 0) > 0
         and row['timings'].get('predicted_n', 0) > 0 for row in records
     )
+    cache_exchanges = sum(row['cached_prompt_tokens'] is not None for row in records)
+    complete_cache_metrics = bool(records) and cache_exchanges == len(records)
+    cached_tokens = sum(row['cached_prompt_tokens'] or 0 for row in records)
     total = input_tokens + output_tokens
     return {
         'recorded_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -127,6 +152,12 @@ def summary(elapsed):
         'within_5_percent': abs(total - TARGET) <= TARGET * 0.05,
         'accounting': 'Sum of chat API usage; repeated conversation history counts again.',
         'thinking_enabled': False, 'cache_prompt': True,
+        'cache_metrics_exchanges': cache_exchanges,
+        'cached_prompt_tokens': cached_tokens if complete_cache_metrics else None,
+        'processed_prompt_tokens': input_tokens - cached_tokens if complete_cache_metrics else None,
+        'cache_hit_rate_percent': round(100 * cached_tokens / input_tokens, 2)
+        if complete_cache_metrics else None,
+        'cache_hit_rate_definition': '100 * sum(cached prompt tokens) / sum(all prompt tokens), including the first request.',
         'wall_seconds': round(elapsed, 3),
         'output_tokens_per_wall_second': round(output_tokens / elapsed, 2) if elapsed else None,
         'decode_tokens_per_second': round(decode_tokens / (decode_ms / 1000), 2)
@@ -171,17 +202,25 @@ def main():
             if not isinstance(assistant, str) or not assistant.strip():
                 raise RuntimeError('The API returned an empty assistant response.')
             messages[:] = candidate + [{'role': 'assistant', 'content': assistant}]
+            cache = cache_metrics(response)
             records.append({
                 'exchange': turn, 'prompt_tokens': usage['prompt_tokens'],
                 'completion_tokens': usage['completion_tokens'],
                 'estimated_prompt_tokens': estimate, 'wall_seconds': round(seconds, 3),
                 'finish_reason': response['choices'][0].get('finish_reason'),
                 'timings': response.get('timings') or {},
+                **cache,
             })
             print(f'\nMessage {2 * turn - 1}/20 (user): {question}', flush=True)
             print(f'Message {2 * turn}/20 (assistant): {assistant}', flush=True)
             print(f"Usage: {usage['prompt_tokens']} input + {usage['completion_tokens']} output; "
                   f'{seconds:.2f}s.', flush=True)
+            if cache['cached_prompt_tokens'] is None:
+                print('Prompt cache: counters unavailable; hit rate unknown.', flush=True)
+            else:
+                print(f"Prompt cache: {cache['cached_prompt_tokens']} cached + "
+                      f"{cache['processed_prompt_tokens']} processed input tokens; "
+                      f"hit rate {cache['cache_hit_rate_percent']:.2f}%.", flush=True)
     finally:
         # Preserve partial evidence if a later request fails.
         report = summary(time.monotonic() - started)
