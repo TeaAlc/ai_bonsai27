@@ -1,0 +1,58 @@
+{
+  "ada": {
+    "source_revision": "88c4bc60b9c9578f134385be9535e853f2db9b9f",
+    "source_sha256": "cd55b6c23f1ef81c8bd9980ae148b66aeac1bc56b4eaed468b40d2a1247aed7b",
+    "compiler_image": "docker.io/nvidia/cuda@sha256:4b9ed5fa8361736996499f64ecebf25d4ec37ff56e4d11323ccde10aa36e0c43",
+    "architectures": [
+      "89-real"
+    ],
+    "cmake_options": {
+      "CMAKE_CUDA_ARCHITECTURES": "89-real",
+      "GGML_CUDA": "ON",
+      "GGML_CUDA_FA": "ON",
+      "GGML_CUDA_FA_ALL_QUANTS": "OFF",
+      "GGML_CUDA_GRAPHS": "ON",
+      "GGML_NATIVE": "OFF",
+      "GGML_AVX2": "ON",
+      "GGML_FMA": "ON",
+      "GGML_F16C": "ON",
+      "LLAMA_CURL": "OFF",
+      "LLAMA_BUILD_UI": "OFF"
+    },
+    "licenses": [
+      "libgomp-copyright.txt",
+      "llama.cpp-LICENSE.txt",
+      "cuda-cudart-copyright.txt",
+      "cublas-copyright.txt",
+      "NCCL-copyright.txt"
+    ]
+  },
+  "blackwell": {
+    "source_revision": "f13265492743209a0fbedc2a2781af3f5f0eab13",
+    "source_sha256": "0368b7a5aa02215cafd72b590162ae6b87ca1690be18445c9af7a53145d4c2d5",
+    "compiler_image": "docker.io/nvidia/cuda@sha256:4b9ed5fa8361736996499f64ecebf25d4ec37ff56e4d11323ccde10aa36e0c43",
+    "architectures": [
+      "120-real"
+    ],
+    "cmake_options": {
+      "CMAKE_CUDA_ARCHITECTURES": "120-real",
+      "GGML_CUDA": "ON",
+      "GGML_CUDA_FA": "ON",
+      "GGML_CUDA_FA_ALL_QUANTS": "OFF",
+      "GGML_CUDA_GRAPHS": "ON",
+      "GGML_NATIVE": "OFF",
+      "GGML_AVX2": "ON",
+      "GGML_FMA": "ON",
+      "GGML_F16C": "ON",
+      "LLAMA_CURL": "OFF",
+      "LLAMA_BUILD_UI": "OFF"
+    },
+    "licenses": [
+      "libgomp-copyright.txt",
+      "llama.cpp-LICENSE.txt",
+      "cuda-cudart-copyright.txt",
+      "cublas-copyright.txt",
+      "NCCL-copyright.txt"
+    ]
+  }
+}

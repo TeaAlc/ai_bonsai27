@@ -63,7 +63,8 @@ release, tagging, and publication. Release/build snapshots are established after
 locking. `backend-artifacts.sh` pins archives and manifest identities;
 `verify-backend.py` rejects extra files, symlinks, and checksum mismatches.
 `build-receipt.py` writes `results/last-build.json` atomically after inspecting a
-successful build and collecting its installed package inventory. Source snapshots
+successful build and collecting its installed package inventory. Receipts also bind consumed source-verification profiles/helpers and runtime
+configuration files by hash. Source snapshots
 and temporary backend copies live under `/tmp/bonsai27/` (or `TMPDIR`).
 
 `registry.py` validates that receipt, verifies the newly pushed version against
@@ -89,5 +90,12 @@ inside a digest-pinned CUDA container, package licenses and runtime libraries,
 and install checksum/provenance-verified files under `data/backends/`. Image
 creation remains in `image_build.sh`, which includes prepared runtimes by
 default. Explicit `--ada-source --blackwell-source` requires both, while
-`--published-only` omits both. The Blackwell verifier additionally checks the
-actual CMake architecture and CUDA/Flash Attention/graph settings.
+`--published-only` omits both. Both verifiers check actual CMake options, architecture, source/compiler pins,
+required licenses, and complete inventories. `backend-profiles.json` holds the
+separate immutable Ada SM89 and Blackwell SM120 profiles. Shared preparation,
+compilation, packaging, and verification live in `build-native-backend.sh`,
+`compile-backend.sh`, `package-backend.py`, and `verify-source.py`; existing
+profile-specific entry points stay supported. Compiler helpers and profiles
+are copied before source download and included by hash in new build.json
+provenance. Blackwell retains failed objects and supports `--resume`; Ada
+cleans its temporary work on failure. Neither operation builds the server image.

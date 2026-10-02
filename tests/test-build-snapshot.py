@@ -13,7 +13,7 @@ from pathlib import Path
 PROJECT=Path(__file__).resolve().parents[1]
 with tempfile.TemporaryDirectory(dir='/tmp/bonsai27',prefix='snapshot-test.') as directory:
     root=Path(directory);repo=root/'repo';repo.mkdir()
-    for name in ('data/logging.sh','image_build.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','tools/verify-ada-source.py','tools/verify-blackwell-source.py','tools/build-receipt.py','tools/semrel/artifacts.sh','data/models/download.sh'):
+    for name in ('data/logging.sh','image_build.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','tools/verify-ada-source.py','tools/verify-blackwell-source.py','tools/verify-source.py','tools/backend_profile.py','tools/backend-profiles.json','tools/build-receipt.py','tools/semrel/artifacts.sh','data/models/download.sh'):
         destination=repo/name;destination.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(PROJECT/name,destination)
     (repo/'tools/version.sh').write_text('#!/bin/sh\necho 1.0.0\n');(repo/'tools/version.sh').chmod(0o755)
     (repo/'Containerfile').write_text('FROM fixture\n')
@@ -37,6 +37,9 @@ with tempfile.TemporaryDirectory(dir='/tmp/bonsai27',prefix='snapshot-test.') as
             path=runtime/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_text('fixture')
         record={'source_revision':verifier.SOURCE_REVISION,'source_sha256':verifier.SOURCE_SHA256,
                 'compiler_image':verifier.COMPILER_IMAGE,'architectures':[architecture], 'cmake_cache':f'CMAKE_CUDA_ARCHITECTURES:STRING={architecture}\nGGML_CUDA:BOOL=ON\nGGML_CUDA_FA:BOOL=ON\nGGML_CUDA_GRAPHS:BOOL=ON\n'}
+        record['cmake_cache'] = ''.join(f'{key}:STRING={value}\n' for key,value in verifier.PROFILE['cmake_options'].items())
+        for license_name in verifier.PROFILE['licenses']:
+            (runtime/'LICENSES'/license_name).write_text('fixture')
         (runtime/'build.json').write_text(json.dumps(record))
         entries=[hashlib.sha256(path.read_bytes()).hexdigest()+'  '+str(path.relative_to(runtime))
                  for path in sorted(runtime.rglob('*')) if path.is_file()]
@@ -57,6 +60,9 @@ if args[0]=='build':
         if arg=='--label':
             key,value=args[index+1].split('=',1);labels[key]=value
     pathlib.Path(os.environ['FIXTURE_IMAGE']).write_text(json.dumps([{'Id':'a'*64,'Config':{'Labels':labels}}]))
+    original_profile=(stage/'tools/backend-profiles.json').read_bytes()
+    pathlib.Path('tools/backend-profiles.json').write_text('{}')
+    assert (stage/'tools/backend-profiles.json').read_bytes()==original_profile
     pathlib.Path('entrypoint.sh').write_text('changed during build\\n')
     subprocess.run(['git','add','entrypoint.sh'],check=True)
     subprocess.run(['git','commit','--quiet','-m','fix: concurrent edit'],check=True)
@@ -72,6 +78,7 @@ else:sys.exit(2)
     assert receipt['revision']==original and receipt['dirty'] is False
     assert git('rev-parse','HEAD')!=original
     assert receipt['image_id']=='sha256:'+'a'*64
+    assert receipt['source_verifier_inputs']['tools/backend-profiles.json'] != hashlib.sha256((repo/'tools/backend-profiles.json').read_bytes()).hexdigest()
     assert set(receipt['inputs'])=={'blackwell','ampere-ada','ada-source','blackwell-source'}
     assert receipt['ada_source_build']['architectures']==['89-real']
     assert receipt['blackwell_source_build']['architectures']==['120-real']

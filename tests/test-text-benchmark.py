@@ -4,6 +4,8 @@ import sys
 sys.dont_write_bytecode = True
 import json
 import os
+import signal
+import time
 import subprocess
 import tempfile
 import threading
@@ -21,6 +23,7 @@ class BenchmarkTests(unittest.TestCase):
         self.requests = []
         self.context = 16384
         self.fail_chat = False
+        self.delay_chat = False
         self.cache_mode = 'timings'
         self.missing_reasoning = False
         self.truncated = False
@@ -39,7 +42,10 @@ class BenchmarkTests(unittest.TestCase):
                 self.send_header('Content-Type', 'application/json')
                 self.send_header('Content-Length', str(len(body)))
                 self.end_headers()
-                self.wfile.write(body)
+                try:
+                    self.wfile.write(body)
+                except BrokenPipeError:
+                    pass  # Cancellation intentionally closes this fixture socket.
 
             def do_GET(self):
                 if self.path == '/health':
@@ -63,6 +69,8 @@ class BenchmarkTests(unittest.TestCase):
                         self.reply({'error': 'Fixture failure'}, 503)
                         return
                     fixture.requests.append(payload)
+                    if fixture.delay_chat:
+                        time.sleep(2)
                     turn = len(fixture.requests)
                     answer = f'Exchange {turn}: retain the accessible entrance, quiet study area and durable library shelving.'
                     output_tokens = 2000 if fixture.large_output else len(answer.split()) + 2
@@ -99,7 +107,7 @@ class BenchmarkTests(unittest.TestCase):
         self.addCleanup(self.server.shutdown)
 
     def invoke(self, argument=None, base_suffix=''):
-        result_path = Path(self.work.name) / 'report.json'
+        result_path = Path(self.work.name) / f'report-{len(list(Path(self.work.name).glob("*.json")))}.json'
         environment = dict(os.environ, BONSAI_BASE_URL=f'http://127.0.0.1:{self.server.server_port}{base_suffix}',
                            BONSAI_BENCHMARK_RESULT=str(result_path))
         args = ['bash', str(PROJECT / 'simple_text_benchmark.sh')]
@@ -229,6 +237,41 @@ class BenchmarkTests(unittest.TestCase):
                 process, report = self.invoke(argument)
                 self.assertEqual(process.returncode, 2)
                 self.assertIsNone(report)
+
+
+    def test_duplicate_output_is_protected(self):
+        path = Path(self.work.name) / 'existing.json'
+        path.write_text('original')
+        environment = dict(os.environ, BONSAI_BASE_URL=f'http://127.0.0.1:{self.server.server_port}',
+                           BONSAI_BENCHMARK_RESULT=str(path))
+        process = subprocess.run(['bash', str(PROJECT / 'simple_text_benchmark.sh')], env=environment,
+                                 text=True, capture_output=True, timeout=30)
+        self.assertEqual(process.returncode, 1)
+        self.assertEqual(path.read_text(), 'original')
+        self.assertFalse(self.requests)
+
+    def test_cancelled_run_preserves_status(self):
+        self.delay_chat = True
+        path = Path(self.work.name) / 'cancelled.json'
+        environment = dict(os.environ, BONSAI_BASE_URL=f'http://127.0.0.1:{self.server.server_port}',
+                           BONSAI_BENCHMARK_RESULT=str(path))
+        process = subprocess.Popen(['bash', str(PROJECT / 'simple_text_benchmark.sh')], env=environment,
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+        try:
+            deadline = time.monotonic() + 10
+            while not self.requests and time.monotonic() < deadline:
+                time.sleep(0.02)
+            self.assertTrue(self.requests)
+            process.send_signal(signal.SIGTERM)
+            _, error = process.communicate(timeout=10)
+            self.assertEqual(process.returncode, 130, error)
+            report = json.loads(path.read_text())
+            self.assertEqual(report['status'], 'cancelled')
+            self.assertEqual(report['completed_exchanges'], 0)
+        finally:
+            if process.poll() is None:
+                process.kill()
+                process.wait()
 
 
 if __name__ == '__main__':

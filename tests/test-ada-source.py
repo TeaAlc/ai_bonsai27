@@ -23,8 +23,10 @@ class ProvenanceTests(unittest.TestCase):
             path = self.root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text('fixture')
-        self.record = {'source_revision': module.SOURCE_REVISION, 'source_sha256': module.SOURCE_SHA256,
-                       'compiler_image': module.COMPILER_IMAGE, 'architectures': ['89-real']}
+        self.record = {key: module.PROFILE[key] for key in ('source_revision', 'source_sha256', 'compiler_image', 'architectures')}
+        self.record['cmake_cache'] = ''.join(f'{key}:STRING={value}\n' for key, value in module.PROFILE['cmake_options'].items())
+        for license_name in module.PROFILE['licenses']:
+            (self.root / 'LICENSES' / license_name).write_text('fixture')
         self.write_inventory()
 
     def tearDown(self):
@@ -60,6 +62,19 @@ class ProvenanceTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'unpinned Ada source'):
                 module.verify(self.root)
             self.record[key] = original
+
+
+    def test_wrong_actual_compiler_option(self):
+        self.record['cmake_cache'] = self.record['cmake_cache'].replace('GGML_CUDA_FA:STRING=ON', 'GGML_CUDA_FA:STRING=OFF')
+        self.write_inventory()
+        with self.assertRaisesRegex(ValueError, 'Ada compiler option'):
+            module.verify(self.root)
+
+    def test_missing_required_license(self):
+        (self.root / 'LICENSES/cublas-copyright.txt').unlink()
+        self.write_inventory()
+        with self.assertRaisesRegex(ValueError, 'required license'):
+            module.verify(self.root)
 
 
 if __name__ == '__main__':

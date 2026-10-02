@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# settings.sh is copied next to config.sh inside the image.
+settings_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+if [[ -f "$settings_dir/config.sh" ]]; then
+    source "$settings_dir/config.sh"
+else
+    source "$settings_dir/../config.sh"
+fi
+
 # Reject oversized decimal strings before Bash arithmetic can wrap.
 validate_decimal() {
     local name=$1 value=$2 minimum=$3 maximum=$4
@@ -13,10 +21,10 @@ validate_decimal() {
 }
 
 validate_bonsai_settings() {
-    validate_decimal BONSAI_CTX_SIZE "${BONSAI_CTX_SIZE:-32000}" 512 262144 || return
-    validate_decimal BONSAI_DOWNLOAD_WAIT_SECONDS "${BONSAI_DOWNLOAD_WAIT_SECONDS:-600}" 1 86400 || return
-    validate_decimal BONSAI_DOWNLOAD_TIMEOUT "${BONSAI_DOWNLOAD_TIMEOUT:-3600}" 1 86400 || return
-    case "${BONSAI_REASONING_EFFORT:-medium}" in
+    validate_decimal BONSAI_CTX_SIZE "${BONSAI_CTX_SIZE:-$BONSAI_DEFAULT_CTX_SIZE}" 512 262144 || return
+    validate_decimal BONSAI_DOWNLOAD_WAIT_SECONDS "${BONSAI_DOWNLOAD_WAIT_SECONDS:-$BONSAI_DEFAULT_DOWNLOAD_WAIT_SECONDS}" 1 86400 || return
+    validate_decimal BONSAI_DOWNLOAD_TIMEOUT "${BONSAI_DOWNLOAD_TIMEOUT:-$BONSAI_DEFAULT_DOWNLOAD_TIMEOUT}" 1 86400 || return
+    case "${BONSAI_REASONING_EFFORT:-$BONSAI_DEFAULT_REASONING_EFFORT}" in
         low|medium|xhigh) ;;
         *) echo 'Error: BONSAI_REASONING_EFFORT must be low, medium, or xhigh.' >&2; return 2 ;;
     esac

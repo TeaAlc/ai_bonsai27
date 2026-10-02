@@ -5,6 +5,7 @@
 data/*
 !data/backends
 !data/models
+!data/config.sh
 !data/logging.sh
 !data/models/download.sh
 !data/gpu

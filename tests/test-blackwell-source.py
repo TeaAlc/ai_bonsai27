@@ -23,8 +23,10 @@ class ProvenanceTests(unittest.TestCase):
             path = self.root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text('fixture')
-        self.record = {'source_revision': module.SOURCE_REVISION, 'source_sha256': module.SOURCE_SHA256,
-                       'compiler_image': module.COMPILER_IMAGE, 'architectures': ['120-real'], 'cmake_cache': 'CMAKE_CUDA_ARCHITECTURES:STRING=120-real\nGGML_CUDA:BOOL=ON\nGGML_CUDA_FA:BOOL=ON\nGGML_CUDA_GRAPHS:BOOL=ON\n'}
+        self.record = {key: module.PROFILE[key] for key in ('source_revision', 'source_sha256', 'compiler_image', 'architectures')}
+        self.record['cmake_cache'] = ''.join(f'{key}:STRING={value}\n' for key, value in module.PROFILE['cmake_options'].items())
+        for license_name in module.PROFILE['licenses']:
+            (self.root / 'LICENSES' / license_name).write_text('fixture')
         self.write_inventory()
 
     def tearDown(self):

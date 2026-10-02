@@ -1,6 +1,6 @@
 # Repository optimization and acceptance plan
 
-Status: **planned, not implemented**. Date: 2026-10-02.
+Status: **implementation and runtime acceptance complete; final clean-build verification pending**. Date: 2026-10-02.
 Reviewed baseline: `33013d2818ddff8cf197d397666b63154ca2490d`.
 The earlier audit remains available as
 [the September 30 audit](docs/history/repository-audit-20260930.md).
@@ -385,15 +385,29 @@ backends remain available for recovery; no rollback moves a published Git tag.
 
 ## Execution checklist
 
-- [ ] Baseline/interface capture complete.
-- [ ] Telemetry parser and explicit timezone contract implemented and tested.
-- [ ] Shared defaults and image consistency checks implemented and tested.
-- [ ] Benchmark Python module extracted with compatible public wrapper.
-- [ ] Identified success/failure evidence index and audit implemented and tested.
-- [ ] Shared native backend tooling and stricter Ada verification completed.
-- [ ] Documentation split with historical links preserved.
-- [ ] Complete offline regression suite passed.
-- [ ] Actual 32000 reasoning benchmark and fresh 16k/8k functional QA passed.
-- [ ] Alternating baseline/candidate performance and VRAM comparison completed.
+- [x] Baseline/interface capture complete.
+- [x] Telemetry parser and explicit timezone contract implemented and tested.
+- [x] Shared defaults and image consistency checks implemented and tested.
+- [x] Benchmark Python module extracted with compatible public wrapper.
+- [x] Identified success/failure evidence index and audit implemented and tested.
+- [x] Shared native backend tooling and stricter Ada verification completed.
+- [x] Documentation split with historical links preserved.
+- [x] Complete offline regression suite passed.
+- [x] Actual 32000 reasoning benchmark and fresh 16k/8k functional QA passed.
+- [x] Alternating baseline/candidate performance and VRAM comparison completed.
 - [ ] Final clean image, acceptance summary and Conventional Commit completed.
-- [ ] Unavailable hardware/publication rows explicitly recorded as pending.
+- [x] Unavailable hardware/publication rows explicitly recorded as pending.
+
+## Execution record
+
+Fresh evidence is under results/optimization/20261002-cleanup/acceptance.json;
+the compact measurement is committed under
+[data/research](data/research/repository-optimization-20261002/acceptance.json).
+All offline fixtures, native Blackwell compilation, four runtime inventories,
+missing-CUDA checks, six alternating comparisons, 18 functional QA checks,
+23 coding assertions, corrected cancellation, and the final full benchmark
+harness passed. Baseline/candidate means were 61.91/61.73 tokens/s and the
+highest global memory was 9,562/9,583 MiB. The initial image-ID normalization
+probe and failed cancellation attempt are retained as diagnostics, excluded
+from performance averages. Unavailable environments remain explicitly pending.
+The final clean image is built and checked after the implementation commit.

@@ -1,0 +1,289 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-02",
+  "scope": "Fresh WSL2 RTX 5070 Ti Laptop acceptance; final clean-build verification recorded separately in ignored results.",
+  "baseline_image_id": "sha256:12a4ea5443376e64d67eb576b9cf9c97ea1c467d21d827a7cd978e962fae8cc7",
+  "candidate_image_id": "sha256:c7f89397aac718bcc6f3f879be13114e53ecb583fc24654815f17bfaa06a37fe",
+  "candidate_source_state": "Development image; exact image and measured runtime inventories are bound by evidence.",
+  "configuration": {
+    "context_tokens": 32000,
+    "speculation": "draft-mtp",
+    "maximum_draft_depth": 2,
+    "reasoning_effort": "medium",
+    "thinking_enabled": true,
+    "flash_attention": true,
+    "main_and_draft_cache": "q8_0",
+    "language_device": "CUDA0",
+    "vision_device": "CPU/RAM"
+  },
+  "performance": {
+    "schema_version": 1,
+    "status": "passed",
+    "groups": {
+      "baseline": {
+        "runs": [
+          {
+            "status": "passed",
+            "image_id": "sha256:12a4ea5443376e64d67eb576b9cf9c97ea1c467d21d827a7cd978e962fae8cc7",
+            "prompt_tokens": 6600,
+            "completion_tokens": 13752,
+            "total_tokens": 20352,
+            "cached_prompt_tokens": 5310,
+            "reasoning_tokens": 12800,
+            "cache_hit_rate_percent": 80.45,
+            "decode_tokens_per_second": 62.51,
+            "output_tokens_per_wall_second": 59.33,
+            "peak_used_mib": 9537,
+            "wall_seconds": 231.796,
+            "mean_used_mib": 9531.709956709956,
+            "samples": 231,
+            "recorded_at": "2026-10-02T18:50:12.783678+00:00",
+            "output_sha256": "1a6a65f0a48e1b99b105cd2c62f7ae7e6376271a7f8ab5693c146e9d99677274",
+            "thinking_tokens_are_estimated": true,
+            "idle_gpu": {
+              "memory.used [MiB]": 1410,
+              "utilization.gpu [%]": 2,
+              "temperature.gpu": 63
+            },
+            "evidence": "baseline-1/run-1"
+          },
+          {
+            "status": "passed",
+            "image_id": "sha256:12a4ea5443376e64d67eb576b9cf9c97ea1c467d21d827a7cd978e962fae8cc7",
+            "prompt_tokens": 6600,
+            "completion_tokens": 13752,
+            "total_tokens": 20352,
+            "cached_prompt_tokens": 5310,
+            "reasoning_tokens": 12800,
+            "cache_hit_rate_percent": 80.45,
+            "decode_tokens_per_second": 61.85,
+            "output_tokens_per_wall_second": 58.78,
+            "peak_used_mib": 9555,
+            "wall_seconds": 233.975,
+            "mean_used_mib": 9553.394849785407,
+            "samples": 233,
+            "recorded_at": "2026-10-02T18:59:26.625539+00:00",
+            "output_sha256": "1a6a65f0a48e1b99b105cd2c62f7ae7e6376271a7f8ab5693c146e9d99677274",
+            "thinking_tokens_are_estimated": true,
+            "idle_gpu": {
+              "memory.used [MiB]": 1427,
+              "utilization.gpu [%]": 4,
+              "temperature.gpu": 71
+            },
+            "evidence": "baseline-2/run-1"
+          },
+          {
+            "status": "passed",
+            "image_id": "sha256:12a4ea5443376e64d67eb576b9cf9c97ea1c467d21d827a7cd978e962fae8cc7",
+            "prompt_tokens": 6600,
+            "completion_tokens": 13752,
+            "total_tokens": 20352,
+            "cached_prompt_tokens": 5310,
+            "reasoning_tokens": 12800,
+            "cache_hit_rate_percent": 80.45,
+            "decode_tokens_per_second": 61.38,
+            "output_tokens_per_wall_second": 58.42,
+            "peak_used_mib": 9562,
+            "wall_seconds": 235.382,
+            "mean_used_mib": 9557.727659574468,
+            "samples": 235,
+            "recorded_at": "2026-10-02T19:08:46.092697+00:00",
+            "output_sha256": "1a6a65f0a48e1b99b105cd2c62f7ae7e6376271a7f8ab5693c146e9d99677274",
+            "thinking_tokens_are_estimated": true,
+            "idle_gpu": {
+              "memory.used [MiB]": 1435,
+              "utilization.gpu [%]": 1,
+              "temperature.gpu": 71
+            },
+            "evidence": "baseline-3/run-1"
+          }
+        ],
+        "decode_tokens_per_second": {
+          "mean": 61.913333333333334,
+          "sample_sd": 0.5676559991168337
+        },
+        "wall_seconds": {
+          "mean": 233.71766666666667,
+          "sample_sd": 1.80679670503722
+        },
+        "peak_used_mib": {
+          "mean": 9551.333333333334,
+          "sample_sd": 12.897028081435403
+        },
+        "reasoning_tokens": {
+          "mean": 12800,
+          "sample_sd": 0.0
+        },
+        "cache_hit_rate_percent": 80.45
+      },
+      "candidate": {
+        "runs": [
+          {
+            "status": "passed",
+            "image_id": "sha256:c7f89397aac718bcc6f3f879be13114e53ecb583fc24654815f17bfaa06a37fe",
+            "prompt_tokens": 6600,
+            "completion_tokens": 13752,
+            "total_tokens": 20352,
+            "cached_prompt_tokens": 5310,
+            "reasoning_tokens": 12800,
+            "cache_hit_rate_percent": 80.45,
+            "decode_tokens_per_second": 61.57,
+            "output_tokens_per_wall_second": 58.71,
+            "peak_used_mib": 9537,
+            "wall_seconds": 234.23,
+            "mean_used_mib": 9531.97424892704,
+            "samples": 233,
+            "recorded_at": "2026-10-02T18:54:49.660513+00:00",
+            "output_sha256": "1a6a65f0a48e1b99b105cd2c62f7ae7e6376271a7f8ab5693c146e9d99677274",
+            "thinking_tokens_are_estimated": true,
+            "idle_gpu": {
+              "memory.used [MiB]": 1409,
+              "utilization.gpu [%]": 2,
+              "temperature.gpu": 70
+            },
+            "evidence": "candidate-1/run-1"
+          },
+          {
+            "status": "passed",
+            "image_id": "sha256:c7f89397aac718bcc6f3f879be13114e53ecb583fc24654815f17bfaa06a37fe",
+            "prompt_tokens": 6600,
+            "completion_tokens": 13752,
+            "total_tokens": 20352,
+            "cached_prompt_tokens": 5310,
+            "reasoning_tokens": 12800,
+            "cache_hit_rate_percent": 80.45,
+            "decode_tokens_per_second": 61.21,
+            "output_tokens_per_wall_second": 57.8,
+            "peak_used_mib": 9562,
+            "wall_seconds": 237.908,
+            "mean_used_mib": 9557.717299578058,
+            "samples": 237,
+            "recorded_at": "2026-10-02T19:04:07.435881+00:00",
+            "output_sha256": "1a6a65f0a48e1b99b105cd2c62f7ae7e6376271a7f8ab5693c146e9d99677274",
+            "thinking_tokens_are_estimated": true,
+            "idle_gpu": {
+              "memory.used [MiB]": 1432,
+              "utilization.gpu [%]": 2,
+              "temperature.gpu": 71
+            },
+            "evidence": "candidate-2/run-1"
+          },
+          {
+            "status": "passed",
+            "image_id": "sha256:c7f89397aac718bcc6f3f879be13114e53ecb583fc24654815f17bfaa06a37fe",
+            "prompt_tokens": 6600,
+            "completion_tokens": 13752,
+            "total_tokens": 20352,
+            "cached_prompt_tokens": 5310,
+            "reasoning_tokens": 12800,
+            "cache_hit_rate_percent": 80.45,
+            "decode_tokens_per_second": 62.4,
+            "output_tokens_per_wall_second": 59.16,
+            "peak_used_mib": 9583,
+            "wall_seconds": 232.454,
+            "mean_used_mib": 9573.077586206897,
+            "samples": 232,
+            "recorded_at": "2026-10-02T19:13:20.368457+00:00",
+            "output_sha256": "1a6a65f0a48e1b99b105cd2c62f7ae7e6376271a7f8ab5693c146e9d99677274",
+            "thinking_tokens_are_estimated": true,
+            "idle_gpu": {
+              "memory.used [MiB]": 1435,
+              "utilization.gpu [%]": 4,
+              "temperature.gpu": 71
+            },
+            "evidence": "candidate-3/run-1"
+          }
+        ],
+        "decode_tokens_per_second": {
+          "mean": 61.72666666666667,
+          "sample_sd": 0.6102731628814525
+        },
+        "wall_seconds": {
+          "mean": 234.864,
+          "sample_sd": 2.781725363870407
+        },
+        "peak_used_mib": {
+          "mean": 9560.666666666666,
+          "sample_sd": 23.028967265887832
+        },
+        "reasoning_tokens": {
+          "mean": 12800,
+          "sample_sd": 0.0
+        },
+        "cache_hit_rate_percent": 80.45
+      }
+    },
+    "decode_change_percent": -0.30149671583934445,
+    "peak_memory_change_mib": 21,
+    "identical_actual_requests": true,
+    "order": [
+      [
+        "baseline",
+        1
+      ],
+      [
+        "candidate",
+        1
+      ],
+      [
+        "baseline",
+        2
+      ],
+      [
+        "candidate",
+        2
+      ],
+      [
+        "baseline",
+        3
+      ],
+      [
+        "candidate",
+        3
+      ]
+    ],
+    "limits": "Three runs on one WSL2 GPU; global VRAM includes desktop; no statistical confidence or full-window capacity claim."
+  },
+  "functional_qa": {
+    "run_directory": "results/runs/20261002T191518Z-1867318",
+    "checks_passed": 18,
+    "coding_assertions_passed": 23
+  },
+  "raw_evidence_root": "results/optimization/20261002-cleanup",
+  "comparison_sha256": "cb229ee771f26d26c864a431043cd6b142b63ab9f6127dc4b1266aba91192e3e",
+  "qa_log_sha256": "3c35405c48ee114da85db61a9c1a1aba9e2ea18b0599a5f3b8d70c2440d6e739",
+  "native_manifest_sha256": "5f52b7dd52c47b84d66c20c03c414351f979e5cda944ba77a41122ec5ba6f937",
+  "compiler_packages_changed": false,
+  "limitations": [
+    "Only WSL2 RTX 5070 Ti Laptop is available for fresh GPU acceptance.",
+    "Global VRAM includes the desktop; one-second samples can miss peaks.",
+    "This conversation does not fill the 32000 context window.",
+    "The initial normalization-diagnostic run is excluded from performance means."
+  ],
+  "pending_environments": [
+    "Native Linux/CDI",
+    "Ampere GPU",
+    "Ada GPU on this host",
+    "Docker/Podman Desktop UI",
+    "GPU-provisioned Hyper-V guest",
+    "Registry publication/anonymous pull"
+  ],
+  "excluded_attempts": [
+    "Initial diagnostic run failed the audit because bare/prefixed image IDs were not normalized; not included in the three-run means.",
+    "The first cancellation test exposed an escaped timeout worker; its owned process/container were recovered, and the corrected test passed."
+  ],
+  "client_wall_interval_difference": "Candidate includes initial health/props HTTP calls; baseline starts its client wall interval after them. Decode uses server timings.",
+  "cancelled_cleanup": {
+    "status": "passed",
+    "cause_fixed": "Nested timeout process-group escape; supervise the owned worker and forward termination to its group.",
+    "partial_state": "cancelled",
+    "exit_status": 143,
+    "failure_stage": "conversation",
+    "user_containers_untouched": true
+  },
+  "final_harness": {
+    "status": "passed",
+    "evidence": "results/optimization/20261002-cleanup/final-harness",
+    "scope": "Additional full ten-exchange run verifies the corrected process supervisor; excluded from the three-pair performance means."
+  }
+}

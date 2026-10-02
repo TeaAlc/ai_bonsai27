@@ -103,7 +103,7 @@ for backend in blackwell ampere-ada; do
     [[ -d "$source_dir" ]] || { echo "Error: missing $backend; run prepare.sh." >&2; exit 2; }
     mkdir -p "$staging/data/backends/$backend"
     cp -a --reflink=auto "$source_dir" "$staging/data/backends/$backend/runtime"
-    actual=$(python3 -B tools/verify-backend.py "$staging/data/backends/$backend/runtime")
+    actual=$(python3 -B "$staging/tools/verify-backend.py" "$staging/data/backends/$backend/runtime")
     expected=$BLACKWELL_MANIFEST_SHA
     [[ "$backend" != ampere-ada ]] || expected=$AMPERE_ADA_MANIFEST_SHA
     [[ "$actual" == "$expected" ]] || { echo "Error: unpinned $backend manifest." >&2; exit 2; }
@@ -119,9 +119,9 @@ for backend in ada blackwell; do
         [[ -f "$source_dir/SHA256SUMS" ]] \
             || { echo "Error: missing $backend source backend; run tools/build-$backend-backend.sh." >&2; exit 2; }
         bonsai_log INFO "Including the specialized $backend runtime."
-        python3 -B "tools/verify-$backend-source.py" "$source_dir"
+        python3 -B "$staging/tools/verify-$backend-source.py" "$source_dir"
         cp -a --reflink=auto "$source_dir/." "$destination/"
-        python3 -B "tools/verify-$backend-source.py" "$destination"
+        python3 -B "$staging/tools/verify-$backend-source.py" "$destination"
     fi
 done
 image="localhost/bonsai2-27b:$version"
@@ -138,5 +138,5 @@ podman image inspect "$image" > "$staging/image.json"
 image_id=$(python3 -B -c 'import json,sys; print(json.load(open(sys.argv[1]))[0]["Id"])' "$staging/image.json")
 podman run --rm --entrypoint dpkg-query "$image_id" -W > "$staging/packages.txt"
 mkdir -p results
-python3 -B tools/build-receipt.py "$staging" "$version" "$revision" "$dirty" results/last-build.json
+python3 -B "$staging/tools/build-receipt.py" "$staging" "$version" "$revision" "$dirty" results/last-build.json
 printf 'Built %s and latest; receipt: results/last-build.json\n' "$image"

@@ -50,3 +50,7 @@ and source provenance. Prepare them with the matching scripts under `tools/`.
 explicit `--ada-source --blackwell-source` requires both. Runtime selection
 uses Ada source on capability 8.9, Blackwell source on 12.0, and the original
 Ampere bundle on 8.6. Source-runtime preparation does not modify published bundles.
+
+`config.sh` is the sourceable shared runtime fallback policy. The image keeps
+explicit ENV defaults for Desktop visibility; tests/test-config.py checks
+consistency. Configuration contains no credentials or host driver binaries.

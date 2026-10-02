@@ -117,3 +117,26 @@ integration; it is not a published release. Evidence:
 [RECHERCHE.md](../RECHERCHE.md) for the image identity and measured throughput.
 The supplied optional Ada runtime was inventory/provenance-verified locally;
 its imported native-Linux performance results are separate host measurements.
+
+## Portable benchmark evidence
+
+`simple_text_benchmark.sh` delegates to `tests/text_benchmark.py` and produces
+an API-only report. `tests/benchmark-backends.sh` starts owned fresh containers
+and produces identified evidence under `run-<n>/`. Run
+`python3 -B tests/benchmark_evidence.py audit PATH/run-1` to verify checksums,
+identity, actual medium-reasoning requests, usage/cache/thinking totals,
+decode throughput, interval VRAM, and separate quality probes. A partial or
+failed index is diagnostic evidence and cannot satisfy acceptance.
+
+GPU telemetry is acquired with TZ=UTC, recorded in telemetry.json, and scoped
+to the conversation's measured interval. Memory includes the desktop and other
+processes; one-second samples can miss brief peaks. Retained older CSV data
+requires an explicit timezone argument to summarize-gpu-memory.py. Ambiguous
+DST wall timestamps and missing counters are skipped rather than guessed.
+
+The benchmark harness uses tests/benchmark-worker.sh to supervise its owned
+timeout process group. A parent INT/TERM is forwarded immediately to the client;
+cleanup stops the worker and monitor, removes only the owned container, and
+finalizes a cancelled/partial index without replacing the primary exit status.
+Direct-parent signal fixtures and a real container cancellation check cover the
+nested-timeout escape discovered during cleanup acceptance.

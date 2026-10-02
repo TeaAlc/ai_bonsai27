@@ -57,6 +57,8 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   with nvidia-smi as a fallback; map
   8.6/8.9 to ampere-ada and 12.0 to blackwell. An explicit BONSAI_GPU_BACKEND
   must match the detected device; run.sh leaves selection to the container. Fail clearly on query errors or unsupported GPUs.
+- `data/config.sh`: shared runtime fallback values; keep explicit Containerfile ENV
+  in sync through tests/test-config.py.
 - `data/logging.sh`: timestamped stderr logs with component, stage, and level.
   Error traps report exit status and line, never command text or credentials.
 - `entrypoint.sh`: validate settings, preflight model cache paths, check actual
@@ -94,10 +96,16 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   per exchange and in total: prefer actual API counters, otherwise label server
   retokenization of reasoning_content as an estimate. Never double-count them
   on top of completion usage. Save reports in results/.
+- `tests/benchmark-worker.sh`: supervise owned timeout groups; forward stop
+  signals before removing the owned monitor/container. Test direct parent stop,
+  inherited stdin/env, and primary exit status through test-benchmark-worker.py.
+- `tests/benchmark_evidence.py`: capture/finalize/audit checksum-bound benchmark
+  identities, raw requests/responses, quality and UTC telemetry. API-only reports
+  do not satisfy identified acceptance. Do not edit scripts or imports during a run.
 - `tests/benchmark-backends.sh`: repeated fresh-container backend experiments,
   32,000-token context, thinking enabled at medium effort, image/executable evidence,
   a 600-second deadline per conversation, GPU telemetry and memory summaries,
-  and final quality probes. Optional DFlash replaces MTP and keeps draft weights on CUDA0; failed
+  and quality probes for each repetition. Optional DFlash replaces MTP and keeps draft weights on CUDA0; failed
   runs must not count as completed benchmarks. DFlash remains workload-specific
   and experimental; earlier timeout/load evidence was contaminated by an
   external GPU workload. Clean PDL-enabled DFlash/DFlash2 runs passed, and
@@ -152,6 +160,9 @@ lock in tools/project.sh for preparation/build/release/tag/push operations.
 Run `tests/test-version.sh`, `tests/test-create-release.sh`, and
 `tests/test-release-tag.sh` when changing versioning or release tooling.
 Run `tests/test-model-download.sh` when changing model downloads or cache paths.
+Run `tests/test-native-build.py`, `tests/test-package-backend.py`,
+`tests/test-config.py`, `tests/test-benchmark-evidence.py`, and
+`tests/test-compare-benchmarks.py` for shared tooling and benchmark contracts.
 Run `tests/test-blackwell-source.py`, `tests/test-ada-source.py`, and
 `tests/test-build-snapshot.py` when changing source runtime packaging.
 Run `tests/test-gpu-backend.sh` and `tests/test-cuda-probe.sh` when changing

@@ -4,6 +4,8 @@ set -euo pipefail
 model_dir=$(realpath -m -- "${BONSAI_MODEL_DIR:-$PWD}")
 project_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 cd -- "$project_dir"
+source data/logging.sh
+bonsai_init_logging benchmark
 source data/gpu/settings.sh
 if (( $# < 2 )); then
     echo 'Usage: benchmark-backends.sh <label> <local-image> [repetitions:3] [server-options...]' >&2
@@ -13,7 +15,7 @@ fi
 port=${BONSAI_PORT:-18084}
 validate_decimal BONSAI_PORT "$port" 1 65535
 port=$((10#$port))
-export BONSAI_CTX_SIZE=${BONSAI_CTX_SIZE:-32000}
+export BONSAI_CTX_SIZE=${BONSAI_CTX_SIZE:-$BONSAI_DEFAULT_CTX_SIZE}
 export BONSAI_REASONING_EFFORT=medium
 validate_bonsai_settings
 mkdir -p /tmp/bonsai27
@@ -66,12 +68,29 @@ PYDRAFT
 fi
 root=${BONSAI_TEST_RUN_DIR:-"$PWD/results/backend-benchmarks/$(date -u +%Y%m%dT%H%M%SZ)-$label-$$"}
 mkdir -p "$root"
+suite=$root
+suite_id=$(basename -- "$suite")
+python3 -B - "$suite/suite.json" "$repetitions" "$label" <<'PYSUITE'
+import sys
+sys.dont_write_bytecode = True
+import json
+from pathlib import Path
+path = Path(sys.argv[1])
+if path.exists():
+    raise SystemExit('Evidence suite already exists; choose a new BONSAI_TEST_RUN_DIR.')
+path.write_text(json.dumps({'schema_version': 1, 'repetitions': int(sys.argv[2]),
+                           'label': sys.argv[3]}, indent=2) + '\n')
+PYSUITE
+python3 -B tests/benchmark_evidence.py suite "$suite"
+root=$suite
+active=false
 name="bonsai-backend-benchmark-$$"
 monitor_pid=
 nvidia_smi=$(command -v nvidia-smi || true)
 if [[ -z "$nvidia_smi" && -x /usr/lib/wsl/lib/nvidia-smi ]]; then
     nvidia_smi=/usr/lib/wsl/lib/nvidia-smi
 fi
+source "$project_dir/tests/benchmark-worker.sh"
 stop_monitor() {
     if [[ -n "$monitor_pid" ]]; then
         kill "$monitor_pid" 2>/dev/null || true
@@ -80,6 +99,7 @@ stop_monitor() {
     fi
 }
 cleanup() {
+    stop_worker
     stop_monitor
     if podman container exists "$name"; then
         podman logs "$name" > "$root/last-container.log" 2>&1 || true
@@ -89,6 +109,12 @@ cleanup() {
 finish() {
     local status=$?
     cleanup
+    if [[ "$active" == true ]]; then
+        outcome=failed
+        case "$status" in 130|143) outcome=cancelled ;; 124) outcome=timed-out ;; esac
+        python3 -B tests/benchmark_evidence.py finalize "$root" "$outcome" "$status" "${bonsai_stage:-unknown}" || true
+        python3 -B tests/benchmark_evidence.py suite "$suite" || true
+    fi
     rm -rf -- "$work"
     if (( status != 0 )); then
         printf 'Error: benchmark stopped (exit %s); preserved evidence: %s\n' "$status" "$root" >&2
@@ -100,13 +126,34 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 for ((repeat=1; repeat<=repetitions; repeat++)); do
     cleanup
+    root="$suite/run-$repeat"
+    mkdir "$root"
+    name="bonsai-backend-benchmark-$$-$repeat"
+    active=true
+    python3 -B - "$root/telemetry.json" <<'PYMETA'
+import sys
+sys.dont_write_bytecode = True
+import json
+import datetime
+from pathlib import Path
+Path(sys.argv[1]).write_text(json.dumps({'timezone': 'UTC', 'interval_seconds': 1,
+    'started_at': datetime.datetime.now(datetime.timezone.utc).isoformat()}, indent=2) + '\n')
+PYMETA
+    bonsai_step gpu-monitor "Starting UTC telemetry for repetition $repeat."
     # Keep timestamped global GPU telemetry, including startup and inference.
     # It exposes competing load; it does not attribute VRAM to this container.
     if [[ -n "$nvidia_smi" ]]; then
-        "$nvidia_smi" --query-gpu=timestamp,name,memory.used,utilization.gpu,power.draw,temperature.gpu \
-            --format=csv --loop=1 > "$root/gpu-monitor-$repeat.csv" 2>&1 &
+        TZ=UTC "$nvidia_smi" -i 0 --query-gpu=timestamp,name,memory.used,memory.total,utilization.gpu,power.draw,temperature.gpu \
+            --format=csv --loop=1 > "$root/gpu.csv" 2>&1 &
         monitor_pid=$!
+    else
+        printf 'timestamp, memory.used [MiB]\n' > "$root/gpu.csv"
+        bonsai_log WARN "NVIDIA-SMI is unavailable; GPU memory metrics will remain unknown."
     fi
+    if [[ -n "$nvidia_smi" ]]; then
+        "$nvidia_smi" -i 0 --query-gpu=name,memory.total,memory.used,utilization.gpu,temperature.gpu --format=csv > "$root/gpu-idle.csv"
+    fi
+    bonsai_step container "Starting the selected image for repetition $repeat."
     if [[ -n "$draft_model" ]]; then
         podman run -d --pull=never --name "$name" "${gpu_args[@]}" \
             --security-opt label=disable \
@@ -122,7 +169,8 @@ for ((repeat=1; repeat<=repetitions; repeat++)); do
         BONSAI_IMAGE="$image" BONSAI_CONTAINER_NAME="$name" BONSAI_PORT="$port" \
             BONSAI_MODEL_DIR="$model_dir" ./run.sh "$@"
     fi
-    python3 -B - "$name" "$port" <<'PY'
+    bonsai_step readiness "Waiting for the owned server API."
+    run_worker timeout --signal=TERM --kill-after=10s 200s python3 -B - "$name" "$port" <<'PY'
 import sys
 sys.dont_write_bytecode = True
 import subprocess
@@ -146,25 +194,34 @@ PY
     podman exec "$name" readlink /proc/1/exe > "$root/executable-$repeat.txt"
     podman inspect "$name" > "$root/container-$repeat.json"
     if [[ -n "$nvidia_smi" ]]; then
-        "$nvidia_smi" --query-gpu=name,memory.used,utilization.gpu,power.draw,temperature.gpu --format=csv > "$root/gpu-$repeat.csv"
+        "$nvidia_smi" -i 0 --query-gpu=name,memory.used,utilization.gpu,power.draw,temperature.gpu --format=csv > "$root/gpu-start.csv"
     fi
-    timeout --signal=INT --kill-after=10s 600s env BONSAI_BENCHMARK_RESULT="$root/benchmark-$repeat.json" ./simple_text_benchmark.sh "127.0.0.1:$port"
+    podman exec "$name" cat /proc/1/cmdline > "$root/process-arguments.bin"
+    bonsai_step identity "Capturing image, process and model identities."
+    run_worker timeout --signal=TERM --kill-after=10s 180s python3 -B tests/benchmark_evidence.py capture "$root" "$name" "http://127.0.0.1:$port" "$suite_id" "$repeat"
+    bonsai_step conversation "Running ten exchanges with medium reasoning."
+    run_worker timeout --signal=INT --kill-after=10s 600s env BONSAI_BENCHMARK_RESULT="$root/benchmark.json" bash "${BONSAI_BENCHMARK_CLIENT:-$project_dir/simple_text_benchmark.sh}" "127.0.0.1:$port"
     stop_monitor
-    if [[ -n "$nvidia_smi" ]]; then
-        python3 -B tests/summarize-gpu-memory.py "$root/benchmark-$repeat.json" \
-            "$root/gpu-monitor-$repeat.csv" "$root/gpu-memory-$repeat.json"
-    fi
-    podman logs "$name" > "$root/server-$repeat.log" 2>&1
-    if ((repeat==repetitions)); then
+    python3 -B tests/summarize-gpu-memory.py "$root/benchmark.json" \
+            "$root/gpu.csv" "$root/gpu-memory.json" UTC
+    podman logs "$name" > "$root/server.log" 2>&1
+    bonsai_step quality "Checking nine independent quality probes."
+    # Quality is checked independently for every fresh repetition.
+    BONSAI_BASE_URL="http://127.0.0.1:$port" BONSAI_TEST_CONTAINER="$name" \
+        BONSAI_TEST_SUITE_ID="$suite_id" BONSAI_TEST_RUN_DIR="$root/quality" \
+        run_worker timeout --signal=INT --kill-after=10s 90s python3 -B tests/test-quality.py
+    if [[ ${BONSAI_EXPERIMENT_CODING:-0} == 1 ]]; then
         BONSAI_BASE_URL="http://127.0.0.1:$port" BONSAI_TEST_CONTAINER="$name" \
-            BONSAI_TEST_SUITE_ID="backend-$label" BONSAI_TEST_RUN_DIR="$root/quality" \
-            timeout --signal=INT --kill-after=10s 90s python3 -B tests/test-quality.py
-        if [[ ${BONSAI_EXPERIMENT_CODING:-0} == 1 ]]; then
-            BONSAI_BASE_URL="http://127.0.0.1:$port" BONSAI_TEST_CONTAINER="$name" \
-                BONSAI_TEST_SUITE_ID="backend-$label" BONSAI_TEST_RUN_DIR="$root/quality" \
-                timeout --signal=INT --kill-after=10s 120s python3 -B tests/test-coding.py
-        fi
+            BONSAI_TEST_SUITE_ID="$suite_id" BONSAI_TEST_RUN_DIR="$root/quality" \
+            run_worker timeout --signal=INT --kill-after=10s 120s python3 -B tests/test-coding.py
     fi
+    podman logs "$name" > "$root/server.log" 2>&1
+    cleanup
+    python3 -B tests/benchmark_evidence.py finalize "$root" completed 0
+    python3 -B tests/benchmark_evidence.py audit "$root" > "$root/audit.json"
+    active=false
+    python3 -B tests/benchmark_evidence.py suite "$suite"
 done
+python3 -B tests/benchmark_evidence.py audit "$suite"
 
 printf 'Benchmark evidence: %s\n' "$root"

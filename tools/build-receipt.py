@@ -41,7 +41,15 @@ record = {'schema': 1, 'image_id': 'sha256:' + image['Id'].removeprefix('sha256:
           'model_pins': (root / 'data/models/download.sh').read_text().split('# A directory lock')[0],
           'semrel_pins': (root / 'tools/semrel/artifacts.sh').read_text(),
           'packages': (root / 'packages.txt').read_text().splitlines(),
-          'repo_digests': image.get('RepoDigests', [])}
+          'repo_digests': image.get('RepoDigests', []),
+          'source_verifier_inputs': {name: hashlib.sha256((root / name).read_bytes()).hexdigest()
+              for name in ('tools/backend-profiles.json', 'tools/backend_profile.py', 'tools/verify-source.py',
+                           'tools/verify-backend.py', 'tools/verify-ada-source.py', 'tools/verify-blackwell-source.py')
+              if (root / name).is_file()},
+          'runtime_inputs': {name: hashlib.sha256((root / name).read_bytes()).hexdigest()
+              for name in ('entrypoint.sh', 'data/config.sh', 'data/logging.sh', 'data/models/download.sh',
+                           'data/gpu/settings.sh', 'data/gpu/detect.sh', 'data/gpu/check-runtime.sh',
+                           'data/gpu/compute-capability.c') if (root / name).is_file()}}
 path = Path(destination)
 temporary = path.with_suffix('.tmp')
 temporary.write_text(json.dumps(record, indent=2) + '\n')
