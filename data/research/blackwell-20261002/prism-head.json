@@ -1,0 +1,6 @@
+{
+  "sha": "f13265492743209a0fbedc2a2781af3f5f0eab13",
+  "url": "https://github.com/PrismML-Eng/llama.cpp/commit/f13265492743209a0fbedc2a2781af3f5f0eab13",
+  "date": "2026-10-02T07:36:29Z",
+  "subject": "webgpu: route up to 8 columns through the mat-vec kernel (#301)"
+}

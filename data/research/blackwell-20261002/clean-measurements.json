@@ -1,0 +1,2335 @@
+{
+  "date": "2026-10-02",
+  "host": "RTX 5070 Ti Laptop GPU, 12 GB, WSL2",
+  "protocol": {
+    "context": 16384,
+    "reasoning_effort": "medium",
+    "thinking": false,
+    "fresh_container_per_repeat": true,
+    "benchmark": "simple_text_benchmark.sh",
+    "messages": 20,
+    "cumulative_usage_target": 16000,
+    "cache": "q8_0 main/draft",
+    "flash_attention": true,
+    "vision": "BF16 CPU"
+  },
+  "exclusions": "The first series was contaminated by a GPU-intensive background application, confirmed by the user. These repetitions started after its removal.",
+  "idle_gpu_csv": "results/blackwell-clean-20261002/idle-before.csv",
+  "groups": {
+    "baseline": {
+      "repeats": 3,
+      "runs": [
+        {
+          "path": "results/blackwell-clean-20261002/baseline-1/benchmark-1.json",
+          "sha256": "bd71396e02ae761e051017b64e4bb051ea0bc00880cc3ba0079346043c4ea26e",
+          "decode_tokens_per_second": 40.91,
+          "wall_seconds": 35.125,
+          "output_tokens_per_wall_second": 23.43,
+          "cache_hit_rate_percent": 87.37,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13215,
+          "processed_prompt_tokens": 1911,
+          "recorded_at": "2026-10-02T15:56:12.598022+00:00",
+          "image_id": "3c45491b8accc505e4d0cb9fe9bfba63e119e72eac75505cc77580e00c430c24",
+          "container_id": "4a3997c14d0ff81e8e1bb7e833bfc23521f4a4066e1a1d679935aa1294fa0f4c",
+          "executable": "/opt/bonsai/blackwell/bin/llama-server",
+          "drafted_tokens": 886,
+          "accepted_draft_tokens": 382,
+          "draft_acceptance_percent": 43.11512415349887,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/baseline-1/gpu-monitor-1.csv",
+            "sha256": "8fa79ca75c219fa6cbda390115cb5bfaf9682d723e03967711b728a41499af02"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/baseline-1/server-1.log",
+            "sha256": "6a9073b8de7bfd64e9f6f401f09581b0172b4701431b08fae613407ba2eafdc4"
+          }
+        },
+        {
+          "path": "results/blackwell-clean-20261002/baseline-2/benchmark-1.json",
+          "sha256": "5a6c7fff3ab4f11294076994435689b24f8f5ab772212414e3c6fc65fc4d0930",
+          "decode_tokens_per_second": 39.8,
+          "wall_seconds": 34.026,
+          "output_tokens_per_wall_second": 24.19,
+          "cache_hit_rate_percent": 87.37,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13215,
+          "processed_prompt_tokens": 1911,
+          "recorded_at": "2026-10-02T15:58:33.893804+00:00",
+          "image_id": "3c45491b8accc505e4d0cb9fe9bfba63e119e72eac75505cc77580e00c430c24",
+          "container_id": "e93a8a229e572a06d0cf557ee73bcd0d631ddbe3f3e06e0eee95dca95181b59f",
+          "executable": "/opt/bonsai/blackwell/bin/llama-server",
+          "drafted_tokens": 886,
+          "accepted_draft_tokens": 382,
+          "draft_acceptance_percent": 43.11512415349887,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/baseline-2/gpu-monitor-1.csv",
+            "sha256": "5895622e000459518d99166972eb4f3073a98ca3e9f03203b9cd853404914f71"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/baseline-2/server-1.log",
+            "sha256": "db80c03db3f0133441c895ea7a2f7250896b63ca9ee60387ae113c597a54ccdd"
+          }
+        },
+        {
+          "path": "results/blackwell-clean-20261002/baseline-3/benchmark-1.json",
+          "sha256": "0cac42ddee93c64b7f9d6602e3f04c7849921db0ab84a8198104a52f5d2faf2d",
+          "decode_tokens_per_second": 39.03,
+          "wall_seconds": 34.973,
+          "output_tokens_per_wall_second": 23.53,
+          "cache_hit_rate_percent": 87.37,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13215,
+          "processed_prompt_tokens": 1911,
+          "recorded_at": "2026-10-02T16:00:54.986322+00:00",
+          "image_id": "3c45491b8accc505e4d0cb9fe9bfba63e119e72eac75505cc77580e00c430c24",
+          "container_id": "91f7b8964aa0b5b7181954d616d3f59199a53f3d6325eb652ae68dd01a0979e9",
+          "executable": "/opt/bonsai/blackwell/bin/llama-server",
+          "drafted_tokens": 886,
+          "accepted_draft_tokens": 382,
+          "draft_acceptance_percent": 43.11512415349887,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/baseline-3/gpu-monitor-1.csv",
+            "sha256": "b5b5b7d2bd17cc5bdd09ddb49cf44660a064e6dc804ff935452de102283e0346"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/baseline-3/server-1.log",
+            "sha256": "5c26c13ee1df72ef9305e254b919ddf91ed2a289d12e5b80739f7b126eed2d13"
+          }
+        }
+      ],
+      "mean": {
+        "decode_tokens_per_second": 39.913333333333334,
+        "wall_seconds": 34.708,
+        "output_tokens_per_wall_second": 23.71666666666667,
+        "cache_hit_rate_percent": 87.37
+      },
+      "sample_stddev": {
+        "decode_tokens_per_second": 0.9451102228488111,
+        "wall_seconds": 0.5954989504608698,
+        "output_tokens_per_wall_second": 0.41295681775862936,
+        "cache_hit_rate_percent": 0.0
+      },
+      "quality": [
+        {
+          "path": "results/blackwell-clean-20261002/baseline-1/quality/quality/summary.json",
+          "sha256": "b2c3f09ca7401d254d449c57aa52bc6d18f8ce04fa580a4bfee8e4707bf97734",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 63.328064305410805,
+              "drafted_tokens": 94,
+              "accepted_draft_tokens": 82
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 64.43069546153572,
+              "drafted_tokens": 410,
+              "accepted_draft_tokens": 366
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 55.769114131492074,
+              "drafted_tokens": 406,
+              "accepted_draft_tokens": 311
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 43.34765250787843,
+              "drafted_tokens": 10,
+              "accepted_draft_tokens": 6
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 55.50457357686273,
+              "drafted_tokens": 12,
+              "accepted_draft_tokens": 11
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 19.173617102866455,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 17.730810829979255,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 18.567343755802295,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "O4tLnxCsXs2uHyQrmmfSELKiDlUCsDJm"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        },
+        {
+          "path": "results/blackwell-clean-20261002/baseline-2/quality/quality/summary.json",
+          "sha256": "59445d38d5cced059f5a9813f32bd9c80b1bf81eb4b4e1814b55614953ec829c",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 56.017318614158,
+              "drafted_tokens": 94,
+              "accepted_draft_tokens": 82
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 62.20885301826986,
+              "drafted_tokens": 410,
+              "accepted_draft_tokens": 366
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 59.5583297944021,
+              "drafted_tokens": 406,
+              "accepted_draft_tokens": 311
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 44.26306424341145,
+              "drafted_tokens": 10,
+              "accepted_draft_tokens": 6
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 58.42190743632986,
+              "drafted_tokens": 12,
+              "accepted_draft_tokens": 11
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 20.23840845155937,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 19.678066826714943,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 18.03849414650865,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "WzfvyDvoeWSiTtWTcPjFlHVx4Iwg5Zuc"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        },
+        {
+          "path": "results/blackwell-clean-20261002/baseline-3/quality/quality/summary.json",
+          "sha256": "17b453de6c2bdaedd561b74f647a2cef695e675da9f31d87982ffede83c18348",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 61.78785844255675,
+              "drafted_tokens": 94,
+              "accepted_draft_tokens": 82
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 62.1275480741877,
+              "drafted_tokens": 410,
+              "accepted_draft_tokens": 366
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 55.607304246602176,
+              "drafted_tokens": 406,
+              "accepted_draft_tokens": 311
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 42.82288454950325,
+              "drafted_tokens": 10,
+              "accepted_draft_tokens": 6
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 53.03295467803693,
+              "drafted_tokens": 12,
+              "accepted_draft_tokens": 11
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 17.449266258353838,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 14.690543697022227,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 14.886047307858343,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "Y7TiKiwJcfkIQ1H3J53gwkDR64Jo7jCz"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        }
+      ]
+    },
+    "native": {
+      "repeats": 3,
+      "runs": [
+        {
+          "path": "results/blackwell-clean-20261002/native-1/benchmark-1.json",
+          "sha256": "6d072d954b6c8194dd53e0620fa4d8358ce4165cd22ff9a24b72e9957be7007f",
+          "decode_tokens_per_second": 43.71,
+          "wall_seconds": 32.858,
+          "output_tokens_per_wall_second": 25.05,
+          "cache_hit_rate_percent": 87.37,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13215,
+          "processed_prompt_tokens": 1911,
+          "recorded_at": "2026-10-02T15:57:24.360480+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "895bf718759cfba5f769c57aff234827b6d07d5219e81407120e79c3c2a94785",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 886,
+          "accepted_draft_tokens": 382,
+          "draft_acceptance_percent": 43.11512415349887,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/native-1/gpu-monitor-1.csv",
+            "sha256": "0f277d38ad0b00a7b84e171bd419b216cd226e2d31eff5df460d125525251d6a"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/native-1/server-1.log",
+            "sha256": "f9326b6208029fd1da3a8d1b954d1c6a38fae34908f569fe85d3f86dc55c3b1a"
+          }
+        },
+        {
+          "path": "results/blackwell-clean-20261002/native-2/benchmark-1.json",
+          "sha256": "c3f8c58927f6a68d6336c536c858cfe86354aef9293439bfd9832dc206a66f5e",
+          "decode_tokens_per_second": 42.36,
+          "wall_seconds": 33.977,
+          "output_tokens_per_wall_second": 24.22,
+          "cache_hit_rate_percent": 87.37,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13215,
+          "processed_prompt_tokens": 1911,
+          "recorded_at": "2026-10-02T15:59:44.789815+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "2abd6cdc403fb38c6835759d96b912801e774786914abe4b5c11f60ed4bdc45c",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 886,
+          "accepted_draft_tokens": 382,
+          "draft_acceptance_percent": 43.11512415349887,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/native-2/gpu-monitor-1.csv",
+            "sha256": "cc030b3d78db7eb0cb4faf79f9bc9aa49fc8f2632f2be88617fe53b7d279fea7"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/native-2/server-1.log",
+            "sha256": "f5bea90c93ef5100787980eac93432cbf16d5dbe85f19b2e8a464241782bca2a"
+          }
+        },
+        {
+          "path": "results/blackwell-clean-20261002/native-3/benchmark-1.json",
+          "sha256": "b98359cef255b8fe1c7b9c274e75823d5abca0e21e6e41fb4aa3e0dcc0c478d1",
+          "decode_tokens_per_second": 43.95,
+          "wall_seconds": 31.966,
+          "output_tokens_per_wall_second": 25.75,
+          "cache_hit_rate_percent": 87.37,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13215,
+          "processed_prompt_tokens": 1911,
+          "recorded_at": "2026-10-02T16:02:07.071838+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "2872a78fe2903d95c5601648e4e37546b274c357868b29a792045e56e62618d9",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 886,
+          "accepted_draft_tokens": 382,
+          "draft_acceptance_percent": 43.11512415349887,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/native-3/gpu-monitor-1.csv",
+            "sha256": "abb7283550d5f756d4f0ed699ee7102e18ef466e8c41cf2c707cd1db7ded7ed6"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/native-3/server-1.log",
+            "sha256": "7a63466d71526d8dd54836e13526195c7787f3aff95ff78c6e12a3bea055d54f"
+          }
+        }
+      ],
+      "mean": {
+        "decode_tokens_per_second": 43.34,
+        "wall_seconds": 32.93366666666667,
+        "output_tokens_per_wall_second": 25.006666666666668,
+        "cache_hit_rate_percent": 87.37
+      },
+      "sample_stddev": {
+        "decode_tokens_per_second": 0.8571464285639896,
+        "wall_seconds": 1.0076330350545923,
+        "output_tokens_per_wall_second": 0.7659199261889811,
+        "cache_hit_rate_percent": 0.0
+      },
+      "quality": [
+        {
+          "path": "results/blackwell-clean-20261002/native-1/quality/quality/summary.json",
+          "sha256": "b93c78c65e55c9e5c1f9ea30b438bbaaec58b85b2b443b6a438bbdfdac3efb0f",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 68.70216206244972,
+              "drafted_tokens": 94,
+              "accepted_draft_tokens": 82
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 69.06726715606682,
+              "drafted_tokens": 410,
+              "accepted_draft_tokens": 366
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 62.09125021940318,
+              "drafted_tokens": 406,
+              "accepted_draft_tokens": 311
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 47.649452507790684,
+              "drafted_tokens": 10,
+              "accepted_draft_tokens": 6
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 61.69285185489842,
+              "drafted_tokens": 12,
+              "accepted_draft_tokens": 11
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 22.194109683290055,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 22.280150613818147,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 22.119978764820388,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "Zx9IcVoIaYymfBerSehhcuNXYO4XXJFm"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        },
+        {
+          "path": "results/blackwell-clean-20261002/native-2/quality/quality/summary.json",
+          "sha256": "c5f57a2bec3c8aad2e6149b6e40247fa4ee257d660a2524fa8536bd4248d796f",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 68.08662119338155,
+              "drafted_tokens": 94,
+              "accepted_draft_tokens": 82
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 67.59460220339429,
+              "drafted_tokens": 410,
+              "accepted_draft_tokens": 366
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 59.698601043424695,
+              "drafted_tokens": 406,
+              "accepted_draft_tokens": 311
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 47.271042704659976,
+              "drafted_tokens": 10,
+              "accepted_draft_tokens": 6
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 63.996450330221684,
+              "drafted_tokens": 12,
+              "accepted_draft_tokens": 11
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 22.090172082440525,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 20.602414602991473,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 20.93933873568273,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "H8WYD1AzZwSl6tqEhpFQRIgMAPo6hQS7"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        },
+        {
+          "path": "results/blackwell-clean-20261002/native-3/quality/quality/summary.json",
+          "sha256": "74daa5a2c16bfc9cee99849beba3caeb16e21b55419b1430767d0eaf38a1f409",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 69.66836759883307,
+              "drafted_tokens": 94,
+              "accepted_draft_tokens": 82
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 69.45731537240272,
+              "drafted_tokens": 410,
+              "accepted_draft_tokens": 366
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 57.69466702600492,
+              "drafted_tokens": 406,
+              "accepted_draft_tokens": 311
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 45.79719171620396,
+              "drafted_tokens": 10,
+              "accepted_draft_tokens": 6
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 63.16347971820666,
+              "drafted_tokens": 12,
+              "accepted_draft_tokens": 11
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 22.188200315072443,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 21.101943488995335,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 20.27657244819336,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "orG7bkYf23u0pUwyvLQObaUoQBgKbSNU"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        }
+      ]
+    },
+    "dflash1-pdl1": {
+      "repeats": 3,
+      "runs": [
+        {
+          "path": "results/blackwell-clean-20261002/dflash1-pdl1/benchmark-1.json",
+          "sha256": "f0cf9754552d048123a127255b524000130991eafa3aca0ebad66c1f275f337d",
+          "decode_tokens_per_second": 34.55,
+          "wall_seconds": 40.264,
+          "output_tokens_per_wall_second": 20.44,
+          "cache_hit_rate_percent": 87.39,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13219,
+          "processed_prompt_tokens": 1907,
+          "recorded_at": "2026-10-02T16:03:27.996189+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "41588a9195d2d4229da78869f98ada62aab985e9669b414e88bd68759d21990c",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 1203,
+          "accepted_draft_tokens": 428,
+          "draft_acceptance_percent": 35.57772236076475,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/dflash1-pdl1/gpu-monitor-1.csv",
+            "sha256": "e789e366b8be50035ba0a7625123c82748d2cfadcb5c8282a0fd1e916a468a6d"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/dflash1-pdl1/server-1.log",
+            "sha256": "ceb9b2e43c1556747eb3f6240169d60d689e8499ca0552f9a58c36308c66ed9d"
+          }
+        },
+        {
+          "path": "results/blackwell-clean-20261002/dflash1-pdl1/benchmark-2.json",
+          "sha256": "bc8bd429c5695afc11a43e660c44d615a32e8415c8379a53f5390233b07a74d7",
+          "decode_tokens_per_second": 35.44,
+          "wall_seconds": 38.701,
+          "output_tokens_per_wall_second": 21.27,
+          "cache_hit_rate_percent": 87.39,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13219,
+          "processed_prompt_tokens": 1907,
+          "recorded_at": "2026-10-02T16:04:19.859737+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "b50afbbf00ba6edbf77e53d6111a6127c76f7bac9bcad9ce8c547b750e6e9311",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 1203,
+          "accepted_draft_tokens": 428,
+          "draft_acceptance_percent": 35.57772236076475,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/dflash1-pdl1/gpu-monitor-2.csv",
+            "sha256": "7b54f96b3ae430539bd47ea5d1c3f6173f1d340efb100b38110832bd1796b2d3"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/dflash1-pdl1/server-2.log",
+            "sha256": "c37df504a50dac338a62f6a41a3bad3b48b67397d5d9d0578cf2bd411a1baa93"
+          }
+        },
+        {
+          "path": "results/blackwell-clean-20261002/dflash1-pdl1/benchmark-3.json",
+          "sha256": "035d3cd9fbceebdb9029c8bfe538cab6ae4282faf330f37e8be02f51aa725d86",
+          "decode_tokens_per_second": 34.97,
+          "wall_seconds": 39.986,
+          "output_tokens_per_wall_second": 20.58,
+          "cache_hit_rate_percent": 87.39,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13219,
+          "processed_prompt_tokens": 1907,
+          "recorded_at": "2026-10-02T16:05:11.243534+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "a94f9cae7efdb133f332c0fe65918f516ad59099c9488d2a82528f8ff6bc01bb",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 1203,
+          "accepted_draft_tokens": 428,
+          "draft_acceptance_percent": 35.57772236076475,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/dflash1-pdl1/gpu-monitor-3.csv",
+            "sha256": "ce7d78048b34f80db6afb4183a935c50584a282485fc037c1a20f331f4840abd"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/dflash1-pdl1/server-3.log",
+            "sha256": "7505f3e8120f035556ad26b383eb73053027d811558aca4dc12a5ebe9d7b3017"
+          }
+        }
+      ],
+      "mean": {
+        "decode_tokens_per_second": 34.986666666666665,
+        "wall_seconds": 39.650333333333336,
+        "output_tokens_per_wall_second": 20.763333333333332,
+        "cache_hit_rate_percent": 87.39
+      },
+      "sample_stddev": {
+        "decode_tokens_per_second": 0.44523402086243763,
+        "wall_seconds": 0.83381432785323,
+        "output_tokens_per_wall_second": 0.4443347086750404,
+        "cache_hit_rate_percent": 0.0
+      },
+      "quality": [
+        {
+          "path": "results/blackwell-clean-20261002/dflash1-pdl1/quality/quality/summary.json",
+          "sha256": "91e22c56c679647fcff83df4c6706bdee25736d3428aeffe354905b5e7b09191",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 59.91829409314134,
+              "drafted_tokens": 108,
+              "accepted_draft_tokens": 91
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 63.4718147282226,
+              "drafted_tokens": 468,
+              "accepted_draft_tokens": 416
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 54.81425964171097,
+              "drafted_tokens": 492,
+              "accepted_draft_tokens": 352
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 43.17845222520154,
+              "drafted_tokens": 12,
+              "accepted_draft_tokens": 8
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 51.668905652578275,
+              "drafted_tokens": 15,
+              "accepted_draft_tokens": 12
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 17.33162327983639,
+              "drafted_tokens": 3,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 17.6084238699794,
+              "drafted_tokens": 3,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 17.266087677193223,
+              "drafted_tokens": 3,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "K1Eyr8kv54w6FhYMRtms9OTGuDlE3KUD"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        },
+        {
+          "path": "results/blackwell-clean-20261002/dflash1-pdl1/quality/coding/summary.json",
+          "sha256": "c7a70c263b9f37d214b1d8a3de5eae8683feebec305f81a89044b6927c9134b5",
+          "kind": "coding",
+          "passed": 3,
+          "total": 3,
+          "cases": [
+            {
+              "task": "prime",
+              "passed": true,
+              "elapsed_seconds": 2.732169945986243,
+              "decode_tokens_per_second": 67.53812924679094,
+              "drafted_tokens": 81,
+              "accepted_draft_tokens": 77,
+              "usage": {
+                "completion_tokens": 103,
+                "prompt_tokens": 74,
+                "total_tokens": 177,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              }
+            },
+            {
+              "task": "intervals",
+              "passed": true,
+              "elapsed_seconds": 2.816520255000796,
+              "decode_tokens_per_second": 63.07991111563449,
+              "drafted_tokens": 102,
+              "accepted_draft_tokens": 86,
+              "usage": {
+                "completion_tokens": 120,
+                "prompt_tokens": 81,
+                "total_tokens": 201,
+                "prompt_tokens_details": {
+                  "cached_tokens": 30
+                }
+              }
+            },
+            {
+              "task": "brackets",
+              "passed": true,
+              "elapsed_seconds": 2.5516214559902437,
+              "decode_tokens_per_second": 63.41741832568258,
+              "drafted_tokens": 93,
+              "accepted_draft_tokens": 75,
+              "usage": {
+                "completion_tokens": 105,
+                "prompt_tokens": 77,
+                "total_tokens": 182,
+                "prompt_tokens_details": {
+                  "cached_tokens": 30
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "dflash2-pdl1": {
+      "repeats": 3,
+      "runs": [
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-pdl1/benchmark-1.json",
+          "sha256": "b86a18e627ef1eb94b7d2e019bfbda7502163be2ad4e35d3ba2a4ca686c27ab2",
+          "decode_tokens_per_second": 29.93,
+          "wall_seconds": 42.907,
+          "output_tokens_per_wall_second": 19.6,
+          "cache_hit_rate_percent": 87.5,
+          "total_tokens": 15951,
+          "prompt_tokens": 15110,
+          "completion_tokens": 841,
+          "cached_prompt_tokens": 13221,
+          "processed_prompt_tokens": 1889,
+          "recorded_at": "2026-10-02T16:06:48.612329+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "ca4f5abcd2ee40f06f58791182e5bd5111805ad12d53a85ec022023c9d3c5147",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 2478,
+          "accepted_draft_tokens": 487,
+          "draft_acceptance_percent": 19.652945924132364,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/dflash2-pdl1/gpu-monitor-1.csv",
+            "sha256": "bd5925d120fb94e857dc2051d4d6e01edea2b01b1af5b887680e15d4c8b62420"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/dflash2-pdl1/server-1.log",
+            "sha256": "0c7b773bc0dae208310a088228cef54a375ec009e0503839aae635ddf98ceca4"
+          }
+        },
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-pdl1/benchmark-2.json",
+          "sha256": "76a94fdf4ac7e1e7d6198d513f64ada725ca9eeefe7d35c51a9b038ac3356ca9",
+          "decode_tokens_per_second": 30.21,
+          "wall_seconds": 42.893,
+          "output_tokens_per_wall_second": 19.61,
+          "cache_hit_rate_percent": 87.5,
+          "total_tokens": 15951,
+          "prompt_tokens": 15110,
+          "completion_tokens": 841,
+          "cached_prompt_tokens": 13221,
+          "processed_prompt_tokens": 1889,
+          "recorded_at": "2026-10-02T16:07:42.814457+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "de07d99e889c5c62468e1c3923691dccb65e1bde4ebc4237521e2603026f89e8",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 2478,
+          "accepted_draft_tokens": 487,
+          "draft_acceptance_percent": 19.652945924132364,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/dflash2-pdl1/gpu-monitor-2.csv",
+            "sha256": "1cf4146f5e0c2ea08b69d85cc0c26305d896495d1cf565a739205aee1f12b695"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/dflash2-pdl1/server-2.log",
+            "sha256": "c8634b17545e7a360e1de6936b92e1a2607fb8a5f3001c9e7563bf64d11d4bdf"
+          }
+        },
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-pdl1/benchmark-3.json",
+          "sha256": "cb832bf2e1aa635aa20cd09bc0f1881ffea94e916840442df1dce1a2738f2798",
+          "decode_tokens_per_second": 30.89,
+          "wall_seconds": 43.528,
+          "output_tokens_per_wall_second": 19.32,
+          "cache_hit_rate_percent": 87.5,
+          "total_tokens": 15951,
+          "prompt_tokens": 15110,
+          "completion_tokens": 841,
+          "cached_prompt_tokens": 13221,
+          "processed_prompt_tokens": 1889,
+          "recorded_at": "2026-10-02T16:08:36.748659+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "5a27b41379a0c096c4149a677cee7f203cdaeaf6223ce4d485acde2ba42161c5",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 2478,
+          "accepted_draft_tokens": 487,
+          "draft_acceptance_percent": 19.652945924132364,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/dflash2-pdl1/gpu-monitor-3.csv",
+            "sha256": "48e6918c796ea9840296d8223ae51411384a32588b482b9e97c7f0883461c77a"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/dflash2-pdl1/server-3.log",
+            "sha256": "9c351b499d8cc0dfb0af1d4ced98f36e4e92b3367ec317d618f55d05eb9b930d"
+          }
+        }
+      ],
+      "mean": {
+        "decode_tokens_per_second": 30.343333333333334,
+        "wall_seconds": 43.10933333333333,
+        "output_tokens_per_wall_second": 19.51,
+        "cache_hit_rate_percent": 87.5
+      },
+      "sample_stddev": {
+        "decode_tokens_per_second": 0.4936935621752968,
+        "wall_seconds": 0.3626435348015091,
+        "output_tokens_per_wall_second": 0.16462077633154334,
+        "cache_hit_rate_percent": 0.0
+      },
+      "quality": [
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-pdl1/quality/quality/summary.json",
+          "sha256": "05d710368f246dfe42c4008449285026e64d321bd013f3247fbc33577e470eec",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 105.98559931101015,
+              "drafted_tokens": 133,
+              "accepted_draft_tokens": 109
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 100.83048944180949,
+              "drafted_tokens": 602,
+              "accepted_draft_tokens": 485
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 76.07609563268448,
+              "drafted_tokens": 735,
+              "accepted_draft_tokens": 409
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 52.26189480725814,
+              "drafted_tokens": 21,
+              "accepted_draft_tokens": 8
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 106.23154226953066,
+              "drafted_tokens": 14,
+              "accepted_draft_tokens": 14
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 13.594529561304531,
+              "drafted_tokens": 7,
+              "accepted_draft_tokens": 1
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 14.037254874436755,
+              "drafted_tokens": 7,
+              "accepted_draft_tokens": 1
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 13.58068283673303,
+              "drafted_tokens": 7,
+              "accepted_draft_tokens": 1
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "p1ZpMR4GISUKsCftHZZQr19IfQD2U1UW"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        },
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-pdl1/quality/coding/summary.json",
+          "sha256": "1da5b5ce541ea1d0bb0fd0b853cda65dfdfd1c92d28abcaa77273f8891db9204",
+          "kind": "coding",
+          "passed": 3,
+          "total": 3,
+          "cases": [
+            {
+              "task": "prime",
+              "passed": true,
+              "elapsed_seconds": 1.9035083650087472,
+              "decode_tokens_per_second": 119.7530269925671,
+              "drafted_tokens": 98,
+              "accepted_draft_tokens": 89,
+              "usage": {
+                "completion_tokens": 103,
+                "prompt_tokens": 74,
+                "total_tokens": 177,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              }
+            },
+            {
+              "task": "intervals",
+              "passed": true,
+              "elapsed_seconds": 2.064728619006928,
+              "decode_tokens_per_second": 104.6916829935839,
+              "drafted_tokens": 126,
+              "accepted_draft_tokens": 102,
+              "usage": {
+                "completion_tokens": 120,
+                "prompt_tokens": 81,
+                "total_tokens": 201,
+                "prompt_tokens_details": {
+                  "cached_tokens": 30
+                }
+              }
+            },
+            {
+              "task": "brackets",
+              "passed": true,
+              "elapsed_seconds": 1.8950955889886245,
+              "decode_tokens_per_second": 119.79841612670987,
+              "drafted_tokens": 98,
+              "accepted_draft_tokens": 90,
+              "usage": {
+                "completion_tokens": 105,
+                "prompt_tokens": 77,
+                "total_tokens": 182,
+                "prompt_tokens_details": {
+                  "cached_tokens": 30
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "dflash2-depth3-pdl1": {
+      "repeats": 3,
+      "runs": [
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/benchmark-1.json",
+          "sha256": "558f1d639006b4a0b85efb5e67eafe30dc3b4bce5272748f9b9c578610936d78",
+          "decode_tokens_per_second": 31.71,
+          "wall_seconds": 41.177,
+          "output_tokens_per_wall_second": 19.99,
+          "cache_hit_rate_percent": 87.36,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13214,
+          "processed_prompt_tokens": 1912,
+          "recorded_at": "2026-10-02T16:10:55.028572+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "77e7d6bf7a1b6d29968c58e8b9faf0f8cec175681d29bf6415a6f7f61c6a4c19",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 1149,
+          "accepted_draft_tokens": 440,
+          "draft_acceptance_percent": 38.29416884247171,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/gpu-monitor-1.csv",
+            "sha256": "655fc29de08b11e848696ec4df8f8ed279982b6ee23fef6abd036692f04895ae"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/server-1.log",
+            "sha256": "8cff9eac32b6f84d40df9b54b6806ae2640d64fea40c95d01e6b26da9136c51d"
+          }
+        },
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/benchmark-2.json",
+          "sha256": "be9b3775c251678f13605728a9dd9c379cd017092dcafb38aab9ed23006392a1",
+          "decode_tokens_per_second": 31.62,
+          "wall_seconds": 40.237,
+          "output_tokens_per_wall_second": 20.45,
+          "cache_hit_rate_percent": 87.36,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13214,
+          "processed_prompt_tokens": 1912,
+          "recorded_at": "2026-10-02T16:11:46.711101+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "f105f6a86ffbc58e655766842bd10d34d3983e13f80660331c2a4d32ad680346",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 1149,
+          "accepted_draft_tokens": 440,
+          "draft_acceptance_percent": 38.29416884247171,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/gpu-monitor-2.csv",
+            "sha256": "60ff7fe98ab9a3126194c771280b3f54cb3d15964ffde2bde9eb2635157d49bf"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/server-2.log",
+            "sha256": "cd7dea3e5239553f92f03a60d7e0f9485ee98a4412c226aefcf13dac744e1fa4"
+          }
+        },
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/benchmark-3.json",
+          "sha256": "54b51eba64d6ba732c38b6135a66218d4ab91b034b04e5dc870bdf023898afae",
+          "decode_tokens_per_second": 30.9,
+          "wall_seconds": 42.102,
+          "output_tokens_per_wall_second": 19.55,
+          "cache_hit_rate_percent": 87.36,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13214,
+          "processed_prompt_tokens": 1912,
+          "recorded_at": "2026-10-02T16:12:38.454722+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "e1a3d817b1d2ad4d65a5eb0ebe922abd2a4db9d18430dd378a1da0601dabe256",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 1149,
+          "accepted_draft_tokens": 440,
+          "draft_acceptance_percent": 38.29416884247171,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/gpu-monitor-3.csv",
+            "sha256": "d71a095e8fc273d998beddf14b10f07b1a89ed8ed5f340de67ed5536dda1985b"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/server-3.log",
+            "sha256": "7d7bc93b301fc546275fffb52fbb264b134fee1ce2086d4e1f3d0e200d0a3663"
+          }
+        }
+      ],
+      "mean": {
+        "decode_tokens_per_second": 31.41,
+        "wall_seconds": 41.172,
+        "output_tokens_per_wall_second": 19.996666666666666,
+        "cache_hit_rate_percent": 87.36
+      },
+      "sample_stddev": {
+        "decode_tokens_per_second": 0.4439594576084636,
+        "wall_seconds": 0.9325100535651051,
+        "output_tokens_per_wall_second": 0.4500370355130039,
+        "cache_hit_rate_percent": 0.0
+      },
+      "quality": [
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/quality/quality/summary.json",
+          "sha256": "69c3632eea3ef2be2bca100a2d866cc3efbbd681714cab04e788da9de8de48c1",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 67.03778502935411,
+              "drafted_tokens": 99,
+              "accepted_draft_tokens": 95
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 65.91070556369611,
+              "drafted_tokens": 456,
+              "accepted_draft_tokens": 419
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 56.896768341044094,
+              "drafted_tokens": 462,
+              "accepted_draft_tokens": 360
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 42.83554150549794,
+              "drafted_tokens": 12,
+              "accepted_draft_tokens": 7
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 54.224837867734784,
+              "drafted_tokens": 15,
+              "accepted_draft_tokens": 11
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 17.009984861113473,
+              "drafted_tokens": 3,
+              "accepted_draft_tokens": 1
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 16.282667100871123,
+              "drafted_tokens": 3,
+              "accepted_draft_tokens": 1
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 15.527950310559005,
+              "drafted_tokens": 3,
+              "accepted_draft_tokens": 1
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "zUnhGQQ99TMEEexFF0FSK2kYorZXGx9F"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        },
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-depth3-pdl1/quality/coding/summary.json",
+          "sha256": "2b8734373fb491b350cb2cd47dfe5c7aae035ab6599a3cfe1a731d4332dfd0ac",
+          "kind": "coding",
+          "passed": 3,
+          "total": 3,
+          "cases": [
+            {
+              "task": "prime",
+              "passed": true,
+              "elapsed_seconds": 2.572768457001075,
+              "decode_tokens_per_second": 69.68626832082738,
+              "drafted_tokens": 78,
+              "accepted_draft_tokens": 77,
+              "usage": {
+                "completion_tokens": 103,
+                "prompt_tokens": 74,
+                "total_tokens": 177,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              }
+            },
+            {
+              "task": "intervals",
+              "passed": true,
+              "elapsed_seconds": 2.9094479490013327,
+              "decode_tokens_per_second": 63.0377076734901,
+              "drafted_tokens": 96,
+              "accepted_draft_tokens": 88,
+              "usage": {
+                "completion_tokens": 120,
+                "prompt_tokens": 81,
+                "total_tokens": 201,
+                "prompt_tokens_details": {
+                  "cached_tokens": 30
+                }
+              }
+            },
+            {
+              "task": "brackets",
+              "passed": true,
+              "elapsed_seconds": 2.4597777349990793,
+              "decode_tokens_per_second": 67.47340639492185,
+              "drafted_tokens": 81,
+              "accepted_draft_tokens": 78,
+              "usage": {
+                "completion_tokens": 105,
+                "prompt_tokens": 77,
+                "total_tokens": 182,
+                "prompt_tokens_details": {
+                  "cached_tokens": 30
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "dflash2-pdl0-diagnostic": {
+      "repeats": 1,
+      "runs": [
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-pdl0-diagnostic/benchmark-1.json",
+          "sha256": "97f2114d2b6a7cc5ebf6047bd8223e68300d5c4e6fcf8088cebefab24a6109d6",
+          "decode_tokens_per_second": 31.18,
+          "wall_seconds": 42.507,
+          "output_tokens_per_wall_second": 19.79,
+          "cache_hit_rate_percent": 87.5,
+          "total_tokens": 15951,
+          "prompt_tokens": 15110,
+          "completion_tokens": 841,
+          "cached_prompt_tokens": 13221,
+          "processed_prompt_tokens": 1889,
+          "recorded_at": "2026-10-02T16:14:09.038632+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "daa65ec666ff1c4dc158fd3cd0c1c75f7279ebbbfbde25b9abf9953808e526ff",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 2478,
+          "accepted_draft_tokens": 487,
+          "draft_acceptance_percent": 19.652945924132364,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/dflash2-pdl0-diagnostic/gpu-monitor-1.csv",
+            "sha256": "9d1d172b8031adbd24b584993415e55895788e45b43ac63140e9bd831ae5d544"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/dflash2-pdl0-diagnostic/server-1.log",
+            "sha256": "ad0734b419b06087934270d8d82c02c21b4eaebc3cffea550a83e600386d406c"
+          }
+        }
+      ],
+      "mean": {
+        "decode_tokens_per_second": 31.18,
+        "wall_seconds": 42.507,
+        "output_tokens_per_wall_second": 19.79,
+        "cache_hit_rate_percent": 87.5
+      },
+      "sample_stddev": {
+        "decode_tokens_per_second": null,
+        "wall_seconds": null,
+        "output_tokens_per_wall_second": null,
+        "cache_hit_rate_percent": null
+      },
+      "quality": [
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-pdl0-diagnostic/quality/quality/summary.json",
+          "sha256": "6f6c6aa16c76ba30ebb2cd3892d5167d8c70d9353f0d4dd7b00c459fbcd182b2",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 112.78081980111502,
+              "drafted_tokens": 133,
+              "accepted_draft_tokens": 109
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 106.28569894221488,
+              "drafted_tokens": 602,
+              "accepted_draft_tokens": 485
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 76.94653398529304,
+              "drafted_tokens": 735,
+              "accepted_draft_tokens": 409
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 52.94731212969974,
+              "drafted_tokens": 21,
+              "accepted_draft_tokens": 8
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 110.62844331029804,
+              "drafted_tokens": 14,
+              "accepted_draft_tokens": 14
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 14.537207983834625,
+              "drafted_tokens": 7,
+              "accepted_draft_tokens": 1
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 14.667488045997244,
+              "drafted_tokens": 7,
+              "accepted_draft_tokens": 1
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 14.201317882299477,
+              "drafted_tokens": 7,
+              "accepted_draft_tokens": 1
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "sHjTsREdNvZPw7bVm4ycP4uwhwLAmhep"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        },
+        {
+          "path": "results/blackwell-clean-20261002/dflash2-pdl0-diagnostic/quality/coding/summary.json",
+          "sha256": "f0c57e2ab4f04a960f775f4060653515070919c29ada48d66a719b2983271dd0",
+          "kind": "coding",
+          "passed": 3,
+          "total": 3,
+          "cases": [
+            {
+              "task": "prime",
+              "passed": true,
+              "elapsed_seconds": 1.9481470359896775,
+              "decode_tokens_per_second": 105.28793152568406,
+              "drafted_tokens": 98,
+              "accepted_draft_tokens": 89,
+              "usage": {
+                "completion_tokens": 103,
+                "prompt_tokens": 74,
+                "total_tokens": 177,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              }
+            },
+            {
+              "task": "intervals",
+              "passed": true,
+              "elapsed_seconds": 2.2657964599784464,
+              "decode_tokens_per_second": 98.03275447325929,
+              "drafted_tokens": 126,
+              "accepted_draft_tokens": 102,
+              "usage": {
+                "completion_tokens": 120,
+                "prompt_tokens": 81,
+                "total_tokens": 201,
+                "prompt_tokens_details": {
+                  "cached_tokens": 30
+                }
+              }
+            },
+            {
+              "task": "brackets",
+              "passed": true,
+              "elapsed_seconds": 1.8960415979963727,
+              "decode_tokens_per_second": 120.77925848503325,
+              "drafted_tokens": 98,
+              "accepted_draft_tokens": 90,
+              "usage": {
+                "completion_tokens": 105,
+                "prompt_tokens": 77,
+                "total_tokens": 182,
+                "prompt_tokens_details": {
+                  "cached_tokens": 30
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "native-coding-diagnostic": {
+      "repeats": 1,
+      "runs": [
+        {
+          "path": "results/blackwell-clean-20261002/native-coding-diagnostic/benchmark-1.json",
+          "sha256": "9866369382222a3ad6e704d091cb472030ddd4357cdf27bccaf76db80762e16c",
+          "decode_tokens_per_second": 44.88,
+          "wall_seconds": 32.989,
+          "output_tokens_per_wall_second": 24.95,
+          "cache_hit_rate_percent": 87.37,
+          "total_tokens": 15949,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "cached_prompt_tokens": 13215,
+          "processed_prompt_tokens": 1911,
+          "recorded_at": "2026-10-02T16:15:20.998670+00:00",
+          "image_id": "fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c",
+          "container_id": "d2ff73463627cd1c1b5a7f83a5cb069cc5daec089d3e9a7cb2f6a5d257ecc86d",
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "drafted_tokens": 886,
+          "accepted_draft_tokens": 382,
+          "draft_acceptance_percent": 43.11512415349887,
+          "telemetry": {
+            "path": "results/blackwell-clean-20261002/native-coding-diagnostic/gpu-monitor-1.csv",
+            "sha256": "1fa841fac673e27737e3c67e68dc00300b4cf0e411554cd67afaed5bb2d7b75c"
+          },
+          "server_log": {
+            "path": "results/blackwell-clean-20261002/native-coding-diagnostic/server-1.log",
+            "sha256": "59d954f30eeb7b5a1a93048c086d0ef647c2afa21072ec625605480fd30d0f79"
+          }
+        }
+      ],
+      "mean": {
+        "decode_tokens_per_second": 44.88,
+        "wall_seconds": 32.989,
+        "output_tokens_per_wall_second": 24.95,
+        "cache_hit_rate_percent": 87.37
+      },
+      "sample_stddev": {
+        "decode_tokens_per_second": null,
+        "wall_seconds": null,
+        "output_tokens_per_wall_second": null,
+        "cache_hit_rate_percent": null
+      },
+      "quality": [
+        {
+          "path": "results/blackwell-clean-20261002/native-coding-diagnostic/quality/quality/summary.json",
+          "sha256": "3e5ab32ee451371720adbe2c16d617a5e8657dab569a021ca1b88b1f7fc0ed91",
+          "kind": "quality",
+          "passed": 9,
+          "total": 9,
+          "cases": [
+            {
+              "case": "arithmetic",
+              "passed": true,
+              "thinking": true,
+              "expected": "4477",
+              "actual": "4477",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 73.71198464004755,
+              "drafted_tokens": 94,
+              "accepted_draft_tokens": 82
+            },
+            {
+              "case": "modular",
+              "passed": true,
+              "thinking": true,
+              "expected": "15",
+              "actual": "15",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 70.27278662913524,
+              "drafted_tokens": 410,
+              "accepted_draft_tokens": 366
+            },
+            {
+              "case": "logic",
+              "passed": true,
+              "thinking": true,
+              "expected": "Oranges",
+              "actual": "Oranges",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 64.40839634872059,
+              "drafted_tokens": 406,
+              "accepted_draft_tokens": 311
+            },
+            {
+              "case": "json-sort",
+              "passed": true,
+              "thinking": false,
+              "expected": [
+                -1,
+                2,
+                5
+              ],
+              "actual": [
+                -1,
+                2,
+                5
+              ],
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 47.3610427007161,
+              "drafted_tokens": 10,
+              "accepted_draft_tokens": 6
+            },
+            {
+              "case": "extraction",
+              "passed": true,
+              "thinking": false,
+              "expected": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "actual": {
+                "id": "BON-7429",
+                "quantity": 3
+              },
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 64.67496518331042,
+              "drafted_tokens": 12,
+              "accepted_draft_tokens": 11
+            },
+            {
+              "case": "quoted-instruction",
+              "passed": true,
+              "thinking": false,
+              "expected": "SAFE",
+              "actual": "SAFE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 23.095755000230955,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "updated-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "BLUE",
+              "actual": "BLUE",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 21.89093934020709,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "unknown-fact",
+              "passed": true,
+              "thinking": false,
+              "expected": "UNKNOWN",
+              "actual": "UNKNOWN",
+              "finish_reason": "stop",
+              "decode_tokens_per_second": 21.31105617594408,
+              "drafted_tokens": 2,
+              "accepted_draft_tokens": 2
+            },
+            {
+              "case": "tool-call",
+              "passed": true,
+              "actual": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "lookup_inventory",
+                    "arguments": "{\"sku\":\"B-17\"}"
+                  },
+                  "id": "s7VhGLXfGmhZAGus9I58GUdE7zSpmkjo"
+                }
+              ],
+              "finish_reason": "tool_calls",
+              "decode_tokens_per_second": null,
+              "drafted_tokens": null,
+              "accepted_draft_tokens": null
+            }
+          ]
+        },
+        {
+          "path": "results/blackwell-clean-20261002/native-coding-diagnostic/quality/coding/summary.json",
+          "sha256": "c8c02da2347d65e1fcc9369d2bf935a17aee0427656235fc6bd876c390fd5469",
+          "kind": "coding",
+          "passed": 3,
+          "total": 3,
+          "cases": [
+            {
+              "task": "prime",
+              "passed": true,
+              "elapsed_seconds": 2.495272547006607,
+              "decode_tokens_per_second": 65.34771068390224,
+              "drafted_tokens": 72,
+              "accepted_draft_tokens": 68,
+              "usage": {
+                "completion_tokens": 103,
+                "prompt_tokens": 74,
+                "total_tokens": 177,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              }
+            },
+            {
+              "task": "intervals",
+              "passed": true,
+              "elapsed_seconds": 2.839272221986903,
+              "decode_tokens_per_second": 63.07436096131686,
+              "drafted_tokens": 88,
+              "accepted_draft_tokens": 76,
+              "usage": {
+                "completion_tokens": 120,
+                "prompt_tokens": 81,
+                "total_tokens": 201,
+                "prompt_tokens_details": {
+                  "cached_tokens": 30
+                }
+              }
+            },
+            {
+              "task": "brackets",
+              "passed": true,
+              "elapsed_seconds": 2.507408806006424,
+              "decode_tokens_per_second": 70.11445510618633,
+              "drafted_tokens": 78,
+              "accepted_draft_tokens": 66,
+              "usage": {
+                "completion_tokens": 105,
+                "prompt_tokens": 77,
+                "total_tokens": 182,
+                "prompt_tokens_details": {
+                  "cached_tokens": 30
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "native_decode_gain_percent": 8.585268080841836,
+  "native_wall_reduction_percent": 5.112173946448461
+}

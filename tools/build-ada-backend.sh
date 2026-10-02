@@ -17,14 +17,19 @@ curl --fail --location --retry 3 \
 printf '%s  %s\n' "$source_sha" "$work/source.tar.gz" | sha256sum --check --status
 mkdir "$work/source"
 tar -xzf "$work/source.tar.gz" --strip-components=1 -C "$work/source"
-# Actual GPU injection supplies libcuda for linking, never a bundled stub.
+# GPU injection supplies the real driver for preflight and linker dependency
+# resolution. CUDA SDK import stubs are never packaged in the runtime.
 # This command compiles only; image creation stays in image_build.sh.
 gpu_args=(--device nvidia.com/gpu=all)
 if [[ -e /dev/dxg ]]; then
     gpu_args=(--device /dev/dxg -v /usr/lib/wsl:/usr/lib/wsl:ro)
 fi
+# Snapshot build scripts so concurrent checkout edits cannot alter compilation.
+mkdir -p "$work/compiler-tools"
+cp tools/compile-ada-backend.sh tools/package-ada-backend.py tools/check-build-cuda.py "$work/compiler-tools/"
 podman run --rm "${gpu_args[@]}" --security-opt label=disable \
-    -v "$work:/work:rw" -v "$PWD/tools:/tools:ro" \
+    -v "$work:/work:rw" -v "$work/compiler-tools:/tools:ro" \
+    -e LD_LIBRARY_PATH=/usr/lib/wsl/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64 \
     -e BONSAI_BUILD_JOBS="$jobs" "$compiler" bash /tools/compile-ada-backend.sh
 python3 -B tools/verify-ada-source.py "$work/runtime"
 mkdir -p data/backends/ada-source

@@ -14,6 +14,16 @@ fi
 podman run --rm "${gpu_args[@]}" --entrypoint bash "$image" \
     /opt/bonsai/check-runtime.sh
 
+# A transferred optional binary must not silently disappear from dependency checks.
+# Change permissions only in this disposable container, never in verified inputs.
+if podman run --rm --entrypoint bash "$image" -c \
+    'chmod -x /opt/bonsai/blackwell/bin/llama-server; bash /opt/bonsai/check-runtime.sh --allow-missing-driver' \
+    > "$work_dir/nonexecutable.log" 2>&1; then
+    echo 'Error: dependency check accepted a nonexecutable server.' >&2
+    exit 1
+fi
+[[ $(< "$work_dir/nonexecutable.log") == *'backend server is not executable: blackwell'* ]]
+
 # A backend override must not hide missing driver access or trigger downloads.
 # Disable NVIDIA visibility so a globally configured runtime cannot inject a GPU.
 mkdir "$work_dir/models"

@@ -1,0 +1,96 @@
+[
+  {
+    "label": "dflash2-coding-validation",
+    "log_path": "results/blackwell-20261002/dflash2-coding-validation/last-container.log",
+    "sha256": "06c992844d41571fbb7d073f7090359054dafbc2b54eb592ece18549129ea963",
+    "selected_lines": [
+      "0.00.221.871 I cmn  common_param:   - CUDA0   : NVIDIA GeForce RTX 5070 Ti Laptop GPU (12199 MiB, 11026 MiB free)",
+      "0.00.221.892 I cmn  common_param:   - CPU     : Intel(R) Core(TM) Ultra 9 275HX (15704 MiB, 15704 MiB free)",
+      "0.00.319.083 I llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 5070 Ti Laptop GPU) (0000:02:00.0) - 11026 MiB free",
+      "0.00.848.937 I load_tensors:        CUDA0 model buffer size =  5660.57 MiB",
+      "0.02.056.353 I llama_context:  CUDA_Host  output buffer size =     0.95 MiB",
+      "0.02.061.652 I llama_kv_cache:      CUDA0 KV buffer size =   544.00 MiB",
+      "0.02.098.491 I llama_memory_recurrent:      CUDA0 RS buffer size =  1197.00 MiB",
+      "0.02.157.121 I sched_reserve:      CUDA0 compute buffer size =   150.28 MiB",
+      "0.02.157.131 I sched_reserve:  CUDA_Host compute buffer size =    26.28 MiB",
+      "0.04.929.016 I llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 5070 Ti Laptop GPU) (0000:02:00.0) - 0 MiB free",
+      "0.05.477.278 E llama_model_load: error loading model: vector::_M_range_check: __n (which is 1) >= this->size() (which is 1)",
+      "0.05.477.412 E llama_model_load_from_file_impl: failed to load model",
+      "0.05.477.415 E common_speculative_init_result: failed to load draft model, '/draft/model.gguf'",
+      "0.05.477.431 E srv    load_model: failed to load draft model, '/draft/model.gguf'",
+      "0.05.479.905 D ~llama_context:      CUDA0 compute buffer size is 150.2834 MiB, matches expectation of 150.2834 MiB",
+      "0.05.479.916 D ~llama_context:  CUDA_Host compute buffer size is  26.2833 MiB, matches expectation of  26.2833 MiB"
+    ]
+  },
+  {
+    "label": "dflash2-coding-fixed-split",
+    "log_path": "results/blackwell-20261002/dflash2-coding-fixed-split/last-container.log",
+    "sha256": "ea881ec83b49cebe9a53ec62483eb8dd35e86358f0865183e682a8baafac1757",
+    "selected_lines": [
+      "0.00.251.528 I cmn  common_param:   - CUDA0   : NVIDIA GeForce RTX 5070 Ti Laptop GPU (12199 MiB, 11026 MiB free)",
+      "0.00.251.552 I cmn  common_param:   - CPU     : Intel(R) Core(TM) Ultra 9 275HX (15704 MiB, 15704 MiB free)",
+      "0.00.362.966 I llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 5070 Ti Laptop GPU) (0000:02:00.0) - 11026 MiB free",
+      "0.01.048.363 I load_tensors:        CUDA0 model buffer size =  5660.57 MiB",
+      "0.03.097.643 I llama_context:  CUDA_Host  output buffer size =     0.95 MiB",
+      "0.03.104.827 I llama_kv_cache:      CUDA0 KV buffer size =   544.00 MiB",
+      "0.03.215.149 I llama_memory_recurrent:      CUDA0 RS buffer size =  1197.00 MiB",
+      "0.03.250.102 I sched_reserve:      CUDA0 compute buffer size =   150.28 MiB",
+      "0.03.250.116 I sched_reserve:  CUDA_Host compute buffer size =    26.28 MiB",
+      "0.05.994.818 I llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 5070 Ti Laptop GPU) (0000:02:00.0) - 0 MiB free",
+      "0.07.492.265 I load_tensors:        CUDA0 model buffer size =  1079.61 MiB",
+      "0.09.023.822 I llama_context:  CUDA_Host  output buffer size =     0.95 MiB",
+      "0.09.026.622 I llama_kv_cache:      CUDA0 KV buffer size =    26.56 MiB",
+      "0.09.234.540 I sched_reserve:      CUDA0 compute buffer size =   558.51 MiB",
+      "0.09.234.546 I sched_reserve:  CUDA_Host compute buffer size =     2.60 MiB",
+      "0.12.197.176 I reserve_compute_meta:        CPU compute buffer size =   248.10 MiB",
+      "0.12.342.484 I common_speculative_impl_draft_dflash: - n_max=7, n_min=0, p_min=0.00",
+      "0.12.342.485 I common_speculative_impl_draft_dflash: - block_size=8, mask_token_id=248070, n_extract=5, sample_from_anchor=true, lineage=dflash",
+      "0.30.953.540 I sched_reserve:      CUDA0 compute buffer size =   198.28 MiB",
+      "0.30.953.546 I sched_reserve:  CUDA_Host compute buffer size =    26.28 MiB"
+    ]
+  },
+  {
+    "label": "clean-dflash2-pdl0-diagnostic",
+    "log_path": "results/blackwell-clean-20261002/dflash2-pdl0-diagnostic/server-1.log",
+    "sha256": "ad0734b419b06087934270d8d82c02c21b4eaebc3cffea550a83e600386d406c",
+    "selected_lines": [
+      "0.00.199.756 I cmn  common_param:   - CUDA0   : NVIDIA GeForce RTX 5070 Ti Laptop GPU (12199 MiB, 11026 MiB free)",
+      "0.00.199.776 I cmn  common_param:   - CPU     : Intel(R) Core(TM) Ultra 9 275HX (15704 MiB, 15704 MiB free)",
+      "0.00.302.172 I llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 5070 Ti Laptop GPU) (0000:02:00.0) - 11026 MiB free",
+      "0.00.857.382 I load_tensors:        CUDA0 model buffer size =  5660.57 MiB",
+      "0.01.740.893 I llama_context:  CUDA_Host  output buffer size =     0.95 MiB",
+      "0.01.745.073 I llama_kv_cache:      CUDA0 KV buffer size =   544.00 MiB",
+      "0.01.777.806 I llama_memory_recurrent:      CUDA0 RS buffer size =  1197.00 MiB",
+      "0.01.828.392 I sched_reserve:      CUDA0 compute buffer size =   150.28 MiB",
+      "0.01.828.403 I sched_reserve:  CUDA_Host compute buffer size =    26.28 MiB",
+      "0.04.251.748 I llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 5070 Ti Laptop GPU) (0000:02:00.0) - 3444 MiB free",
+      "0.04.553.449 I load_tensors:        CUDA0 model buffer size =  1079.61 MiB",
+      "0.04.748.480 I llama_context:  CUDA_Host  output buffer size =     0.95 MiB",
+      "0.04.749.451 I llama_kv_cache:      CUDA0 KV buffer size =    26.56 MiB",
+      "0.04.763.732 I sched_reserve:      CUDA0 compute buffer size =   558.51 MiB",
+      "0.04.763.754 I sched_reserve:  CUDA_Host compute buffer size =     2.60 MiB",
+      "0.05.631.018 I reserve_compute_meta:        CPU compute buffer size =   248.10 MiB",
+      "0.07.918.194 I sched_reserve:      CUDA0 compute buffer size =   198.28 MiB",
+      "0.07.918.206 I sched_reserve:  CUDA_Host compute buffer size =    26.28 MiB"
+    ],
+    "finding": "The clean run has 3444 MiB free at draft load; the contaminated failures had 0 MiB. Draft inference succeeds with PDL disabled; three separate clean repetitions also succeed with PDL enabled."
+  },
+  {
+    "label": "upstream-split-minimal-reproducer",
+    "source_path": "data/research/blackwell-20261002/zero-free-split-reproducer.cpp",
+    "source_sha256": "1c8e4293fa0ecf10aae4802e4ef080ac18bdc0e6071635fef28359b175ad6a21",
+    "result_path": "results/blackwell-clean-20261002/zero-free-split-result.txt",
+    "result_sha256": "600ae7afe2227f2f313dca9a0abfae4895b056f01406cd73ff7309ed7a2c5317",
+    "zero_free_split": {
+      "normalized": "NaN",
+      "device_index": 1,
+      "device_count": 1,
+      "result": "vector::_M_range_check"
+    },
+    "explicit_split_1": {
+      "normalized": 1,
+      "device_index": 0,
+      "result": "success"
+    }
+  }
+]

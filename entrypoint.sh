@@ -62,6 +62,11 @@ if [[ "$gpu_backend" == ampere-ada && -x /opt/bonsai/ada-source/bin/llama-server
         bonsai_log INFO 'Using the optional pinned Prism source backend for SM89.'
     fi
 fi
+# Native SM120 code and the newer Prism kernels are used only on Blackwell.
+if [[ "$gpu_backend" == blackwell && -x /opt/bonsai/blackwell-source/bin/llama-server ]]; then
+    backend_dir=/opt/bonsai/blackwell-source
+    bonsai_log INFO 'Using the pinned Prism source backend for SM120.'
+fi
 export LD_LIBRARY_PATH="/usr/lib/wsl/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:$backend_dir/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 if ! query_cuda_capability >/dev/null; then
     fail 'CUDA driver/GPU access is unavailable. Docker requires --gpus all and NVIDIA_DRIVER_CAPABILITIES=compute,utility; Podman requires NVIDIA CDI or the WSL /dev/dxg and /usr/lib/wsl mounts. No models were downloaded.'
@@ -130,6 +135,10 @@ server_args=(
 # should fail rather than silently moving language-model weights to the CPU.
 gpu_args=(
     --device CUDA0
+    # A fixed single-device split avoids free-memory normalization (0/0)
+    # when the WSL driver reports no remaining space during draft loading.
+    --split-mode none
+    --tensor-split 1
     --n-gpu-layers all
     --fit off
     --override-tensor '.*=CUDA0'

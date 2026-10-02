@@ -70,12 +70,13 @@ and tests. Local build tooling uses `flock`; model-cache locks do not.
 | --- | --- | --- |
 | Ampere, e.g. RTX 30 series | 8.6 | Pinned Ampere/Ada bundle |
 | Ada, e.g. RTX 40 series | 8.9 | Pinned Ampere/Ada bundle; optional optimized Ada build |
-| Blackwell, e.g. RTX 50 series | 12.0 | Pinned Blackwell bundle |
+| Blackwell, e.g. RTX 50 series | 12.0 | Native SM120 Prism build when included; pinned Blackwell bundle otherwise |
 
 Other compute capabilities are rejected before model downloads. These support
 limits do not include every GPU marketed under those architecture names.
-All three supported capabilities remain available in an image built with the
-optional Ada backend; that optimization is selected only on 8.9.
+All three supported capabilities remain available in an image containing both
+specialized backends: Ada source is selected only on 8.9, Blackwell source
+only on 12.0, and Ampere 8.6 keeps its published bundle.
 
 Enough VRAM is required for the entire LLM and context state: memory pressure
 fails startup rather than automatically offloading to CPU. The 16k setup has
@@ -251,7 +252,10 @@ files use `/tmp/bonsai27/`, or the standard `TMPDIR` override.
 
 ## Optional Ada source backend
 
-The published backend bundles remain the default. An optional source build of
+Prepared source backends are included automatically by `image_build.sh`; this
+preserves the specialized Ada runtime during subsequent builds. Without a
+prepared source runtime, the corresponding published bundle remains available.
+An Ada source build of
 PrismML's fork at `88c4bc60b9c9578f134385be9535e853f2db9b9f` includes the merged
 Ada PTQ1, MTP, and native quantized Flash Attention changes researched on
 2026-10-01. Prepare it separately, then create the image through the usual build
@@ -270,8 +274,9 @@ several minutes. `BONSAI_BUILD_JOBS` accepts 1–64 and defaults to 8; reduce it
 hosts with little RAM. The prepared runtime, licenses, complete file inventory,
 and build provenance stay under `data/backends/ada-source/runtime/` and are
 excluded from Git. The build receipt includes the optional runtime identity and
-compiler inventory. Rebuilding `./image_build.sh` without the option uses the original
-bundles again.
+compiler inventory. An ordinary `./image_build.sh` rebuild retains all prepared
+source runtimes. Use `--published-only` explicitly to build the two original
+bundles without either specialized runtime.
 
 The optional image selects this backend only on compute capability 8.9. The
 original Ampere 8.6 and Blackwell 12.0 bundles remain available. Runtime testing
@@ -279,6 +284,42 @@ of this optional build was performed only on an RTX 4070 Ti SUPER in a native
 Linux KVM guest with NVIDIA CDI. GPU-only language-model placement, CPU BF16
 vision, 16,384-token default context, MTP=2, q8_0 caches, and batch invariance
 remain unchanged.
+## Specialized Blackwell source backend
+
+Build the native SM120 Prism runtime alongside the existing Ada runtime:
+
+```bash
+./prepare.sh
+./tools/build-ada-backend.sh       # skip if its verified runtime is already prepared
+./tools/build-blackwell-backend.sh
+./image_build.sh --ada-source --blackwell-source
+./run.sh
+```
+
+The explicit image flags require both source runtimes to be present. Subsequent
+ordinary builds automatically retain prepared runtimes. The image also keeps
+both published bundles for Ampere support and compatibility builds. GPU detection
+selects `/opt/bonsai/ada-source` on 8.9 and `/opt/bonsai/blackwell-source` on 12.0;
+`BONSAI_GPU_BACKEND` continues to accept only `ampere-ada` or `blackwell`.
+
+Blackwell source revision, archive SHA256, CUDA compiler image digest, native
+architecture, complete runtime inventory, licenses, and actual CMake settings
+are verified and recorded. Files remain under
+`data/backends/blackwell-source/runtime/`, excluded from Git. The build requires
+Internet access, working GPU injection, temporary disk space, and several
+minutes; `BONSAI_BUILD_JOBS` accepts 1–64 (default 8). The host needs no CUDA SDK
+or sudo. Default inference retains MTP=2, main/draft q8_0, Flash Attention,
+16,384-token context, GPU-only LLM placement, and BF16 vision on CPU.
+
+A failed native Blackwell compilation retains its temporary directory and logs
+its path. Resume that exact pinned build with
+`./tools/build-blackwell-backend.sh --resume /tmp/bonsai27/blackwell-source.XXXXXX`.
+Successful preparation removes its temporary sources and objects. Both native
+builders snapshot their compiler scripts before a long build. Image creation
+checks `TMPDIR` space before copying runtime snapshots; a small `/tmp` RAM
+filesystem may require freeing temporary files or selecting a larger `TMPDIR`.
+The standard default remains `/tmp/bonsai27/`.
+
 ## API examples
 
 Text chat:
@@ -396,11 +437,71 @@ identical; each used about 16k cumulative API usage and a 16,384-token window.
 
 MTP=2 has the shortest total time on this benchmark. The optional backend gained
 about 4% decode throughput over the original backend in the earlier comparison.
-Tested DFlash/DFlash2 drafts, including the official Qwen3.8 DFlash2 checkpoint
-in BF16 and Q8_0, were slower here. Paired quality probes against the original
+On that Ada host, tested DFlash/DFlash2 drafts, including the official Qwen3.8
+DFlash2 checkpoint in BF16 and Q8_0, were slower on this conversation. Paired quality probes against the original
 image found no degradation. These are workload-specific results, not universal
 speed or quality guarantees. Measurements, confidence intervals, model/build
 identities, and research sources are in [RECHERCHE.md](RECHERCHE.md).
+
+On the RTX 5070 Ti Laptop (12 GB, WSL2), the October 2 Blackwell comparison
+was repeated after the user stopped a GPU-intensive background application.
+The initial timings are retained as contaminated evidence, excluded from this
+comparison. Baseline and native builds were alternated, each with three fresh
+containers, 20 messages, 16k context, q8_0 caches, Flash Attention, and CPU vision:
+
+| Blackwell mode | Runs | Mean decode tokens/s | Mean conversation wall time |
+| --- | ---: | ---: | ---: |
+| Published Blackwell backend, MTP=2 | 3 | 39.91 | 34.708 s |
+| **Native SM120 Prism backend, MTP=2** | **3** | **43.34** | **32.934 s** |
+| Native + Qwen3.5 DFlash, draft depth 3 | 3 | 34.99 | 39.650 s |
+| Native + Bonsai DFlash2, draft depth 3 | 3 | 31.41 | 41.172 s |
+| Native + Bonsai DFlash2, draft depth 7 | 3 | 30.34 | 43.109 s |
+
+The clean native MTP comparison measured **8.6% higher decode throughput** and
+5.1% less conversation wall time. MTP runs used 15,949 cumulative API tokens,
+including 823 output tokens, with 87.37% prompt-cache hits. DFlash2 depth 7 used
+15,951 tokens including 841 output tokens; cache hits were 87.50%. Its output
+can differ at near-tied greedy choices under batched verification. These runs
+do not measure throughput with a filled 16k context.
+
+Both DFlash modes completed all three clean conversations, passed nine quality
+probes, and passed the three restricted coding tasks (23 assertions). Bonsai
+DFlash2 reached 104.69–119.80 tokens/s on those individual coding tasks and
+100.83–105.99 tokens/s on two individual thinking probes. It was nevertheless
+slower on the library conversation, with only 19.65% draft-token acceptance.
+Native MTP reached 63.07–70.11 tokens/s on the separate clean coding probes.
+The container default therefore remains MTP=2; DFlash is a workload-specific
+experimental option rather than a general speed improvement.
+
+Earlier draft loading failures exposed an upstream device-split bug when CUDA
+reported zero free memory; the container now fixes the split to CUDA0. Slow
+prefill under the competing GPU load also exceeded test deadlines. The clean
+DFlash/DFlash2 repetitions succeeded with CUDA PDL enabled; the known older
+Blackwell PDL race is already fixed in the pinned source. Full details and
+limits are in [Blackwell research](RECHERCHE.md#native-blackwell-and-dflash-experiments-october-2-2026).
+
+To reproduce independent cold-cache runs of an existing local image:
+
+```bash
+BONSAI_MODEL_DIR="$HOME/bonsai-models" \
+  ./tests/benchmark-backends.sh native localhost/bonsai2-27b:latest 3
+```
+
+The helper owns its containers on localhost port 18084 (`BONSAI_PORT` overrides
+it), uses a 16k window and medium reasoning, and saves image identity, executable,
+API timing/cache counters, timestamped GPU telemetry, logs, and nine quality probes under `results/`.
+`BONSAI_TEST_RUN_DIR` selects the evidence directory. Set
+`BONSAI_EXPERIMENT_CODING=1` to add the restricted coding tests after the last
+run. Optional server arguments follow the repetition count.
+
+For experimental DFlash, set `BONSAI_EXPERIMENT_DRAFT_MODEL` to an existing
+compatible GGUF and `BONSAI_EXPERIMENT_DRAFT_N_MAX` to 1–15 (default 3).
+The helper replaces MTP rather than combining strategies and pins the draft to
+CUDA0; it does not download draft models or permit CPU fallback. Draft trials use
+`GGML_CUDA_PDL=1`; `BONSAI_EXPERIMENT_PDL` accepts `0` (disabled) or `1`
+(enabled, default) for controlled comparisons. Successful startup does not establish draft
+stability or sufficient memory for every prompt. Benchmark requests have a
+120-second overall deadline; failed runs preserve partial evidence.
 
 | Platform | Runtime evidence |
 | --- | --- |

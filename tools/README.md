@@ -80,3 +80,14 @@ when needed, independently of Docker's `latest` alias.
 Run `tests/run-regressions.sh` for isolated version, release, publication,
 preparation, cache, signal, configuration, and evidence regressions. No fixture
 publishes to GHCR. Real GPU/API validation uses `tests/run-qa.sh`.
+
+## Native GPU source runtimes
+
+`build-ada-backend.sh` prepares the pinned SM89 runtime;
+`build-blackwell-backend.sh` prepares the pinned SM120 runtime. Both compile
+inside a digest-pinned CUDA container, package licenses and runtime libraries,
+and install checksum/provenance-verified files under `data/backends/`. Image
+creation remains in `image_build.sh`, which includes prepared runtimes by
+default. Explicit `--ada-source --blackwell-source` requires both, while
+`--published-only` omits both. The Blackwell verifier additionally checks the
+actual CMake architecture and CUDA/Flash Attention/graph settings.

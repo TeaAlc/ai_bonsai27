@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY data/backends/blackwell/runtime/ /opt/bonsai/blackwell/
 COPY data/backends/ampere-ada/runtime/ /opt/bonsai/ampere-ada/
 COPY data/backends/ada-source/runtime/ /opt/bonsai/ada-source/
+COPY data/backends/blackwell-source/runtime/ /opt/bonsai/blackwell-source/
 COPY data/logging.sh /opt/bonsai/logging.sh
 COPY entrypoint.sh /usr/local/bin/bonsai-server
 COPY data/models/download.sh /opt/bonsai/download-models.sh
@@ -22,6 +23,9 @@ COPY --from=gpu-probe-build /cuda-compute-capability /opt/bonsai/cuda-compute-ca
 ENV BONSAI_CTX_SIZE=16384 BONSAI_MODEL=/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf GGML_CUDA_BATCH_INVARIANT=1
 # Docker's NVIDIA runtime must inject CUDA compute libraries, not just NVML tools.
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+# Copies through Windows filesystems can lose executable permission bits.
+# Restore installation modes in the image without changing verified file bytes.
+RUN find /opt/bonsai -type f -path "*/bin/*" -exec chmod 0755 {} +
 # Builds have no GPU driver mount. Every other runtime dependency must resolve.
 RUN bash /opt/bonsai/check-runtime.sh --allow-missing-driver
 EXPOSE 8080

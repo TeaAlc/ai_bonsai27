@@ -1,0 +1,14 @@
+{
+  "status": "ahead",
+  "ahead_by": 2,
+  "commits": [
+    {
+      "sha": "f450c768fafff439354c944c90cff7e1fbc86e1c",
+      "subject": "sycl: FWHT for widths above 512 and Kronecker sizes (port of upstream #28254, #29243) (#302)"
+    },
+    {
+      "sha": "f13265492743209a0fbedc2a2781af3f5f0eab13",
+      "subject": "webgpu: route up to 8 columns through the mat-vec kernel (#301)"
+    }
+  ]
+}

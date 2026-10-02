@@ -13,7 +13,7 @@ from pathlib import Path
 PROJECT=Path(__file__).resolve().parents[1]
 with tempfile.TemporaryDirectory(dir='/tmp/bonsai27',prefix='snapshot-test.') as directory:
     root=Path(directory);repo=root/'repo';repo.mkdir()
-    for name in ('data/logging.sh','image_build.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','tools/build-receipt.py','tools/semrel/artifacts.sh','data/models/download.sh'):
+    for name in ('data/logging.sh','image_build.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','tools/verify-ada-source.py','tools/verify-blackwell-source.py','tools/build-receipt.py','tools/semrel/artifacts.sh','data/models/download.sh'):
         destination=repo/name;destination.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(PROJECT/name,destination)
     (repo/'tools/version.sh').write_text('#!/bin/sh\necho 1.0.0\n');(repo/'tools/version.sh').chmod(0o755)
     (repo/'Containerfile').write_text('FROM fixture\n')
@@ -26,6 +26,21 @@ with tempfile.TemporaryDirectory(dir='/tmp/bonsai27',prefix='snapshot-test.') as
         manifest=hashlib.sha256(b'fixture').hexdigest()+'  ./payload\n'
         (runtime/'SHA256SUMS').write_text(manifest)
         pins=re.sub(r'readonly '+prefix+r'_MANIFEST_SHA=[a-f0-9]+','readonly '+prefix+'_MANIFEST_SHA='+hashlib.sha256(manifest.encode()).hexdigest(),pins)
+    # Prepared architecture-specific builds must survive ordinary image rebuilds.
+    import importlib.util
+    for backend, architecture in [('ada', '89-real'), ('blackwell', '120-real')]:
+        spec=importlib.util.spec_from_file_location(backend, PROJECT/f'tools/verify-{backend}-source.py')
+        verifier=importlib.util.module_from_spec(spec);spec.loader.exec_module(verifier)
+        runtime=repo/'data/backends'/f'{backend}-source'/'runtime';runtime.mkdir(parents=True)
+        for name in ('bin/llama-server','lib/libggml-cuda.so.0','lib/libnccl.so.2',
+                     'LICENSES/llama.cpp-LICENSE.txt','LICENSES/NCCL-copyright.txt'):
+            path=runtime/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_text('fixture')
+        record={'source_revision':verifier.SOURCE_REVISION,'source_sha256':verifier.SOURCE_SHA256,
+                'compiler_image':verifier.COMPILER_IMAGE,'architectures':[architecture], 'cmake_cache':f'CMAKE_CUDA_ARCHITECTURES:STRING={architecture}\nGGML_CUDA:BOOL=ON\nGGML_CUDA_FA:BOOL=ON\nGGML_CUDA_GRAPHS:BOOL=ON\n'}
+        (runtime/'build.json').write_text(json.dumps(record))
+        entries=[hashlib.sha256(path.read_bytes()).hexdigest()+'  '+str(path.relative_to(runtime))
+                 for path in sorted(runtime.rglob('*')) if path.is_file()]
+        (runtime/'SHA256SUMS').write_text('\n'.join(entries)+'\n')
     (repo/'tools/backend-artifacts.sh').write_text(pins)
     (repo/'.gitignore').write_text('data/backends/\nresults/\n')
     def git(*args):return subprocess.check_output(['git','-C',str(repo),*args],text=True).strip()
@@ -57,6 +72,9 @@ else:sys.exit(2)
     assert receipt['revision']==original and receipt['dirty'] is False
     assert git('rev-parse','HEAD')!=original
     assert receipt['image_id']=='sha256:'+'a'*64
+    assert set(receipt['inputs'])=={'blackwell','ampere-ada','ada-source','blackwell-source'}
+    assert receipt['ada_source_build']['architectures']==['89-real']
+    assert receipt['blackwell_source_build']['architectures']==['120-real']
     # The same project lock is honored by independent processes.
     command=['bash','-c','cd "$1"; source tools/project.sh; lock_project; echo start >> "$2"; sleep .2; echo end >> "$2"','test',str(repo),str(root/'events')]
     one=subprocess.Popen(command,env=env);two=subprocess.Popen(command,env=env)

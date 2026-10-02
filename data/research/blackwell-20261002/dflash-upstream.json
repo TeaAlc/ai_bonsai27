@@ -1,0 +1,21 @@
+{
+  "retrieved_at": "2026-10-02",
+  "url": "https://github.com/PrismML-Eng/llama.cpp/pull/261",
+  "merged_at": "2026-09-25T18:22:35Z",
+  "merge_commit_sha": "279df66449f597f9b91d1976865486ba33e2b984",
+  "purpose": "DFlash2 support, with borrowed target Hadamard transforms from PR210",
+  "review_evidence": [
+    {
+      "url": "https://github.com/PrismML-Eng/llama.cpp/pull/261#pullrequestreview-5306323159",
+      "author": "bri-prism",
+      "submitted_at": "2026-09-24T15:10:20Z",
+      "state": "APPROVED",
+      "claims": [
+        "RTX 4090 and RTX 5090 tested end to end",
+        "Bonsai-specific and original Qwen3.8 DFlash2 drafters",
+        "PQ2_0 and PTQ1_0 targets; code and math faster, prose less favorable",
+        "Near-tied tokens can differ under batched verification"
+      ]
+    }
+  ]
+}

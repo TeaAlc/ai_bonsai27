@@ -1,0 +1,895 @@
+{
+  "experiment_date": "2026-10-02",
+  "gpu": "RTX 5070 Ti Laptop GPU, 12 GB, WSL2",
+  "baseline_image": "sha256:3c45491b8accc505e4d0cb9fe9bfba63e119e72eac75505cc77580e00c430c24",
+  "baseline_source": "b5f0eb8",
+  "protocol": {
+    "repeats": 3,
+    "fresh_server_per_run": true,
+    "context": 16384,
+    "kv_main_draft": "q8_0",
+    "flash_attention": true,
+    "vision": "BF16 CPU",
+    "speculation": "MTP=2",
+    "thinking": false,
+    "benchmark": "simple_text_benchmark.sh",
+    "input_output": "~16k cumulative API tokens; repeated history counts again; not a filled 16k context"
+  },
+  "baseline": {
+    "runs": [
+      {
+        "path": "results/blackwell-20261002/baseline/benchmark-1.json",
+        "sha256": "c0ef352e88999a041ece067c415e00002491383cb1c7d0eed49f46ad1fd052a2",
+        "recorded_at": "2026-10-02T14:39:35.863571+00:00",
+        "total_tokens": 15949,
+        "prompt_tokens": 15126,
+        "completion_tokens": 823,
+        "decode_tokens_per_second": 31.05,
+        "wall_seconds": 39.623,
+        "output_tokens_per_wall_second": 20.77,
+        "cache_hit_rate_percent": 87.37
+      },
+      {
+        "path": "results/blackwell-20261002/baseline/benchmark-2.json",
+        "sha256": "d9ffa412e4649e9e61f199fa7f9126d46c5563e5067e35fa113de5429e74c791",
+        "recorded_at": "2026-10-02T14:40:24.411852+00:00",
+        "total_tokens": 15949,
+        "prompt_tokens": 15126,
+        "completion_tokens": 823,
+        "decode_tokens_per_second": 31.41,
+        "wall_seconds": 40.554,
+        "output_tokens_per_wall_second": 20.29,
+        "cache_hit_rate_percent": 87.37
+      },
+      {
+        "path": "results/blackwell-20261002/baseline/benchmark-3.json",
+        "sha256": "f40c04ef9a8b14baa50fc2c594e8baf4fec615d872d7fd63ece8f17474df54aa",
+        "recorded_at": "2026-10-02T14:41:11.966406+00:00",
+        "total_tokens": 15949,
+        "prompt_tokens": 15126,
+        "completion_tokens": 823,
+        "decode_tokens_per_second": 31.47,
+        "wall_seconds": 40.398,
+        "output_tokens_per_wall_second": 20.37,
+        "cache_hit_rate_percent": 87.37
+      }
+    ],
+    "mean": {
+      "decode_tokens_per_second": 31.31,
+      "wall_seconds": 40.19166666666667,
+      "output_tokens_per_wall_second": 20.476666666666667,
+      "cache_hit_rate_percent": 87.37
+    },
+    "sample_stddev": {
+      "decode_tokens_per_second": 0.22715633383201017,
+      "wall_seconds": 0.49861842458270245,
+      "output_tokens_per_wall_second": 0.25716402029314533,
+      "cache_hit_rate_percent": 0.0
+    },
+    "quality": {
+      "passed": 9,
+      "total": 9,
+      "path": "results/blackwell-20261002/baseline/quality/quality/summary.json",
+      "sha256": "9c407cc3f2287c6866edf0d6b1942b8d4ffa2d67bff5208cdaafbba4b4915df5"
+    }
+  },
+  "draft_pins": [
+    {
+      "id": "Anbeeld/Qwen3.5-27B-DFlash-GGUF",
+      "revision": "f5944a97b6ab2ccf493f153b854fca446d655fef",
+      "file": "Qwen3.5-27B-DFlash-Q4_K_M.gguf",
+      "sha256": "e66803c4e14daf9683f6422086133d77a1554d4fee1137fc5962529276a8db56"
+    },
+    {
+      "id": "naklitechie/Qwen3.8-27B-DFlash2-ternary-bonsai2",
+      "revision": "0059b38aa255698b1a87305eb3fbb5a3cfd616e2",
+      "file": "Qwen3.8-27B-DFlash2-r3-Q4_K_M.gguf",
+      "sha256": "6c11956fde5f52867e3255991b30405ae931d205a35caf3fc87a2c3865aa6530"
+    },
+    {
+      "id": "z-lab/Qwen3.8-27B-DFlash2",
+      "revision": "50307d4c4cde6860d4eee73e2547cd786fe8e8a4",
+      "file": "zlab-Qwen3.8-DFlash2-Q8_0.gguf",
+      "sha256": "1c6b30af5cfcb9ee42059b18eea4e175dc70d67a1aa44f753b9b7727905e249e",
+      "conversion_metadata": "data/research/zlab-dflash2-20261002/conversion.json"
+    }
+  ],
+  "source-mtp2": {
+    "runs": [
+      {
+        "path": "results/blackwell-20261002/source-mtp2/benchmark-1.json",
+        "sha256": "df7a39a89ae0ae786d54cae9bc8629d089e1bb94bb477f5840f9c8abfa550dbc",
+        "decode_tokens_per_second": 38.46,
+        "wall_seconds": 36.408,
+        "output_tokens_per_wall_second": 22.61,
+        "cache_hit_rate_percent": 87.37,
+        "total_tokens": 15949,
+        "completion_tokens": 823,
+        "prompt_tokens": 15126,
+        "recorded_at": "2026-10-02T15:12:17.529169+00:00"
+      },
+      {
+        "path": "results/blackwell-20261002/source-mtp2/benchmark-2.json",
+        "sha256": "7bd48b84523df420988c07489a114f43cb45bbb25eaab7e5ef725bb5076c76d9",
+        "decode_tokens_per_second": 37.42,
+        "wall_seconds": 37.406,
+        "output_tokens_per_wall_second": 22.0,
+        "cache_hit_rate_percent": 87.37,
+        "total_tokens": 15949,
+        "completion_tokens": 823,
+        "prompt_tokens": 15126,
+        "recorded_at": "2026-10-02T15:13:04.246539+00:00"
+      },
+      {
+        "path": "results/blackwell-20261002/source-mtp2/benchmark-3.json",
+        "sha256": "49926ae7c5c65b289cb7303cb9ed1ba89fcfecfb496dd450933387393e8d48eb",
+        "decode_tokens_per_second": 38.19,
+        "wall_seconds": 35.717,
+        "output_tokens_per_wall_second": 23.04,
+        "cache_hit_rate_percent": 87.37,
+        "total_tokens": 15949,
+        "completion_tokens": 823,
+        "prompt_tokens": 15126,
+        "recorded_at": "2026-10-02T15:13:48.182920+00:00"
+      }
+    ],
+    "mean": {
+      "decode_tokens_per_second": 38.02333333333333,
+      "wall_seconds": 36.510333333333335,
+      "output_tokens_per_wall_second": 22.55,
+      "cache_hit_rate_percent": 87.37
+    },
+    "sample_stddev": {
+      "decode_tokens_per_second": 0.5396603870336717,
+      "wall_seconds": 0.8491374054493968,
+      "output_tokens_per_wall_second": 0.5225897052181564,
+      "cache_hit_rate_percent": 0.0
+    },
+    "quality": {
+      "passed": 9,
+      "total": 9,
+      "sha256": "86c9b9f1f0dc6296170f34d41ede40f24df3c85319398a9cc0d7a65288bf8e48",
+      "path": "results/blackwell-20261002/source-mtp2/quality/quality/summary.json"
+    },
+    "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+    "pdl": "default"
+  },
+  "dflash2-3": {
+    "runs": [
+      {
+        "path": "results/blackwell-20261002/dflash2-3/benchmark-1.json",
+        "sha256": "373ab2528da64b02e4f610aebbaea05401263042c8222f0bc4137ef0c0881772",
+        "decode_tokens_per_second": 27.25,
+        "wall_seconds": 46.26,
+        "output_tokens_per_wall_second": 17.79,
+        "cache_hit_rate_percent": 87.36,
+        "total_tokens": 15949,
+        "completion_tokens": 823,
+        "prompt_tokens": 15126,
+        "recorded_at": "2026-10-02T15:19:49.966345+00:00"
+      },
+      {
+        "path": "results/blackwell-20261002/dflash2-3/benchmark-2.json",
+        "sha256": "d9231ff8fe74bef93246d48ff8a8f33e6e1c4d2b2383998d969a42943cdcef58",
+        "decode_tokens_per_second": 27.73,
+        "wall_seconds": 47.085,
+        "output_tokens_per_wall_second": 17.48,
+        "cache_hit_rate_percent": 87.36,
+        "total_tokens": 15949,
+        "completion_tokens": 823,
+        "prompt_tokens": 15126,
+        "recorded_at": "2026-10-02T15:20:47.681961+00:00"
+      },
+      {
+        "path": "results/blackwell-20261002/dflash2-3/benchmark-3.json",
+        "sha256": "1f34e6fb428334c76e16e568b535cdad1e06b719e50eb986b1caa3ed7cb1a2de",
+        "decode_tokens_per_second": 26.95,
+        "wall_seconds": 46.894,
+        "output_tokens_per_wall_second": 17.55,
+        "cache_hit_rate_percent": 87.36,
+        "total_tokens": 15949,
+        "completion_tokens": 823,
+        "prompt_tokens": 15126,
+        "recorded_at": "2026-10-02T15:21:44.856063+00:00"
+      }
+    ],
+    "mean": {
+      "decode_tokens_per_second": 27.31,
+      "wall_seconds": 46.74633333333333,
+      "output_tokens_per_wall_second": 17.606666666666666,
+      "cache_hit_rate_percent": 87.36
+    },
+    "sample_stddev": {
+      "decode_tokens_per_second": 0.3934463114581206,
+      "wall_seconds": 0.4318684213198904,
+      "output_tokens_per_wall_second": 0.16258331197676187,
+      "cache_hit_rate_percent": 0.0
+    },
+    "quality": {
+      "passed": 9,
+      "total": 9,
+      "sha256": "f4c5c1674e02065e8cc31688c36d274c6fe7f66612b57d3fc45e9dd068abb78b",
+      "path": "results/blackwell-20261002/dflash2-3/quality/quality/summary.json"
+    },
+    "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+    "pdl": "0"
+  },
+  "combined_image": {
+    "image_id": "sha256:d28857535ab4712596ac24e3e356704ab3bce454228c5ad76bae269622b3ca22",
+    "source_revision": "b5f0eb88fdd93a2555660d826c626fd1f26180fb",
+    "dirty": true,
+    "inputs": {
+      "blackwell": "2d471d4e3ee1561b0af539b1b225c6c10dd39fad3e1ef47527426487d6de9fde",
+      "ampere-ada": "e0fbc05a630584076ae6d2554483536336bf9f24ba378730b5ebe8b2bf6935ac",
+      "ada-source": "2a29849cac102e76591f82a9b1b93515bd14f0fab9dbb0003ca93e16112ac921",
+      "blackwell-source": "f2df852338b092c190435bdedabef291740812245719d5522f4b38a2b4d86be3"
+    },
+    "path": "results/blackwell-20261002/combined-build-receipt.json"
+  },
+  "source_mtp2_decode_improvement_percent": 21.441498988608544,
+  "source_mtp2_wall_reduction_percent": 9.15944432925565,
+  "excluded_trials": [
+    {
+      "path": "results/blackwell-20261002/invalid-source-build-failed",
+      "reason": "Image build ran out of TMPDIR space; an exploratory controller used the old receipt. Excluded, then rebuilt with fail-fast sequencing and executable identity checks."
+    }
+  ],
+  "dflash1-3-pdl-off": {
+    "runs": [
+      {
+        "path": "results/blackwell-20261002/dflash1-3-pdl-off/benchmark-1.json",
+        "sha256": "b3c428933485b83dc37d4db3b42b0e48fe81dff84f843b7cdf3d3ae55225a3c5",
+        "decode_tokens_per_second": 30.16,
+        "wall_seconds": 42.455,
+        "output_tokens_per_wall_second": 19.39,
+        "cache_hit_rate_percent": 87.39,
+        "total_tokens": 15949,
+        "completion_tokens": 823,
+        "prompt_tokens": 15126,
+        "recorded_at": "2026-10-02T15:29:41.159040+00:00",
+        "cached_prompt_tokens": 13219,
+        "processed_prompt_tokens": 1907
+      }
+    ],
+    "mean": {
+      "decode_tokens_per_second": 30.16,
+      "wall_seconds": 42.455,
+      "output_tokens_per_wall_second": 19.39,
+      "cache_hit_rate_percent": 87.39
+    },
+    "sample_stddev": {
+      "decode_tokens_per_second": null,
+      "wall_seconds": null,
+      "output_tokens_per_wall_second": null,
+      "cache_hit_rate_percent": null
+    },
+    "quality": {
+      "passed": 9,
+      "total": 9,
+      "path": "results/blackwell-20261002/dflash1-3-pdl-off/quality/quality/summary.json",
+      "sha256": "c0867a0248e24463984e361b2ef24f15740efb52f8019cf9285f2f68f07f9f90"
+    },
+    "pdl": "0"
+  },
+  "dflash2-7": {
+    "runs": [
+      {
+        "path": "results/blackwell-20261002/dflash2-7/benchmark-1.json",
+        "sha256": "dffeaad718a37e3e48c6c4acbfba1d77dfa3b16e4547154cbb514894fb381420",
+        "decode_tokens_per_second": 25.45,
+        "wall_seconds": 48.694,
+        "output_tokens_per_wall_second": 17.27,
+        "cache_hit_rate_percent": 87.5,
+        "total_tokens": 15951,
+        "completion_tokens": 841,
+        "prompt_tokens": 15110,
+        "recorded_at": "2026-10-02T15:23:16.879875+00:00",
+        "cached_prompt_tokens": 13221,
+        "processed_prompt_tokens": 1889
+      },
+      {
+        "path": "results/blackwell-20261002/dflash2-7/benchmark-2.json",
+        "sha256": "5a7310370f02dfd884fe25d1fa5da5279b39a2366375866af30085c692990ffa",
+        "decode_tokens_per_second": 25.21,
+        "wall_seconds": 50.775,
+        "output_tokens_per_wall_second": 16.56,
+        "cache_hit_rate_percent": 87.5,
+        "total_tokens": 15951,
+        "completion_tokens": 841,
+        "prompt_tokens": 15110,
+        "recorded_at": "2026-10-02T15:24:17.159946+00:00",
+        "cached_prompt_tokens": 13221,
+        "processed_prompt_tokens": 1889
+      },
+      {
+        "path": "results/blackwell-20261002/dflash2-7/benchmark-3.json",
+        "sha256": "19b6c372f9da085370e9998f801c37f8cea0a763d93353b731c75a06e0bfc549",
+        "decode_tokens_per_second": 26.73,
+        "wall_seconds": 47.895,
+        "output_tokens_per_wall_second": 17.56,
+        "cache_hit_rate_percent": 87.5,
+        "total_tokens": 15951,
+        "completion_tokens": 841,
+        "prompt_tokens": 15110,
+        "recorded_at": "2026-10-02T15:25:14.431994+00:00",
+        "cached_prompt_tokens": 13221,
+        "processed_prompt_tokens": 1889
+      }
+    ],
+    "mean": {
+      "decode_tokens_per_second": 25.796666666666667,
+      "wall_seconds": 49.12133333333333,
+      "output_tokens_per_wall_second": 17.13,
+      "cache_hit_rate_percent": 87.5
+    },
+    "sample_stddev": {
+      "decode_tokens_per_second": 0.8171495171223767,
+      "wall_seconds": 1.4867953232820332,
+      "output_tokens_per_wall_second": 0.5144900387762625,
+      "cache_hit_rate_percent": 0.0
+    },
+    "quality": {
+      "passed": 9,
+      "total": 9,
+      "path": "results/blackwell-20261002/dflash2-7/quality/quality/summary.json",
+      "sha256": "7df549957020a6eb2ffe802ee69d7821ebad3897353a2c4c6756b303ede2736e"
+    },
+    "pdl": "0"
+  },
+  "official-dflash2-3": {
+    "runs": [
+      {
+        "path": "results/blackwell-20261002/official-dflash2-3/benchmark-1.json",
+        "sha256": "616c1df24b8e6968ebb03ba205e0ff892a40753141c2c049ac073af0123c9fc2",
+        "decode_tokens_per_second": 26.85,
+        "wall_seconds": 47.357,
+        "output_tokens_per_wall_second": 17.38,
+        "cache_hit_rate_percent": 87.36,
+        "total_tokens": 15949,
+        "completion_tokens": 823,
+        "prompt_tokens": 15126,
+        "recorded_at": "2026-10-02T15:26:37.466216+00:00",
+        "cached_prompt_tokens": 13214,
+        "processed_prompt_tokens": 1912
+      }
+    ],
+    "mean": {
+      "decode_tokens_per_second": 26.85,
+      "wall_seconds": 47.357,
+      "output_tokens_per_wall_second": 17.38,
+      "cache_hit_rate_percent": 87.36
+    },
+    "sample_stddev": {
+      "decode_tokens_per_second": null,
+      "wall_seconds": null,
+      "output_tokens_per_wall_second": null,
+      "cache_hit_rate_percent": null
+    },
+    "quality": {
+      "passed": 9,
+      "total": 9,
+      "path": "results/blackwell-20261002/official-dflash2-3/quality/quality/summary.json",
+      "sha256": "16046b6fef59a7d2748bcf70b2ec24ff7e1ccafe69cf581e253b8b66b3b9b56b"
+    },
+    "pdl": "0"
+  },
+  "source-threads4": {
+    "runs": [
+      {
+        "path": "results/blackwell-20261002/source-threads4/benchmark-1.json",
+        "sha256": "472af9d2a97d22ef2cf6e33c11bc17ba3274092792fa230ccb50fe24dca44b51",
+        "decode_tokens_per_second": 39.27,
+        "wall_seconds": 35.153,
+        "output_tokens_per_wall_second": 23.41,
+        "cache_hit_rate_percent": 87.37,
+        "total_tokens": 15949,
+        "completion_tokens": 823,
+        "prompt_tokens": 15126,
+        "recorded_at": "2026-10-02T15:31:03.004753+00:00",
+        "cached_prompt_tokens": 13215,
+        "processed_prompt_tokens": 1911
+      }
+    ],
+    "mean": {
+      "decode_tokens_per_second": 39.27,
+      "wall_seconds": 35.153,
+      "output_tokens_per_wall_second": 23.41,
+      "cache_hit_rate_percent": 87.37
+    },
+    "sample_stddev": {
+      "decode_tokens_per_second": null,
+      "wall_seconds": null,
+      "output_tokens_per_wall_second": null,
+      "cache_hit_rate_percent": null
+    },
+    "quality": {
+      "passed": 9,
+      "total": 9,
+      "path": "results/blackwell-20261002/source-threads4/quality/quality/summary.json",
+      "sha256": "780b13f1f29a110568a2db94419dd06c9b499ae5e89fda82777ae50af30fe5cf"
+    },
+    "pdl": "default"
+  },
+  "baseline-control": {
+    "runs": [
+      {
+        "path": "results/blackwell-20261002/baseline-control/benchmark-1.json",
+        "sha256": "858a9ed2013e1ba5bf8551f83de00620e3483bef4877d24d4dd0b62536c52ff4",
+        "decode_tokens_per_second": 34.35,
+        "wall_seconds": 38.337,
+        "output_tokens_per_wall_second": 21.47,
+        "cache_hit_rate_percent": 87.37,
+        "total_tokens": 15949,
+        "completion_tokens": 823,
+        "prompt_tokens": 15126,
+        "recorded_at": "2026-10-02T15:32:22.233511+00:00",
+        "cached_prompt_tokens": 13215,
+        "processed_prompt_tokens": 1911
+      }
+    ],
+    "mean": {
+      "decode_tokens_per_second": 34.35,
+      "wall_seconds": 38.337,
+      "output_tokens_per_wall_second": 21.47,
+      "cache_hit_rate_percent": 87.37
+    },
+    "sample_stddev": {
+      "decode_tokens_per_second": null,
+      "wall_seconds": null,
+      "output_tokens_per_wall_second": null,
+      "cache_hit_rate_percent": null
+    },
+    "quality": {
+      "passed": 9,
+      "total": 9,
+      "path": "results/blackwell-20261002/baseline-control/quality/quality/summary.json",
+      "sha256": "d38bd0f11464029fe5cbe00dfa2ee82b07117cac2a538cd717a708eaa75ae98f"
+    },
+    "pdl": "default"
+  },
+  "later_baseline_control": {
+    "repeats": 1,
+    "decode_tokens_per_second": 34.35,
+    "native_gain_vs_control_percent": 10.693837942746232,
+    "limitation": "The later baseline control was faster than the initial three-run baseline. Laptop clock/thermal/system drift limits attribution of the entire initial 21.4% difference."
+  },
+  "thinking_quality": {
+    "baseline": [
+      {
+        "case": "arithmetic",
+        "expected": "4477",
+        "actual": "4477",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 29,
+          "prompt_ms": 248.903,
+          "prompt_per_token_ms": 8.582862068965516,
+          "prompt_per_second": 116.51125137101603,
+          "predicted_n": 128,
+          "predicted_ms": 2740.281,
+          "predicted_per_token_ms": 21.577015748031496,
+          "predicted_per_second": 46.345612001104996,
+          "draft_n": 94,
+          "draft_n_accepted": 82
+        }
+      },
+      {
+        "case": "modular",
+        "expected": "15",
+        "actual": "15",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 41,
+          "prompt_ms": 263.717,
+          "prompt_per_token_ms": 6.432121951219512,
+          "prompt_per_second": 155.46968909854124,
+          "predicted_n": 571,
+          "predicted_ms": 11777.316,
+          "predicted_per_token_ms": 20.661957894736844,
+          "predicted_per_second": 48.39812398682348,
+          "draft_n": 410,
+          "draft_n_accepted": 366
+        }
+      },
+      {
+        "case": "logic",
+        "expected": "Oranges",
+        "actual": "Oranges",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 72,
+          "prompt_ms": 299.646,
+          "prompt_per_token_ms": 4.1617500000000005,
+          "prompt_per_second": 240.2835345707935,
+          "predicted_n": 515,
+          "predicted_ms": 11593.953,
+          "predicted_per_token_ms": 22.55632879377432,
+          "predicted_per_second": 44.33345555221761,
+          "draft_n": 406,
+          "draft_n_accepted": 311
+        }
+      }
+    ],
+    "source-mtp2": [
+      {
+        "case": "arithmetic",
+        "expected": "4477",
+        "actual": "4477",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 29,
+          "prompt_ms": 234.92,
+          "prompt_per_token_ms": 8.100689655172413,
+          "prompt_per_second": 123.44627958453941,
+          "predicted_n": 128,
+          "predicted_ms": 2352.781,
+          "predicted_per_token_ms": 18.525834645669292,
+          "predicted_per_second": 53.97867459827328,
+          "draft_n": 94,
+          "draft_n_accepted": 82
+        }
+      },
+      {
+        "case": "modular",
+        "expected": "15",
+        "actual": "15",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 41,
+          "prompt_ms": 239.791,
+          "prompt_per_token_ms": 5.848560975609756,
+          "prompt_per_second": 170.98223035893756,
+          "predicted_n": 571,
+          "predicted_ms": 10464.853,
+          "predicted_per_token_ms": 18.359391228070173,
+          "predicted_per_second": 54.46803696143654,
+          "draft_n": 410,
+          "draft_n_accepted": 366
+        }
+      },
+      {
+        "case": "logic",
+        "expected": "Oranges",
+        "actual": "Oranges",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 72,
+          "prompt_ms": 279.476,
+          "prompt_per_token_ms": 3.881611111111111,
+          "prompt_per_second": 257.62498389843853,
+          "predicted_n": 515,
+          "predicted_ms": 9579.055,
+          "predicted_per_token_ms": 18.636293774319068,
+          "predicted_per_second": 53.6587377356117,
+          "draft_n": 406,
+          "draft_n_accepted": 311
+        }
+      }
+    ],
+    "dflash2-3": [
+      {
+        "case": "arithmetic",
+        "expected": "4477",
+        "actual": "4477",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 29,
+          "prompt_ms": 287.83,
+          "prompt_per_token_ms": 9.925172413793103,
+          "prompt_per_second": 100.75391724281694,
+          "predicted_n": 128,
+          "predicted_ms": 2054.866,
+          "predicted_per_token_ms": 16.18004724409449,
+          "predicted_per_second": 61.804516693545956,
+          "draft_n": 99,
+          "draft_n_accepted": 95
+        }
+      },
+      {
+        "case": "modular",
+        "expected": "15",
+        "actual": "15",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 41,
+          "prompt_ms": 269.314,
+          "prompt_per_token_ms": 6.568634146341464,
+          "prompt_per_second": 152.23865079424016,
+          "predicted_n": 571,
+          "predicted_ms": 10214.723,
+          "predicted_per_token_ms": 17.920566666666666,
+          "predicted_per_second": 55.801806862506204,
+          "draft_n": 456,
+          "draft_n_accepted": 419
+        }
+      },
+      {
+        "case": "logic",
+        "expected": "Oranges",
+        "actual": "Oranges",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 72,
+          "prompt_ms": 349.59,
+          "prompt_per_token_ms": 4.855416666666667,
+          "prompt_per_second": 205.95554792757233,
+          "predicted_n": 515,
+          "predicted_ms": 10265.701,
+          "predicted_per_token_ms": 19.972180933852137,
+          "predicted_per_second": 50.06964453766967,
+          "draft_n": 462,
+          "draft_n_accepted": 360
+        }
+      }
+    ],
+    "dflash2-7": [
+      {
+        "case": "arithmetic",
+        "expected": "4477",
+        "actual": "4477",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 29,
+          "prompt_ms": 306.714,
+          "prompt_per_token_ms": 10.576344827586206,
+          "prompt_per_second": 94.55062370807984,
+          "predicted_n": 128,
+          "predicted_ms": 1391.773,
+          "predicted_per_token_ms": 10.958842519685039,
+          "predicted_per_second": 91.25051283506723,
+          "draft_n": 133,
+          "draft_n_accepted": 109
+        }
+      },
+      {
+        "case": "modular",
+        "expected": "15",
+        "actual": "15",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 41,
+          "prompt_ms": 255.973,
+          "prompt_per_token_ms": 6.2432439024390245,
+          "prompt_per_second": 160.17314326120334,
+          "predicted_n": 571,
+          "predicted_ms": 6566.941,
+          "predicted_per_token_ms": 11.520949122807018,
+          "predicted_per_second": 86.7984043103174,
+          "draft_n": 602,
+          "draft_n_accepted": 485
+        }
+      },
+      {
+        "case": "logic",
+        "expected": "Oranges",
+        "actual": "Oranges",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 72,
+          "prompt_ms": 349.057,
+          "prompt_per_token_ms": 4.8480138888888895,
+          "prompt_per_second": 206.27003612590494,
+          "predicted_n": 515,
+          "predicted_ms": 7814.767,
+          "predicted_per_token_ms": 15.203826848249028,
+          "predicted_per_second": 65.77291427882622,
+          "draft_n": 735,
+          "draft_n_accepted": 409
+        }
+      }
+    ],
+    "official-dflash2-3": [
+      {
+        "case": "arithmetic",
+        "expected": "4477",
+        "actual": "4477",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 29,
+          "prompt_ms": 316.804,
+          "prompt_per_token_ms": 10.924275862068965,
+          "prompt_per_second": 91.53924824181513,
+          "predicted_n": 128,
+          "predicted_ms": 2209.671,
+          "predicted_per_token_ms": 17.398984251968503,
+          "predicted_per_second": 57.474619524807096,
+          "draft_n": 102,
+          "draft_n_accepted": 94
+        }
+      },
+      {
+        "case": "modular",
+        "expected": "15",
+        "actual": "15",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 41,
+          "prompt_ms": 305.965,
+          "prompt_per_token_ms": 7.4625609756097555,
+          "prompt_per_second": 134.00225515990394,
+          "predicted_n": 571,
+          "predicted_ms": 9847.193,
+          "predicted_per_token_ms": 17.275777192982456,
+          "predicted_per_second": 57.88451592245629,
+          "draft_n": 456,
+          "draft_n_accepted": 419
+        }
+      },
+      {
+        "case": "logic",
+        "expected": "Oranges",
+        "actual": "Oranges",
+        "passed": true,
+        "finish_reason": "stop",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 72,
+          "prompt_ms": 307.185,
+          "prompt_per_token_ms": 4.2664583333333335,
+          "prompt_per_second": 234.3864446506177,
+          "predicted_n": 515,
+          "predicted_ms": 10759.312,
+          "predicted_per_token_ms": 20.932513618677042,
+          "predicted_per_second": 47.77257133169853,
+          "draft_n": 468,
+          "draft_n_accepted": 359
+        }
+      }
+    ]
+  },
+  "coding_mtp2": {
+    "path": "results/blackwell-20261002/coding-mtp2/coding/summary.json",
+    "sha256": "67b85704d34c0fa4a875c86c83dd873505d7c15197fe7a871a569086241ae383",
+    "tasks": [
+      {
+        "task": "prime",
+        "passed": true,
+        "elapsed_seconds": 9.908662027009996,
+        "usage": {
+          "completion_tokens": 103,
+          "prompt_tokens": 74,
+          "total_tokens": 177,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 74,
+          "prompt_ms": 5908.08,
+          "prompt_per_token_ms": 79.83891891891892,
+          "prompt_per_second": 12.525219699123912,
+          "predicted_n": 103,
+          "predicted_ms": 3386.992,
+          "predicted_per_token_ms": 33.20580392156863,
+          "predicted_per_second": 30.115217278340186,
+          "draft_n": 72,
+          "draft_n_accepted": 68
+        },
+        "stdout": "BONSAI_ASSERTIONS_COMPLETED_d782758cf61d43f0a9e4d734f5bc13ca\n",
+        "stderr": ""
+      },
+      {
+        "task": "intervals",
+        "passed": true,
+        "elapsed_seconds": 4.7744303939980455,
+        "usage": {
+          "completion_tokens": 120,
+          "prompt_tokens": 81,
+          "total_tokens": 201,
+          "prompt_tokens_details": {
+            "cached_tokens": 30
+          }
+        },
+        "timings": {
+          "cache_n": 30,
+          "prompt_n": 51,
+          "prompt_ms": 524.366,
+          "prompt_per_token_ms": 10.281686274509804,
+          "prompt_per_second": 97.26031054645038,
+          "predicted_n": 120,
+          "predicted_ms": 3832.53,
+          "predicted_per_token_ms": 32.206134453781516,
+          "predicted_per_second": 31.049985257780108,
+          "draft_n": 88,
+          "draft_n_accepted": 76
+        },
+        "stdout": "BONSAI_ASSERTIONS_COMPLETED_e53ca3ef31134508b45e988db24140f8\n",
+        "stderr": ""
+      },
+      {
+        "task": "brackets",
+        "passed": true,
+        "elapsed_seconds": 4.321366023999872,
+        "usage": {
+          "completion_tokens": 105,
+          "prompt_tokens": 77,
+          "total_tokens": 182,
+          "prompt_tokens_details": {
+            "cached_tokens": 30
+          }
+        },
+        "timings": {
+          "cache_n": 30,
+          "prompt_n": 47,
+          "prompt_ms": 467.789,
+          "prompt_per_token_ms": 9.95295744680851,
+          "prompt_per_second": 100.47264899345645,
+          "predicted_n": 105,
+          "predicted_ms": 3335.663,
+          "predicted_per_token_ms": 32.07368269230769,
+          "predicted_per_second": 31.17820954934596,
+          "draft_n": 78,
+          "draft_n_accepted": 66
+        },
+        "stdout": "BONSAI_ASSERTIONS_COMPLETED_e9194d5f3fb04913b68db875e5c625a4\n",
+        "stderr": ""
+      }
+    ]
+  },
+  "failed_experiments": [
+    {
+      "label": "dflash1-3",
+      "pdl": "1",
+      "status": "First API request stalled; stopped the owned container after more than two minutes. No completed-conversation rate."
+    },
+    {
+      "label": "dflash1-7",
+      "status": "Draft model load failed with vector::_M_range_check. No inference measurement."
+    },
+    {
+      "label": "dflash2-coding-validation",
+      "status": "Draft model load failed with vector::_M_range_check; no coding result."
+    },
+    {
+      "label": "dflash2-coding-fixed-split",
+      "pdl": "0",
+      "status": "Explicit tensor split let the draft load, but the conversation timed out after 120 seconds. No coding result; fixed placement does not prove DFlash stability."
+    }
+  ],
+  "conclusion": {
+    "default": "native Blackwell MTP=2; preserve native Ada unchanged",
+    "dialogue": "DFlash/DFlash2 slower than native MTP=2 in the tested 20-message conversation.",
+    "thinking": "Bonsai-specific DFlash2 depth 7 was faster on three individual thinking probes, all correct; not a general throughput guarantee.",
+    "stability": "Experimental draft modes exhibited timeouts and loading failures on this 12GB WSL laptop. They are not enabled by default and no DFlash coding performance claim is made."
+  },
+  "comparability_warning": "User confirmed a GPU-intensive background application during the first experiment series. Those timings are contaminated and are not the final performance comparison. Clean repetition results are recorded separately.",
+  "runtime_qa": {
+    "run_directory": "results/runs/20261002T154829Z-1628277",
+    "checks_passed": 18,
+    "checks_total": 18,
+    "long_prompt_tokens": 15009,
+    "vision_fixture_passes": 2,
+    "coding_tasks_passed": 3,
+    "coding_assertions": 23,
+    "image_id": "sha256:fd861a144b82b67e6d240dc33de2cdc3e3921f1f70b8351d4e80f44636984d6c"
+  }
+}

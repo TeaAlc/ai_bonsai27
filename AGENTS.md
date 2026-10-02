@@ -34,6 +34,8 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
 - `image_build.sh`: verify extracted backend files and build the image using
   `Containerfile`. Determine the image version through `tools/version.sh` and
   semrel, then tag the successful build with its SemVer version and `latest`.
+  Include prepared Ada and Blackwell source runtimes by default; explicit
+  --ada-source/--blackwell-source require them, --published-only omits both.
   Keep image creation in this script. Build immutable source/backend snapshots and atomically record results/last-build.json with image identity and dependency inventory.
 - `image_push.sh`: publish the last built image to the project GHCR package
   under its version and `latest` tags. Prefer Podman and support Docker fallback.
@@ -69,6 +71,11 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   Put additional project-supplied build/runtime dependencies in suitable `data/`
   subdirectories. Do not recreate a top-level `vendor/` directory.
 - `data/research/`: retained research metadata and source inputs.
+- `tools/build-blackwell-backend.sh`: prepare the pinned native SM120 Prism
+  runtime in a pinned CUDA compiler container. Preserve the separate SM89 Ada
+  runtime and original published bundles. Store binaries/licenses/provenance
+  under data/backends/blackwell-source/runtime, excluded from Git. Select it
+  automatically only on CUDA capability 12.0; Ada source is selected only on 8.9.
 - `tools/`: all project-supplied build tooling, including the pinned semrel
   installer, binary cache, license, and version policy. Host GPU runtime
   dependencies remain under `data/`. Do not install build tools globally.
@@ -81,6 +88,13 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   tokens and decode speed from wall-clock throughput. Report per-exchange and
   token-weighted total prompt cache hits from actual API counters, including
   the first request; unknown counters must remain null. Save reports in results/.
+- `tests/benchmark-backends.sh`: repeated fresh-container backend experiments,
+  16k context, image/executable evidence, bounded API requests, and final quality
+  probes. Optional DFlash replaces MTP and keeps draft weights on CUDA0; failed
+  runs must not count as completed benchmarks. DFlash remains workload-specific
+  and experimental; earlier timeout/load evidence was contaminated by an
+  external GPU workload. Clean PDL-enabled DFlash/DFlash2 runs passed, and
+  zero-free-memory split failure is reproduced.
 - `results/`: local test evidence, excluded from Git.
 - `other_repo/`: local repository copies for integration, excluded from Git and
   build snapshots. Preserve imported commit history and executable file modes;
@@ -131,6 +145,8 @@ lock in tools/project.sh for preparation/build/release/tag/push operations.
 Run `tests/test-version.sh`, `tests/test-create-release.sh`, and
 `tests/test-release-tag.sh` when changing versioning or release tooling.
 Run `tests/test-model-download.sh` when changing model downloads or cache paths.
+Run `tests/test-blackwell-source.py`, `tests/test-ada-source.py`, and
+`tests/test-build-snapshot.py` when changing source runtime packaging.
 Run `tests/test-gpu-backend.sh` and `tests/test-cuda-probe.sh` when changing
 backend detection; `tests/test-runtime.sh` checks dependencies with real GPU
 access and verifies missing CUDA fails before any model download.

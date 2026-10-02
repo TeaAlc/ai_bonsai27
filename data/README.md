@@ -17,7 +17,7 @@ the CUDA driver probe compiled from `gpu/compute-capability.c`, with
 `nvidia-smi` as a fallback; an explicit `BONSAI_GPU_BACKEND` overrides detection.
 
 `gpu/check-runtime.sh` verifies download tools, HTTPS certificates, and all
-shared-library dependencies of both backends. Image builds permit only
+shared-library dependencies of both published bundles and every included source backend. Image builds permit only
 libcuda.so.1 to be absent; the GPU-enabled runtime check permits no missing
 libraries. Distribution runtime packages are explicitly installed in the image.
 The host's CUDA driver is injected through Docker GPU support, NVIDIA CDI, or
@@ -41,3 +41,12 @@ contents. The host CUDA driver is injected at runtime, not bundled here.
 and container. Backend overrides must match the actual CUDA device. Model
 transfers use supervised children and directory locks, with explicit host
 `download_models.sh --verify` / `--repair` operations for pinned cache files.
+
+`backends/ada-source/runtime/` holds the pinned native SM89 Prism build;
+`backends/blackwell-source/runtime/` holds the pinned native SM120 Prism build.
+Each includes licenses, complete `SHA256SUMS`, and `build.json` with compiler
+and source provenance. Prepare them with the matching scripts under `tools/`.
+`image_build.sh` verifies and includes prepared source runtimes automatically;
+explicit `--ada-source --blackwell-source` requires both. Runtime selection
+uses Ada source on capability 8.9, Blackwell source on 12.0, and the original
+Ampere bundle on 8.6. Source-runtime preparation does not modify published bundles.

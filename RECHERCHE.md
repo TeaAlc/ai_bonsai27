@@ -1011,3 +1011,202 @@ MTP=2 with positive draft/accepted API counters, and CPU BF16 vision.
 The 15,009-token input measured 653.2 prompt tokens/s; the three coding
 responses measured 63.0, 62.2, and 62.2 generated tokens/s. These are fresh
 standard-backend measurements, separate from the imported Ada experiments.
+
+## Native Blackwell and DFlash experiments, October 2, 2026
+
+The notebook comparison uses an RTX 5070 Ti Laptop GPU (12 GB), WSL2, rootless
+Podman, and the pinned PTQ1_0 MTP Lean target with CPU BF16 vision. Both native
+Ada and native Blackwell runtimes are now packaged in the same image, alongside
+the original two published bundles. Ada's prepared runtime inventory remains
+unchanged (`2a29849cac102e76591f82a9b1b93515bd14f0fab9dbb0003ca93e16112ac921`).
+Selection is automatic: native Ada on CUDA capability 8.9, native Blackwell on
+12.0, and the published Ampere bundle on 8.6. No automatic CPU model offload
+was added.
+
+The Blackwell source is Prism revision
+`f13265492743209a0fbedc2a2781af3f5f0eab13`, verified source archive SHA256
+`0368b7a5aa02215cafd72b590162ae6b87ca1690be18445c9af7a53145d4c2d5`, compiled
+with the same digest-pinned CUDA 12.8 image as Ada, native `120-real`, CUDA
+Graphs and Flash Attention enabled. Actual CMake options, binaries, runtime
+libraries, licenses, and complete SHA256 inventory are recorded and verified.
+The prepared Blackwell inventory is
+`f2df852338b092c190435bdedabef291740812245719d5522f4b38a2b4d86be3`.
+The imported Ada files had lost executable permission bits during Windows
+filesystem transfer. Container installation restores executable modes for
+backend binaries without changing their bytes or SHA256 inventory. Otherwise
+the executable-based optional selection would silently skip the prepared Ada
+backend. The final image dependency check covers all four installed runtimes.
+
+The two commits after the Ada source pin concern SYCL and WebGPU, not an
+additional CUDA optimization. The older published Blackwell bundle was already
+compiled for SM120; this comparison therefore measures a newer fork/kernel/MTP
+implementation as well as the source build, rather than attributing every gain
+to an architecture flag. Source revision metadata is retained under
+`data/research/blackwell-20261002/`.
+
+[Prism PR221](https://github.com/PrismML-Eng/llama.cpp/pull/221) integrates hybrid
+PTQ1_0 kernel dispatch, native quantized-KV Flash Attention, and MTP catch-up
+changes. The prepared source is unchanged upstream code. Compiler scripts are
+snapshotted before compilation, real CUDA access is checked inside the compiler
+container, and WSL driver paths are supplied for linking. Driver import stubs
+are not packaged as runtime drivers. Failed Blackwell builds retain their work
+for a verified resume; source files are re-extracted from the checksum-verified
+archive. Image preparation checks temporary space before copying the four
+runtime inventories, addressing a real small `/tmp` tmpfs failure encountered
+during development.
+
+### DFlash compatibility and failure diagnosis
+
+DFlash2 support is present in the pinned Prism source. The merged
+[Prism PR261](https://github.com/PrismML-Eng/llama.cpp/pull/261) implements the
+local convolution/candidate selector and reports end-to-end Bonsai tests on
+RTX 5090, including PTQ1_0. The prerequisite borrowed-embedding/output Hadamard
+handling comes from [PR210](https://github.com/PrismML-Eng/llama.cpp/pull/210).
+Consequently neither missing DFlash2 support nor a general lack of Blackwell
+support explains these local failures. Published L4/5090 measurements concern
+other hardware, different memory headroom, workloads, and sometimes PQ2_0;
+they are not measurements from this notebook.
+
+The [Bonsai-specific r3 draft](https://huggingface.co/naklitechie/Qwen3.8-27B-DFlash2-ternary-bonsai2)
+is trained on the ternary target's own features/generations. Its block size is
+8, so depth 7 follows its documented configuration. The original z-lab Qwen3.8
+DFlash2 draft was also tested as Q8_0. The older Qwen3.5 DFlash draft uses a
+16-token block and different feature taps/mask token; it is a cross-version
+comparison rather than a model-specific recommended drafter. Draft revisions,
+files, SHA256 values, and the local conversion provenance are recorded in
+`measurements.json`; no unpinned draft download was added to production startup.
+
+**The draft-load exception is reproducible from the actual memory report.**
+The failed DFlash2 startup logs show 11,026 MiB free before loading the target,
+then **0 MiB free** immediately before loading the draft. In pinned
+`src/llama-model.cpp:1586–1631`, an unspecified tensor split is calculated from
+free memory. The special fallback handles `free=0,total=0`, but not
+`free=0,total>0`. With one GPU, the split normalization becomes `0/0` (NaN),
+`upper_bound` returns index 1, and `devices.at(1)` throws the recorded
+`vector::_M_range_check` exception. The retained minimal C++ reproducer produces
+the same index and exception; an explicit split of 1 produces CUDA device 0.
+`entrypoint.sh` therefore fixes `--split-mode none --tensor-split 1`, consistent
+with the existing CUDA0-only requirement. This avoids the indexing bug; it does
+not create VRAM or justify CPU offloading.
+
+Verbose buffer records show approximately 5,660.57 MiB of target weights,
+544 MiB of target KV, 1,197 MiB recurrent state, and 150.28 MiB initial target
+compute scratch. The r3 Q4_K_M draft adds 1,079.61 MiB weights, 26.56 MiB KV,
+and 558.51 MiB compute scratch. Their sum is about 9.0 GiB, before driver
+contexts, graph/pool allocations, temporary peaks, and other GPU applications.
+These buffer sizes are allocations, not a complete physical-residency audit.
+The user subsequently confirmed a GPU-intensive background application during
+the first experiment series. That makes memory contention a concrete confounder,
+not evidence that DFlash itself cannot run on a 12 GB Blackwell notebook.
+
+**The initial inference timeouts are not established kernel deadlocks.**
+One timed-out verbose run logged 431 prompt tokens processed in 60.09 seconds
+(7.17 tokens/s), then emitted its first token at 145.72 seconds after server
+start. Cancellation occurred at 150.92 seconds after start when the client's
+120-second conversation deadline expired. Startup/initialization is separate
+from the request deadline; these timestamps establish slow progress, not a
+permanent CUDA kernel deadlock. Memory/load pressure can therefore explain a
+failed client test without proving a hung kernel. Windows/WSL driver paging is a plausible
+contributor but was not directly profiled; no CPU LLM offload was enabled.
+NVIDIA documents limits to WSL memory/NVML behavior in the
+[CUDA on WSL guide](https://docs.nvidia.com/cuda/wsl-user-guide/index.html).
+
+A historical Blackwell PDL race in the PTQ1_0 consumer is documented in
+[the published kernel notes](https://github.com/sudoingX/bonsai2-small-gpu/blob/main/kernel/blackwell.md).
+The pinned source already calls `ggml_cuda_pdl_sync()` before the first load in
+`mmvq-ptq1_0.cuh`, and the GDN path also contains its wait. The documented
+q4_0 vector-kernel stack issue does not explain these q8_0 cache tests.
+Disabling PDL alone did not prevent all initial timeouts. Clean runs with PDL
+on/off are used below to distinguish memory contention from that older bug;
+no unverified kernel patch is applied to a verified upstream bundle.
+
+The first timing series is retained as **contaminated historical evidence** in
+`data/research/blackwell-20261002/measurements.json`, including failed trials.
+Its initial 31.31→38.02 tokens/s comparison must not be used as the final speedup
+claim. GPU telemetry, identified logs, completed API counters, and fresh-server
+repetitions after the background application stopped are recorded separately.
+
+### Clean repetitions after competing GPU load stopped
+
+The user confirmed the competing application had been removed before these
+repetitions. Initial global GPU telemetry reported 845 MiB used, 1% utilization,
+and 58°C. Baseline/native runs were alternated, with a fresh server and prompt
+cache every time. All modes retained 16k allocated context, q8_0 main/draft
+caches, Flash Attention, CPU BF16 vision, medium template reasoning effort, and
+greedy thinking-disabled conversation requests. Usage is cumulative over ten
+exchanges, not a filled 16k context. Timestamped startup/inference GPU telemetry,
+image/container IDs, actual executable paths, per-request draft/cache counters,
+and report/log SHA256 identities are summarized in
+`data/research/blackwell-20261002/clean-measurements.json`; raw evidence stays
+under `results/blackwell-clean-20261002/`.
+
+| Mode | Repetitions | Mean decode tokens/s | Mean wall seconds | Prompt-cache hit rate |
+| --- | ---: | ---: | ---: | ---: |
+| Published Blackwell, MTP=2 | 3 | 39.91 | 34.708 | 87.37% |
+| Native SM120 Prism, MTP=2 | 3 | 43.34 | 32.934 | 87.37% |
+| Native + Qwen3.5 DFlash, depth 3, PDL on | 3 | 34.99 | 39.650 | 87.39% |
+| Native + Bonsai DFlash2, depth 3, PDL on | 3 | 31.41 | 41.172 | 87.36% |
+| Native + Bonsai DFlash2, depth 7, PDL on | 3 | 30.34 | 43.109 | 87.50% |
+
+The clean MTP comparison yields **8.6% higher decode throughput** and **5.1%
+less conversation wall time**. All three paired native runs beat their baseline
+run. The initial contaminated 21.4% result is superseded. MTP and DFlash1 runs
+used 15,949 cumulative tokens / 823 output tokens. DFlash2 depth 7 used 15,951
+cumulative tokens / 841 outputs; near-tied greedy choices can differ between
+single-row and batched verification, as upstream PR261 documents. Rates use
+actual server decode timings and are distinct from output/wall throughput.
+
+All three clean DFlash1 runs and all six clean DFlash2 runs completed without
+load exceptions or client timeouts, with **PDL enabled**. Each draft mode passed
+nine quality probes and three restricted coding tasks / 23 assertions. A
+separate verbose PDL-disabled DFlash2 diagnostic also completed. Its draft-load
+log reports **3444 MiB free**, versus **0 MiB** in the contaminated failures.
+This controlled change, the exact split-error reproducer, and the earlier
+slow-progress log identify memory/load contention plus the upstream split bug
+as the supported explanation, rather than an inherent DFlash2/Blackwell
+incompatibility. No Windows paging profile or compute-sanitizer trace was
+captured, so a specific driver-paging mechanism is not claimed as proven.
+
+DFlash performance depends strongly on workload. Actual conversation counters
+show 43.12% draft-token acceptance for MTP, 35.58% for the Qwen3.5 draft, and
+19.65% for Bonsai DFlash2 depth 7. The latter pays drafting/verification costs
+for mostly rejected prose tokens. On its three small coding tasks it instead
+accepted 80.95–91.84% of drafts and decoded at 119.75, 104.69, and 119.80 tokens/s;
+all generated functions passed execution assertions. A separate clean native
+MTP coding diagnostic reached 65.35, 63.07, and 70.11 tokens/s on the same three
+tasks. Its arithmetic/modular
+thinking probes achieved 105.99/100.83 tokens/s, versus native MTP's
+69.67/69.46 on the final clean paired backend run. These are individual probes,
+not a broad coding benchmark. The older Qwen3.5 draft gave 63.08–67.54 tokens/s
+on coding and provides no clear advantage over MTP here.
+
+The source dispatch sends PTQ1_0 verification up to four columns through MMVQ
+and five or more through MMQ, with the threshold documented as Ada-tuned.
+Depth 7 can use a different verify kernel than depth 3. This is a plausible
+performance contributor, not a profiled cause of failure; no unmeasured kernel
+threshold patch is introduced. DFlash2 metadata contains its convolution and
+selector, and the source detects DFlash2 by a positive selector top-k. Both
+DFlash generations correctly use the same `draft-dflash` server strategy name.
+
+The recommended default remains native MTP=2, preserving the existing runtime
+contract. DFlash2 is useful for predictable code/math on this notebook, but the
+conversation evidence does not support making it the default. Test helpers
+replace MTP rather than accidentally append both strategies, keep target/draft
+weights and caches on CUDA0, validate depth/PDL controls, and preserve partial
+evidence on failure. No CPU LLM fallback or production draft-model download is
+added.
+
+### Final image validation
+
+A fresh suite `20261002T161853Z-1675445` on the final combined runtime passed
+18/18 audited checks: CUDA-only language-model/draft buffers and state, main
+and draft q8_0/Flash Attention, MTP depth 2 with actual API draft counters,
+15,009-token recall, model identity, 16k and environment-selected 8k context,
+CPU BF16 vision, two shape/color vision probes, the unicorn-image request, and
+three generated functions with 23 restricted execution assertions. All four
+packaged backends passed the dependency check with real CUDA attached. The
+nonexecutable-server negative test and pre-download missing-CUDA failures also
+passed, as did the complete offline regression suite. No Python bytecode
+caches were found. Compact identified validation metadata is retained in
+`final-validation.json`. Benchmark image IDs remain bound to their actual
+measured development builds; no measurement is relabeled as a future image.

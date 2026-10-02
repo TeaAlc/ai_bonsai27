@@ -1,0 +1,26 @@
+{
+  "runtime_qa_directory": "results/runs/20261002T161853Z-1675445",
+  "image_id": "sha256:00be1bae88175e1212fe29f82e3ac0c69007ecf0dc204300fb42dbccff046ed6",
+  "checks_passed": 18,
+  "checks_total": 18,
+  "long_prompt_tokens": 15009,
+  "coding_tasks": 3,
+  "coding_assertions": 23,
+  "vision_fixtures": 2,
+  "context_windows": [
+    16384,
+    8192
+  ],
+  "server_log_sha256": "ea67d0c8b67233e4fcf6a31ebaf55174ad9b5e0f453cd3c2c75fd1862fd3c18a",
+  "all_packaged_backends_dependency_checks": [
+    "blackwell",
+    "ampere-ada",
+    "ada-source",
+    "blackwell-source"
+  ],
+  "nonexecutable_dependency_failure": "passed",
+  "missing_gpu_before_download": "passed",
+  "offline_regressions": "passed",
+  "no_bytecode_caches": "confirmed",
+  "limitation": "Ada kernels are preserved from the verified imported runtime; only Blackwell inference was tested on this host."
+}

@@ -19,8 +19,12 @@ done
 
 initial_library_path=${LD_LIBRARY_PATH:-}
 backends=(blackwell ampere-ada)
-[[ ! -x /opt/bonsai/ada-source/bin/llama-server ]] || backends+=(ada-source)
+for backend in ada-source blackwell-source; do
+    [[ ! -f /opt/bonsai/$backend/bin/llama-server ]] || backends+=("$backend")
+done
 for backend in "${backends[@]}"; do
+    [[ -x /opt/bonsai/$backend/bin/llama-server ]] \
+        || { echo "Error: backend server is not executable: $backend" >&2; exit 2; }
     export LD_LIBRARY_PATH="/usr/lib/wsl/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/opt/bonsai/$backend/lib${initial_library_path:+:$initial_library_path}"
     for binary in "/opt/bonsai/$backend/bin/llama-server" /opt/bonsai/"$backend"/lib/*.so*; do
         # Ignore no dependencies other than the explicitly allowed host driver.

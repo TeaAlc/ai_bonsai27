@@ -27,3 +27,8 @@ data/backends/ampere-ada/*
 data/backends/ada-source/*
 !data/backends/ada-source/runtime
 !data/backends/ada-source/runtime/**
+
+!data/backends/blackwell-source
+data/backends/blackwell-source/*
+!data/backends/blackwell-source/runtime
+!data/backends/blackwell-source/runtime/**
