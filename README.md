@@ -959,3 +959,7 @@ verification always uses `./simple_text_benchmark.sh`.
 The official Z Lab Qwen3.8 DFlash2 checkpoint was also tested in BF16 and Q8_0,
 with three and seven draft tokens. Its results and conversion pins are recorded
 in the 2026-10-02 section of [RECHERCHE.md](RECHERCHE.md).
+
+Three fresh-container benchmark repetitions per MTP mode confirm that MTP=2
+has the lowest mean wall time on this host. Means, sample standard deviations,
+and the measurement scope are documented in [RECHERCHE.md](RECHERCHE.md).

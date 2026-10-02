@@ -880,3 +880,43 @@ remain under `results/performance/`; compact measurements, checksums, pins,
 and quality results are retained in `data/research/zlab-dflash2-20261002/`.
 The final MTP control report is
 `results/performance/zlab-official/final-mtp2.json`.
+
+## 2026-10-02: three repeated MTP comparisons
+
+The unchanged `simple_text_benchmark.sh` was run three times each for MTP=1,
+MTP=2, and no speculative decoding on the existing optimized image. Every run
+used a fresh container and cold prompt cache. Block orders were 1/2/off,
+2/off/1, and off/1/2, with one GPU container at a time. All used the same
+Prism runtime binary, CUDA0 placement, 16,384-token context, q8_0 caches,
+Flash Attention, CPU BF16 vision, and batch invariance. Each completed ten
+exchanges with 15,162 prompt and 806 completion tokens (15,968 cumulative
+usage). All nine full conversations were identical. Off runs had no MTP
+strategy in the actual process arguments and zero proposed draft tokens.
+
+An initial preliminary series mistakenly selected the older backend for two
+off runs through an obsolete temporary entrypoint. That entire series was
+excluded and all nine measurements were repeated after correcting the
+entrypoint. Recorded process arguments and executable hashes verify that
+the following runs all use the identical optimized backend.
+
+| Variant | Wall time runs (s) | Mean wall time ± sample SD (s) | Mean decode ± sample SD (tokens/s) | 95% t interval for mean wall time (s) |
+| --- | --- | ---: | ---: | --- |
+| MTP=1 | 16.052, 16.091, 16.145 | 16.096 ± 0.047 | 89.13 ± 0.07 | 15.980–16.212 |
+| MTP=2 | 15.805, 15.850, 15.900 | 15.852 ± 0.048 | 87.32 ± 0.09 | 15.734–15.970 |
+| No speculation | 17.381, 17.401, 17.372 | 17.385 ± 0.015 | 73.49 ± 0.06 | 17.348–17.422 |
+
+MTP=2 has the shortest mean total wall time: approximately 1.5% less than
+MTP=1 and 8.8% less than no speculation. MTP=1 has about 2.1% higher decode
+throughput, but this does not offset its other request work in this benchmark.
+MTP=2 remains the serving default. These confidence intervals use Student
+t with two degrees of freedom, assuming independent approximately normal
+measurements. Three repeated runs of one deterministic conversation provide
+evidence of repeatability here, not statistical certainty or generalization
+to other prompts, sustained workloads, or 128k context.
+
+The restored MTP=2 service on localhost:8080 passed a separate final unchanged
+benchmark (87.26 decode tokens/s, 15.861 seconds); it is
+excluded from the three-run means. No serving defaults or runtime binaries
+changed. Reports and logs are in `results/performance/mtp-triplicate-20261002/`;
+compact measurements, statistics, and evidence hashes are retained in
+`data/research/mtp-triplicate-20261002/measurements.json`.
