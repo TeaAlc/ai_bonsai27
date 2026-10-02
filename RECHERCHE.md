@@ -773,3 +773,110 @@ Raw reports are `results/performance/final-simple-text-benchmark-cold.json` and
 inspection/log evidence beside them. Their SHA256 identities and compact
 measurements are retained in the research JSON. `results/last-build.json`
 identifies the exact built image and all three backend inventories.
+
+## 2026-10-02: official Z Lab Qwen3.8 DFlash2 test
+
+At the user's request, this test uses the exact official
+[z-lab/Qwen3.8-27B-DFlash2](https://huggingface.co/z-lab/Qwen3.8-27B-DFlash2)
+checkpoint, revision `50307d4c4cde6860d4eee73e2547cd786fe8e8a4`. It is the
+Qwen3.8 target drafter described by its authors, without Bonsai-specific
+re-fitting. It is distinct from the two community Bonsai-adapted drafts tested
+on October 1. The authors' published numbers use a full Qwen target on H200 and
+SGLang; they are not measurements of this PTQ1 Bonsai container.
+
+Actual CUDA driver access was verified before downloading the 3,848,817,896-byte
+Safetensors file. Its pinned SHA256 is
+`67fc76d68dc5a9415511a4f394ef744d67510cd20e93b37cc2cc7d28e4bab65c`.
+The repository does not supply a GGUF. Conversion used the already tested Prism
+source revision `88c4bc60b9c9578f134385be9535e853f2db9b9f`, and the matching
+Qwen tokenizer at `1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0`.
+Tokenizer inputs were checked against their upstream Git blob or LFS identities.
+The converter ran with Python bytecode disabled inside an isolated Python
+container, with recorded package versions. No host-wide tools or drivers were
+installed. Configurations and conversion provenance are retained under
+`data/research/zlab-dflash2-20261002/`.
+
+Two conversions were tested: BF16, preserving the draft weights without
+quantization, and Q8_0. Both contain 81 tensors and use the same source checkpoint.
+Their GGUF SHA256s are respectively
+`8b91284fe4a90dd1d6736f3c3ed73be0cc091770d555b5902d970ff5bd0cfd5f`
+and `1c6b30af5cfcb9ee42059b18eea4e175dc70d67a1aa44f753b9b7727905e249e`.
+The target PTQ1 model, its original tokenizer/chat template, medium reasoning
+default, CPU BF16 vision, main/draft q8_0 KV caches, Flash Attention, batch
+invariance, and CUDA0-only LLM placement were preserved. The experiment explicitly
+removed the default MTP strategy before selecting `draft-dflash`; main and draft
+both remained on CUDA0, with no automatic CPU offloading.
+
+### Fresh, uncontended simple_text_benchmark measurements
+
+A fresh MTP=2 baseline and each draft/depth pair received two runs: cold prompt
+cache followed by a warm repeated conversation. All used the unchanged
+`simple_text_benchmark.sh`, with ten exchanges, twenty messages, and about 16k
+cumulative API usage in the 16,384-token window. These are short-conversation
+measurements, not a filled 16k context or a long coding workload. Initial Q8_0
+exploratory runs overlapped converter/artifact I/O; they were retained locally
+but excluded from the comparison below. All listed runs took place after that
+work completed, without a competing GPU container.
+
+| Variant | Decode tokens/s, cold / warm | Wall seconds, cold / warm | Cold draft acceptance |
+| --- | ---: | ---: | ---: |
+| Existing Prism backend, MTP=2 | 87.21 / 87.64 | 15.952 / 15.549 | 44.06% |
+| Official DFlash2 Q8_0, n=3 | 71.95 / 73.45 | 19.362 / 18.097 | 35.48% |
+| Official DFlash2 Q8_0, n=7 | 56.95 / 57.95 | 22.275 / 21.064 | 16.14% |
+| Official DFlash2 BF16, n=3 | 66.16 / 67.33 | 20.214 / 19.013 | 35.83% |
+| Official DFlash2 BF16, n=7 | 49.83 / 50.46 | 24.253 / 23.184 | 16.71% |
+
+The official checkpoint loads and drafts successfully, but neither precision nor
+depth accelerates this workload. BF16 does not resolve the performance deficit.
+The best official variant, Q8_0 n=3, is about 17.5% slower in decode throughput
+and takes about 21.4% longer end to end than the fresh cold MTP=2 baseline.
+Increasing draft depth sharply reduces acceptance and increases total work.
+This result applies to the unchanged Bonsai PTQ1 target and this GPU/backend;
+it does not contradict speedups measured with a full-precision Qwen target.
+
+The n=3 variants retain all ten benchmark answers exactly. The n=7 variants
+change conversation answers, as seen in the previous batched verification
+experiments. The final paired correctness evaluation follows these speed tests.
+
+### Final quality comparison
+
+After the complete speed sweep, fresh identified tests were run on the exact
+original GHCR image, the existing optimized MTP=2 image, and all four official
+draft configurations. All six configurations passed nine reasoning / instruction
+/ JSON / tool-call probes, three coding tasks with 23 restricted-container
+assertions, two CPU BF16 vision fixtures, arithmetic chat, and recall from a
+15,009-token actual API prompt. All compared answer and reasoning text fields
+across the sixteen responses matched the original. Tool names and parsed
+arguments were independently checked; random tool-call IDs were excluded.
+Verbose server logs also confirmed no CPU model buffers. Runtime command/mount
+provenance and checksummed raw logs are retained alongside the responses.
+
+No improvement or degradation was observed on these paired quality probes.
+They remain a small regression evaluation, not a general proof of unchanged
+quality. The official n=7 benchmark conversations diverge. The earlier controlled
+[DFlash2 report](https://github.com/ggml-org/llama.cpp/discussions/29387) documents
+near-tied greedy choices in batched verification; token margins were not measured
+for the divergences here. Identical target weights alone do not establish
+byte-identical answers for every batch shape. The official model did not improve speed on this
+host; the existing MTP=2 service is retained. The final verification below uses
+`simple_text_benchmark.sh` again after the quality evaluation.
+
+### Final unchanged benchmark and restored service
+
+After quality evaluation, the best official variant (Q8_0, n=3) was checked
+again with the unchanged `simple_text_benchmark.sh`: cold/warm decode rates
+71.84/73.43 tokens/s and wall times 19.260/18.072 seconds. Both conversations
+matched the MTP baseline exactly. The existing `bonsai2-27b` MTP=2 container was
+then restarted on localhost:8080 at 16,384 tokens. Its final cold benchmark
+measured 87.21 decode tokens/s and 16.191 seconds, with all ten exchanges,
+15,162 prompt tokens, 806 completion tokens, 15,968 cumulative usage tokens,
+87.09% cache hits, and zero cached tokens on the first exchange. The official
+Q8_0 n=3 cold verification was 17.6% slower in decoding and took 19.0% longer
+end to end than that restored-service verification.
+
+No serving defaults or runtime binaries were changed. The converter container
+was removed. Raw reports, converter inventories, and identified quality responses
+remain under `results/performance/`; compact measurements, checksums, pins,
+and quality results are retained in `data/research/zlab-dflash2-20261002/`.
+The final MTP control report is
+`results/performance/zlab-official/final-mtp2.json`.

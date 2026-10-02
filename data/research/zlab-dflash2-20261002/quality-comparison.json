@@ -1,0 +1,140 @@
+{
+  "baseline_image_id": "sha256:ece87f5e0e34f91c5b77f9d333578922a6973403031a49469928f450ee5fc461",
+  "performed_after_speed_sweep": true,
+  "suite_id": "zlab-official-20261002",
+  "limits": "Small paired regression probe, not a broad statistical quality benchmark. Tool-call IDs excluded; name and parsed arguments checked independently. Raw identified responses and log-checksum envelopes saved locally.",
+  "rows": [
+    {
+      "variant": "dflash2-zlab-bf16-3",
+      "suite_status": {
+        "test-quality.py": 0,
+        "test-coding.py": 0,
+        "test-vision.py": 0,
+        "test-api.py": 0
+      },
+      "quality_passed": 9,
+      "quality_cases": 9,
+      "coding_passed": 3,
+      "coding_assertions": 23,
+      "vision_passed": 2,
+      "chat_passed": true,
+      "long_context_passed": true,
+      "long_prompt_tokens": 15009,
+      "compared_responses": 16,
+      "changed_answer_or_reasoning_fields": [],
+      "cpu_model_buffer_detected": false,
+      "server_log_sha256": "98cf3871accdd9583f06c4416877f8ef692d6cf06cb6d42f642bc3b1bc9dd4cd",
+      "evidence_directory": "results/performance/zlab-official/quality/dflash2-zlab-bf16-3"
+    },
+    {
+      "variant": "dflash2-zlab-bf16-7",
+      "suite_status": {
+        "test-quality.py": 0,
+        "test-coding.py": 0,
+        "test-vision.py": 0,
+        "test-api.py": 0
+      },
+      "quality_passed": 9,
+      "quality_cases": 9,
+      "coding_passed": 3,
+      "coding_assertions": 23,
+      "vision_passed": 2,
+      "chat_passed": true,
+      "long_context_passed": true,
+      "long_prompt_tokens": 15009,
+      "compared_responses": 16,
+      "changed_answer_or_reasoning_fields": [],
+      "cpu_model_buffer_detected": false,
+      "server_log_sha256": "2edb6f287ff2ff58785b7beb9ea1c27f1f958652a4c6412de02bfa81d252ce08",
+      "evidence_directory": "results/performance/zlab-official/quality/dflash2-zlab-bf16-7"
+    },
+    {
+      "variant": "dflash2-zlab-q8_0-3-clean",
+      "suite_status": {
+        "test-quality.py": 0,
+        "test-coding.py": 0,
+        "test-vision.py": 0,
+        "test-api.py": 0
+      },
+      "quality_passed": 9,
+      "quality_cases": 9,
+      "coding_passed": 3,
+      "coding_assertions": 23,
+      "vision_passed": 2,
+      "chat_passed": true,
+      "long_context_passed": true,
+      "long_prompt_tokens": 15009,
+      "compared_responses": 16,
+      "changed_answer_or_reasoning_fields": [],
+      "cpu_model_buffer_detected": false,
+      "server_log_sha256": "f7a0dd9b4d9d1c67fa28ba043c71393b88a6f40603103f54dce4408b3c12bdce",
+      "evidence_directory": "results/performance/zlab-official/quality/dflash2-zlab-q8_0-3-clean"
+    },
+    {
+      "variant": "dflash2-zlab-q8_0-7-clean",
+      "suite_status": {
+        "test-quality.py": 0,
+        "test-coding.py": 0,
+        "test-vision.py": 0,
+        "test-api.py": 0
+      },
+      "quality_passed": 9,
+      "quality_cases": 9,
+      "coding_passed": 3,
+      "coding_assertions": 23,
+      "vision_passed": 2,
+      "chat_passed": true,
+      "long_context_passed": true,
+      "long_prompt_tokens": 15009,
+      "compared_responses": 16,
+      "changed_answer_or_reasoning_fields": [],
+      "cpu_model_buffer_detected": false,
+      "server_log_sha256": "4b9b9b5d2a0118091894afa119a5157244cb8a5703dd210af891e93471d72c74",
+      "evidence_directory": "results/performance/zlab-official/quality/dflash2-zlab-q8_0-7-clean"
+    },
+    {
+      "variant": "original-default",
+      "suite_status": {
+        "test-quality.py": 0,
+        "test-coding.py": 0,
+        "test-vision.py": 0,
+        "test-api.py": 0
+      },
+      "quality_passed": 9,
+      "quality_cases": 9,
+      "coding_passed": 3,
+      "coding_assertions": 23,
+      "vision_passed": 2,
+      "chat_passed": true,
+      "long_context_passed": true,
+      "long_prompt_tokens": 15009,
+      "compared_responses": 16,
+      "changed_answer_or_reasoning_fields": [],
+      "cpu_model_buffer_detected": false,
+      "server_log_sha256": "c455a60422d3bdcea163acf040c33865eb35dcdced643e5008b57eb75cfa2119",
+      "evidence_directory": "results/performance/zlab-official/quality/original-default"
+    },
+    {
+      "variant": "selected",
+      "suite_status": {
+        "test-quality.py": 0,
+        "test-coding.py": 0,
+        "test-vision.py": 0,
+        "test-api.py": 0
+      },
+      "quality_passed": 9,
+      "quality_cases": 9,
+      "coding_passed": 3,
+      "coding_assertions": 23,
+      "vision_passed": 2,
+      "chat_passed": true,
+      "long_context_passed": true,
+      "long_prompt_tokens": 15009,
+      "compared_responses": 16,
+      "changed_answer_or_reasoning_fields": [],
+      "cpu_model_buffer_detected": false,
+      "server_log_sha256": "173f5797e3db306c4c4bb176ec6feffbc038d16d2297db1e70ad30f23085bca5",
+      "evidence_directory": "results/performance/zlab-official/quality/selected"
+    }
+  ]
+}

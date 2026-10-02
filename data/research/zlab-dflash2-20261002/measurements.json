@@ -1,0 +1,233 @@
+{
+  "benchmark": "unchanged simple_text_benchmark.sh; 16k cumulative usage, 16384 context; thinking disabled",
+  "gpu": "RTX 4070 Ti SUPER, SM89, 16GB",
+  "target": "same pinned Bonsai2 PTQ1_0 MTP lean weights; BF16 vision remains on CPU",
+  "backend_revision": "88c4bc60b9c9578f134385be9535e853f2db9b9f",
+  "main_and_draft_caches": "q8_0, Flash Attention enabled, batch invariance=1, CUDA0-only LLM",
+  "measurements": [
+    {
+      "variant": "zlab-baseline",
+      "runs": [
+        {
+          "report": "results/performance/zlab-baseline-1.json",
+          "prompt_tokens": 15162,
+          "completion_tokens": 806,
+          "total_tokens": 15968,
+          "completed_exchanges": 10,
+          "decode_tokens_per_second": 87.21,
+          "wall_seconds": 15.952,
+          "cache_hit_rate_percent": 87.09,
+          "first_cached_tokens": 0,
+          "draft_tokens": 858,
+          "accepted_draft_tokens": 378,
+          "draft_acceptance_percent": 44.06,
+          "benchmark_answers_equal_baseline": true
+        },
+        {
+          "report": "results/performance/zlab-baseline-2.json",
+          "prompt_tokens": 15162,
+          "completion_tokens": 806,
+          "total_tokens": 15968,
+          "completed_exchanges": 10,
+          "decode_tokens_per_second": 87.64,
+          "wall_seconds": 15.549,
+          "cache_hit_rate_percent": 89.94,
+          "first_cached_tokens": 431,
+          "draft_tokens": 858,
+          "accepted_draft_tokens": 378,
+          "draft_acceptance_percent": 44.06,
+          "benchmark_answers_equal_baseline": true
+        }
+      ]
+    },
+    {
+      "variant": "dflash2-zlab-q8_0-3-clean",
+      "runs": [
+        {
+          "report": "results/performance/dflash2-zlab-q8_0-3-clean-1.json",
+          "prompt_tokens": 15162,
+          "completion_tokens": 806,
+          "total_tokens": 15968,
+          "completed_exchanges": 10,
+          "decode_tokens_per_second": 71.95,
+          "wall_seconds": 19.362,
+          "cache_hit_rate_percent": 87.07,
+          "first_cached_tokens": 0,
+          "draft_tokens": 1167,
+          "accepted_draft_tokens": 414,
+          "draft_acceptance_percent": 35.48,
+          "benchmark_answers_equal_baseline": true
+        },
+        {
+          "report": "results/performance/dflash2-zlab-q8_0-3-clean-2.json",
+          "prompt_tokens": 15162,
+          "completion_tokens": 806,
+          "total_tokens": 15968,
+          "completed_exchanges": 10,
+          "decode_tokens_per_second": 73.45,
+          "wall_seconds": 18.097,
+          "cache_hit_rate_percent": 89.92,
+          "first_cached_tokens": 431,
+          "draft_tokens": 1167,
+          "accepted_draft_tokens": 414,
+          "draft_acceptance_percent": 35.48,
+          "benchmark_answers_equal_baseline": true
+        }
+      ]
+    },
+    {
+      "variant": "dflash2-zlab-q8_0-7-clean",
+      "runs": [
+        {
+          "report": "results/performance/dflash2-zlab-q8_0-7-clean-1.json",
+          "prompt_tokens": 15130,
+          "completion_tokens": 806,
+          "total_tokens": 15936,
+          "completed_exchanges": 10,
+          "decode_tokens_per_second": 56.95,
+          "wall_seconds": 22.275,
+          "cache_hit_rate_percent": 87.2,
+          "first_cached_tokens": 0,
+          "draft_tokens": 2646,
+          "accepted_draft_tokens": 427,
+          "draft_acceptance_percent": 16.14,
+          "benchmark_answers_equal_baseline": false
+        },
+        {
+          "report": "results/performance/dflash2-zlab-q8_0-7-clean-2.json",
+          "prompt_tokens": 15130,
+          "completion_tokens": 806,
+          "total_tokens": 15936,
+          "completed_exchanges": 10,
+          "decode_tokens_per_second": 57.95,
+          "wall_seconds": 21.064,
+          "cache_hit_rate_percent": 90.05,
+          "first_cached_tokens": 431,
+          "draft_tokens": 2646,
+          "accepted_draft_tokens": 427,
+          "draft_acceptance_percent": 16.14,
+          "benchmark_answers_equal_baseline": false
+        }
+      ]
+    },
+    {
+      "variant": "dflash2-zlab-bf16-3",
+      "runs": [
+        {
+          "report": "results/performance/dflash2-zlab-bf16-3-1.json",
+          "prompt_tokens": 15162,
+          "completion_tokens": 806,
+          "total_tokens": 15968,
+          "completed_exchanges": 10,
+          "decode_tokens_per_second": 66.16,
+          "wall_seconds": 20.214,
+          "cache_hit_rate_percent": 87.07,
+          "first_cached_tokens": 0,
+          "draft_tokens": 1161,
+          "accepted_draft_tokens": 416,
+          "draft_acceptance_percent": 35.83,
+          "benchmark_answers_equal_baseline": true
+        },
+        {
+          "report": "results/performance/dflash2-zlab-bf16-3-2.json",
+          "prompt_tokens": 15162,
+          "completion_tokens": 806,
+          "total_tokens": 15968,
+          "completed_exchanges": 10,
+          "decode_tokens_per_second": 67.33,
+          "wall_seconds": 19.013,
+          "cache_hit_rate_percent": 89.92,
+          "first_cached_tokens": 431,
+          "draft_tokens": 1161,
+          "accepted_draft_tokens": 416,
+          "draft_acceptance_percent": 35.83,
+          "benchmark_answers_equal_baseline": true
+        }
+      ]
+    },
+    {
+      "variant": "dflash2-zlab-bf16-7",
+      "runs": [
+        {
+          "report": "results/performance/dflash2-zlab-bf16-7-1.json",
+          "prompt_tokens": 15130,
+          "completion_tokens": 806,
+          "total_tokens": 15936,
+          "completed_exchanges": 10,
+          "decode_tokens_per_second": 49.83,
+          "wall_seconds": 24.253,
+          "cache_hit_rate_percent": 87.2,
+          "first_cached_tokens": 0,
+          "draft_tokens": 2597,
+          "accepted_draft_tokens": 434,
+          "draft_acceptance_percent": 16.71,
+          "benchmark_answers_equal_baseline": false
+        },
+        {
+          "report": "results/performance/dflash2-zlab-bf16-7-2.json",
+          "prompt_tokens": 15130,
+          "completion_tokens": 806,
+          "total_tokens": 15936,
+          "completed_exchanges": 10,
+          "decode_tokens_per_second": 50.46,
+          "wall_seconds": 23.184,
+          "cache_hit_rate_percent": 90.05,
+          "first_cached_tokens": 431,
+          "draft_tokens": 2597,
+          "accepted_draft_tokens": 434,
+          "draft_acceptance_percent": 16.71,
+          "benchmark_answers_equal_baseline": false
+        }
+      ]
+    }
+  ],
+  "excluded_exploratory_runs": "dflash2-zlab-q8_0-3 and -7 initial runs; overlapped converter work or artifact hashing; retained locally but not used for final comparisons",
+  "final_verification": [
+    {
+      "report": "results/performance/dflash2-zlab-final-1.json",
+      "sha256": "3d57550bf14969a084c472e12d4b9b91251925522dd4ce067c7027760e034e3c",
+      "recorded_at": "2026-10-02T06:37:34.112373+00:00",
+      "decode_tokens_per_second": 71.84,
+      "wall_seconds": 19.26,
+      "prompt_tokens": 15162,
+      "completion_tokens": 806,
+      "total_tokens": 15968,
+      "cache_hit_rate_percent": 87.07,
+      "context_size": 16384,
+      "first_cached_tokens": 0
+    },
+    {
+      "report": "results/performance/dflash2-zlab-final-2.json",
+      "sha256": "aa6b2f481ee2017af0156bbce829207e9408935af2e9145a521a02d7a8eb31ae",
+      "recorded_at": "2026-10-02T06:37:52.256125+00:00",
+      "decode_tokens_per_second": 73.43,
+      "wall_seconds": 18.072,
+      "prompt_tokens": 15162,
+      "completion_tokens": 806,
+      "total_tokens": 15968,
+      "cache_hit_rate_percent": 89.92,
+      "context_size": 16384,
+      "first_cached_tokens": 431
+    },
+    {
+      "report": "results/performance/zlab-official/final-mtp2.json",
+      "sha256": "4f76c107a4793b28d2d62ea4db75090bfc201c7969d416402ed1f1409ed44923",
+      "recorded_at": "2026-10-02T06:38:16.992748+00:00",
+      "decode_tokens_per_second": 87.21,
+      "wall_seconds": 16.191,
+      "prompt_tokens": 15162,
+      "completion_tokens": 806,
+      "total_tokens": 15968,
+      "cache_hit_rate_percent": 87.09,
+      "context_size": 16384,
+      "first_cached_tokens": 0
+    }
+  ],
+  "restored_service": {
+    "container": "bonsai2-27b",
+    "base_url": "http://localhost:8080",
+    "image_id": "sha256:5f327fa98e1474285f8e943f20eb9ca3d497b3d79f6d3261949db25d9deae6c0",
+    "speculation": "draft-mtp, n_max=2",
+    "context": 16384
+  }
+}

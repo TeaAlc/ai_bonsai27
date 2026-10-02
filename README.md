@@ -955,3 +955,7 @@ small identified probe for reasoning, instruction following, and tool calls;
 use the same `BONSAI_TEST_*` identity variables as the other API tests. Its score
 is a regression check, not a general measure of model quality. Final speed
 verification always uses `./simple_text_benchmark.sh`.
+
+The official Z Lab Qwen3.8 DFlash2 checkpoint was also tested in BF16 and Q8_0,
+with three and seven draft tokens. Its results and conversion pins are recorded
+in the 2026-10-02 section of [RECHERCHE.md](RECHERCHE.md).

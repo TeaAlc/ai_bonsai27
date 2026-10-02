@@ -1,0 +1,44 @@
+{
+  "id": "z-lab/Qwen3.8-27B-DFlash2",
+  "sha": "50307d4c4cde6860d4eee73e2547cd786fe8e8a4",
+  "lastModified": "2026-08-19T02:52:37.000Z",
+  "cardData": {
+    "license": "apache-2.0",
+    "library_name": "transformers",
+    "pipeline_tag": "text-generation",
+    "base_model": [
+      "Qwen/Qwen3.8-27B"
+    ],
+    "inference": false,
+    "tags": [
+      "dflash2",
+      "speculative-decoding",
+      "block-diffusion",
+      "draft-model",
+      "sglang",
+      "vllm"
+    ]
+  },
+  "siblings": [
+    {
+      "rfilename": "README.md",
+      "blobId": "1ee0eb2b2f81767f40521b61245211e5400b81bc",
+      "size": 5397
+    },
+    {
+      "rfilename": "config.json",
+      "blobId": "79279cc5665bced6f3cdaa2095a2ffe819497b2e",
+      "size": 1239
+    },
+    {
+      "rfilename": "model.safetensors",
+      "blobId": "a988e2ea15d5cb6553f37a7f140304fb42fa8c10",
+      "size": 3848817896,
+      "lfs": {
+        "sha256": "67fc76d68dc5a9415511a4f394ef744d67510cd20e93b37cc2cc7d28e4bab65c",
+        "size": 3848817896,
+        "pointerSize": 135
+      }
+    }
+  ]
+}
