@@ -146,8 +146,8 @@ CDI regeneration backs up an existing spec and avoids conflicting copies in
 `no-additional-gids-for-device-nodes` compatibility flag is persisted for the
 CDI refresh service. It omits supplementary device groups: if your host relies
 on those permissions, upgrade Podman. Existing conflicting refresh flags or
-duplicate CDI specs stop setup for manual review. The previous installer names
-remain thin compatibility aliases; all setup logic lives in `install_nvidia.sh`.
+duplicate CDI specs stop setup for manual review. All setup logic lives in
+`install_nvidia.sh`; the previous installer scripts have been removed.
 
 ## Configuration
 

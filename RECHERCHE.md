@@ -924,7 +924,7 @@ compact measurements, statistics, and evidence hashes are retained in
 ## 2026-10-02: unified native Linux NVIDIA installer
 
 `install_nvidia.sh` consolidates the driver and Podman Toolkit/CDI installers.
-The old names are compatibility aliases. NVIDIA's official
+The old installer scripts have been removed; use `install_nvidia.sh`. NVIDIA's official
 [toolkit requirements](https://github.com/NVIDIA/nvidia-container-toolkit) state
 that a host NVIDIA driver is required, while the host CUDA development toolkit
 is not required for container execution. The project keeps CUDA runtime
