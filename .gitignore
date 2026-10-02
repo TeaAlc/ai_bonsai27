@@ -29,3 +29,6 @@ tools/semrel/downloads/
 data/backends/*/runtime.previous/
 data/backends/*/*.part
 data/backends/*/*.lock.d/
+
+# Local repository copies used for integration
+/other_repo/

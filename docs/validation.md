@@ -88,3 +88,17 @@ API tests. Final performance verification uses `./simple_text_benchmark.sh`.
 The October 1–2 Ada experiments and paired comparisons against the original
 GHCR image are documented in [RECHERCHE.md](../RECHERCHE.md). Small regression
 probes do not establish general model quality.
+
+## Local integration verification — 2026-10-02
+
+After importing the eight commits through `b875b68` from the supplied local
+checkout, a fresh standard development image passed the complete offline
+regression runner, syntax checks, real CUDA dependency/failure checks, and
+18/18 identified API QA checks on the RTX 5070 Ti Laptop WSL2 host. Both vision
+fixtures, all 23 coding assertions, the unicorn image request, and 16k/8k
+context checks passed. The run used local image `1.5.0`, marked dirty during
+integration; it is not a published release. Evidence:
+`results/runs/20261002T143103Z-1520949/`. See the integration section in
+[RECHERCHE.md](../RECHERCHE.md) for the image identity and measured throughput.
+The supplied optional Ada runtime was inventory/provenance-verified locally;
+its imported native-Linux performance results are separate host measurements.

@@ -972,3 +972,42 @@ regression runner includes `tests/test-nvidia-setup.py`.
 The final unchanged `simple_text_benchmark.sh` completed all ten exchanges
 (15,968 cumulative tokens, context 16,384) at 87.47 decode tokens/s and
 15.633 seconds. Its report and checksum are recorded in the verification JSON.
+
+## Local repository integration — 2026-10-02
+
+Eight commits from the supplied `other_repo/ai_bonsai27` checkout were imported
+by fast-forward, from `e6e37a4` through `b875b68`, preserving their original
+history. They add the optional pinned SM89 backend, performance and DFlash
+research, extracted documentation guides, unified NVIDIA setup diagnostics,
+and the renamed `image_build.sh` entry point. No tracked source files were
+missing after integration. The source checkout's uncommitted differences were
+executable-bit losses from copying; committed executable modes were preserved.
+Local repository copies are now ignored, including during build snapshots.
+
+The supplied optional Ada runtime passed `tools/verify-ada-source.py` before
+and after local import. Its inventory SHA256 is
+`2a29849cac102e76591f82a9b1b93515bd14f0fab9dbb0003ca93e16112ac921`.
+These binaries remain excluded from Git; the default image still uses the
+original published bundles. Imported Ada measurements describe the other
+host's recorded runs, not fresh measurements on this WSL2 notebook.
+
+The complete offline regression runner and all tracked shell/Python syntax
+checks passed. A fresh standard development build produced local `1.5.0` and
+`latest`, image ID
+`021a4cadbe75a1cd685b46c30d74aa53577af7ac16add8777b8d34baf01c0b43`,
+source `b875b68e1915c3c5c1b8de3e87cb30f8bdb24821`, marked dirty because the
+integration documentation and ignore rule were added locally. Both packaged
+backend dependency checks passed with real CUDA access. Negative startup
+checks confirmed that missing GPU access fails before downloads, and invalid
+settings or a read-only model cache fail before GPU detection. No release tags
+were created or moved and no images were published.
+
+Fresh identified GPU/API QA on this RTX 5070 Ti Laptop WSL2 host passed all
+18 audit checks, both vision fixtures, all 23 coding assertions, the unicorn
+image description, and 16k/8k context verification. Evidence is retained in
+`results/runs/20261002T143103Z-1520949/`. Logs verified 66/66 layers and all
+language-model buffers on CUDA0, main/draft Flash Attention and q8_0 caches,
+MTP=2 with positive draft/accepted API counters, and CPU BF16 vision.
+The 15,009-token input measured 653.2 prompt tokens/s; the three coding
+responses measured 63.0, 62.2, and 62.2 generated tokens/s. These are fresh
+standard-backend measurements, separate from the imported Ada experiments.

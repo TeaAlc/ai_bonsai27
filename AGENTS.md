@@ -82,6 +82,9 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   token-weighted total prompt cache hits from actual API counters, including
   the first request; unknown counters must remain null. Save reports in results/.
 - `results/`: local test evidence, excluded from Git.
+- `other_repo/`: local repository copies for integration, excluded from Git and
+  build snapshots. Preserve imported commit history and executable file modes;
+  verify ignored backend inventories before reusing supplied binaries.
 - Use `/tmp/bonsai27/` for temporary work. Build scripts honor the standard
   `TMPDIR` variable, defaulting to that directory.
 

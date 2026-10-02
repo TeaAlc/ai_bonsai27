@@ -240,6 +240,12 @@ The pinned semrel tool lives under `tools/`; version calculation uses complete
 local Git history and reachable stable tags. Builds never tag Git or publish
 implicitly. See [release and publication procedures](docs/releases.md),
 [data layout](data/README.md), and [dependency pins](RECHERCHE.md).
+The imported changes passed fresh GPU/API QA on this WSL2 notebook: 18/18
+checks, vision, coding, and 16k/8k context verification. See the
+[dated integration validation](docs/validation.md#local-integration-verification--2026-10-02).
+
+The build entry point is now `image_build.sh` (formerly `build.sh`). Local
+repository copies under `other_repo/` are excluded from Git and build snapshots.
 Preparation, build, release, tag, and push share a checkout lock. Temporary build
 files use `/tmp/bonsai27/`, or the standard `TMPDIR` override.
 
