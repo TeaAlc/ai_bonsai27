@@ -1,0 +1,39 @@
+{
+  "recorded_date": "2026-10-02",
+  "command": "./install_nvidia.sh --check --verify-container",
+  "host_changes": false,
+  "log": "results/nvidia-setup/20261002T125728Z-195453.log",
+  "log_sha256": "efa8cc995da5b4ac7dd4709c711daf7ec23089ed5f2e91e4dd63f7141e62b055",
+  "distribution": "Linux Mint 22.3",
+  "kernel": "7.0.0-38-generic",
+  "driver": "595.91.07",
+  "gpu": "RTX 4070 Ti SUPER",
+  "compute_capability": "8.9",
+  "podman": "6.1.2",
+  "rootless": true,
+  "oci_runtime": "crun",
+  "cgroups": "v2",
+  "nvidia_container_toolkit": "1.20.1",
+  "cdi_path": "/var/run/cdi/nvidia.yaml",
+  "cdi_version": "0.7.0",
+  "cdi_sha256": "6d258d20083877ffdfc364ff78fcc6675d370e01ef298be496fc65efdb9ecb2d",
+  "image_id": "5f327fa98e1474285f8e943f20eb9ca3d497b3d79f6d3261949db25d9deae6c0",
+  "all_backend_dependencies_passed": true,
+  "real_installation_tested": false,
+  "sources": [
+    "https://github.com/NVIDIA/nvidia-container-toolkit",
+    "https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/cdi-support.html",
+    "https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/troubleshooting.html"
+  ],
+  "final_simple_text_benchmark": {
+    "path": "results/nvidia-setup/final-simple-text-benchmark.json",
+    "sha256": "9cf93b4a09c5ce295d1992cc7c7c03ddf102f8d64b6fa11bea968aa505088c83",
+    "decode_tokens_per_second": 87.47,
+    "wall_seconds": 15.633,
+    "completed_exchanges": 10,
+    "total_tokens": 15968,
+    "context_size": 16384
+  },
+  "installer_fixtures": 14,
+  "offline_regressions_passed": true
+}

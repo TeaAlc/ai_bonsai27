@@ -920,3 +920,36 @@ excluded from the three-run means. No serving defaults or runtime binaries
 changed. Reports and logs are in `results/performance/mtp-triplicate-20261002/`;
 compact measurements, statistics, and evidence hashes are retained in
 `data/research/mtp-triplicate-20261002/measurements.json`.
+
+## 2026-10-02: unified native Linux NVIDIA installer
+
+`install_nvidia.sh` consolidates the driver and Podman Toolkit/CDI installers.
+The old names are compatibility aliases. NVIDIA's official
+[toolkit requirements](https://github.com/NVIDIA/nvidia-container-toolkit) state
+that a host NVIDIA driver is required, while the host CUDA development toolkit
+is not required for container execution. The project keeps CUDA runtime
+libraries in its image and installs the CDI base package on the Podman host.
+The [CDI guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/cdi-support.html)
+and [troubleshooting guidance](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/troubleshooting.html)
+cover refresh services and the Podman 4 feature flag retained by the installer.
+
+A fresh `--check --verify-container` completed successfully on Linux Mint 22.3,
+kernel 7.0.0-38-generic, RTX 4070 Ti SUPER (CUDA capability 8.9), driver
+595.91.07, Podman 6.1.2/rootless/crun/cgroup v2, and Toolkit 1.20.1. The actual
+CDI spec was `/var/run/cdi/nvidia.yaml`, version 0.7.0. The isolated, networkless
+container probe returned 8.9, and all three packaged backend dependency checks
+passed against image `5f327fa98e1474285f8e943f20eb9ca3d497b3d79f6d3261949db25d9deae6c0`.
+The private diagnostic log is retained in
+`results/nvidia-setup/20261002T125728Z-195453.log`; its checksum and source links
+are retained in `data/research/nvidia-setup-20261002/verification.json`. Earlier installation/CDI failure notes above describe
+the historical October 1 state, not this current verified setup.
+
+No host packages or CDI configuration were modified during this check.
+Installation, driver/reboot handling, Podman 4 compatibility, failed CDI
+generation, and error propagation are checked through isolated command fixtures;
+this does not claim a fresh real driver installation was tested. The offline
+regression runner includes `tests/test-nvidia-setup.py`.
+
+The final unchanged `simple_text_benchmark.sh` completed all ten exchanges
+(15,968 cumulative tokens, context 16,384) at 87.47 decode tokens/s and
+15.633 seconds. Its report and checksum are recorded in the verification JSON.
