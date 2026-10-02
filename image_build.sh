@@ -12,7 +12,7 @@ ada_source=false
 case "${1:-}" in
     '') (( $# == 0 )) || exit 2 ;;
     --ada-source) (( $# == 1 )) || exit 2; ada_source=true ;;
-    *) echo 'Usage: build.sh [--ada-source]' >&2; exit 2 ;;
+    *) echo 'Usage: image_build.sh [--ada-source]' >&2; exit 2 ;;
 esac
 bonsai_step project-lock "Waiting for the checkout lock."
 lock_project

@@ -29,9 +29,9 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   extract backends. Do not build the image here.
 - `create_realease.sh`: reconcile public Git/GHCR release history, calculate the
   version through semrel, create a local annotated release tag, then call
-  build.sh as the final action. Roll back the new tag on build failure; never
+  image_build.sh as the final action. Roll back the new tag on build failure; never
   move existing tags or push implicitly. --offline uses only local tags.
-- `build.sh`: verify extracted backend files and build the image using
+- `image_build.sh`: verify extracted backend files and build the image using
   `Containerfile`. Determine the image version through `tools/version.sh` and
   semrel, then tag the successful build with its SemVer version and `latest`.
   Keep image creation in this script. Build immutable source/backend snapshots and atomically record results/last-build.json with image identity and dependency inventory.
@@ -147,7 +147,7 @@ ordinary import caching is disabled. For syntax checks use `ast.parse` with
 ## Validation and documentation
 
 Run checks appropriate to the change. For runtime changes, build through
-`./build.sh`, then use the actual OpenAI-compatible API to validate behavior.
+`./image_build.sh`, then use the actual OpenAI-compatible API to validate behavior.
 Use outside-sandbox access when needed and authorized by the active session.
 Do not install host drivers or rely on sudo.
 

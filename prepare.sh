@@ -47,4 +47,4 @@ prepare_backend() {
 }
 prepare_backend blackwell "$BLACKWELL_ARCHIVE" "$BLACKWELL_SHA"
 prepare_backend ampere-ada "$AMPERE_ADA_ARCHIVE" "$AMPERE_ADA_SHA"
-echo 'Preparation complete. Build the image with ./build.sh.'
+echo 'Preparation complete. Build the image with ./image_build.sh.'

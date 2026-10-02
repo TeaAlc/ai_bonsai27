@@ -18,7 +18,7 @@ printf '%s  %s\n' "$source_sha" "$work/source.tar.gz" | sha256sum --check --stat
 mkdir "$work/source"
 tar -xzf "$work/source.tar.gz" --strip-components=1 -C "$work/source"
 # Actual GPU injection supplies libcuda for linking, never a bundled stub.
-# This command compiles only; image creation stays in build.sh.
+# This command compiles only; image creation stays in image_build.sh.
 gpu_args=(--device nvidia.com/gpu=all)
 if [[ -e /dev/dxg ]]; then
     gpu_args=(--device /dev/dxg -v /usr/lib/wsl:/usr/lib/wsl:ro)
@@ -40,4 +40,4 @@ else
     [[ ! -d data/backends/ada-source/runtime.previous ]] || mv data/backends/ada-source/runtime.previous data/backends/ada-source/runtime
     exit 2
 fi
-printf 'Backend prepared. Build the opt-in image with ./build.sh --ada-source.\n'
+printf 'Backend prepared. Build the opt-in image with ./image_build.sh --ada-source.\n'

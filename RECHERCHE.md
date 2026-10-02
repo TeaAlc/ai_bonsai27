@@ -44,7 +44,7 @@ The [official Bonsai 2 model card](https://huggingface.co/prism-ml/Ternary-Bonsa
 | Official vision repository revision | `b072e1d3b35a0a630cece372c2127528e0994386` |
 | `Ternary-Bonsai-2-27B-mmproj-BF16.gguf` | `e287342d92332fa3577ed1d42e921dac9370c08da58ba9337fa450f6cc76cfd7` |
 
-`prepare.sh` downloads and verifies these files. CUDA archives and extracted libraries reside under `data/backends/blackwell/` and `data/backends/ampere-ada/`; retained source/metadata are under `data/research/`. `build.sh` rechecks internal backend checksums and creates the image. GGUF files stay in `BONSAI_MODEL_DIR` on the host (default: the caller’s current directory) and are mounted read/write at `/models` by `run.sh`. The container downloads missing files using the shared pins in `data/models/download.sh`; `download_models.sh` provides the same download on the host. Downloads are locked, resumable, and SHA256-verified before atomic publication; existing nonempty readable files are reused without re-verification. License files for the prebuilt backends are copied into the image under `/opt/bonsai/<backend>/LICENSES/`.
+`prepare.sh` downloads and verifies these files. CUDA archives and extracted libraries reside under `data/backends/blackwell/` and `data/backends/ampere-ada/`; retained source/metadata are under `data/research/`. `image_build.sh` rechecks internal backend checksums and creates the image. GGUF files stay in `BONSAI_MODEL_DIR` on the host (default: the caller’s current directory) and are mounted read/write at `/models` by `run.sh`. The container downloads missing files using the shared pins in `data/models/download.sh`; `download_models.sh` provides the same download on the host. Downloads are locked, resumable, and SHA256-verified before atomic publication; existing nonempty readable files are reused without re-verification. License files for the prebuilt backends are copied into the image under `/opt/bonsai/<backend>/LICENSES/`.
 
 ## GPU placement and platform behavior
 
@@ -70,7 +70,7 @@ The saved `tests/qa.py` audit reported **14/14 checks passed**. It reads recorde
 
 ## Local image versioning added on 30 September 2026
 
-Image builds now calculate their project version through the pinned [greatliontech/semrel 0.7.0](https://github.com/greatliontech/semrel/releases/tag/0.7.0) binary, installed and cached under `tools/`. This project version is separate from the fixed Bonsai CUDA backend commits. `build.sh` labels the image with its version and source revision, tags it as `localhost/bonsai2-27b:<version>`, and updates the local `latest` alias after success. `run.sh` defaults to that alias and accepts `BONSAI_IMAGE` for a specific tag.
+Image builds now calculate their project version through the pinned [greatliontech/semrel 0.7.0](https://github.com/greatliontech/semrel/releases/tag/0.7.0) binary, installed and cached under `tools/`. This project version is separate from the fixed Bonsai CUDA backend commits. `image_build.sh` labels the image with its version and source revision, tags it as `localhost/bonsai2-27b:<version>`, and updates the local `latest` alias after success. `run.sh` defaults to that alias and accepts `BONSAI_IMAGE` for a specific tag.
 
 The version wrapper supports annotated and lightweight stable tags by dereferencing tag objects in a temporary local snapshot before invoking semrel. Versioning tests confirmed initial version `1.0.0`, patch/minor/major changes, no bump for docs-only changes, rejection of shallow history, and exclusion of tags on unrelated branches. Version calculation and image building create no Git release tags and perform no remote publication. See [tools/README.md](tools/README.md) for the policy and checksummed artifacts.
 
@@ -294,7 +294,7 @@ Hyper-V guest, and live publication/anonymous pull remain explicit pending rows.
 ### Final clean release verification
 
 The online `create_realease.sh` workflow reconciled public release history,
-created local `v1.4.0`, and called `build.sh` successfully for both version/latest
+created local `v1.4.0`, and called `image_build.sh` successfully for both version/latest
 tags. The release image is
 `f39b06302ab6b70df04157cc8729a121eb4adf31f0dec52af31701b376f81c6b`, source
 `de4b8edccb4940c9d005f89a77ae199fa142c5a8`, `io.bonsai.git.dirty=false`.

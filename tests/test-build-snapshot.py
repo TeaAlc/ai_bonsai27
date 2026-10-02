@@ -13,7 +13,7 @@ from pathlib import Path
 PROJECT=Path(__file__).resolve().parents[1]
 with tempfile.TemporaryDirectory(dir='/tmp/bonsai27',prefix='snapshot-test.') as directory:
     root=Path(directory);repo=root/'repo';repo.mkdir()
-    for name in ('data/logging.sh','build.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','tools/build-receipt.py','tools/semrel/artifacts.sh','data/models/download.sh'):
+    for name in ('data/logging.sh','image_build.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','tools/build-receipt.py','tools/semrel/artifacts.sh','data/models/download.sh'):
         destination=repo/name;destination.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(PROJECT/name,destination)
     (repo/'tools/version.sh').write_text('#!/bin/sh\necho 1.0.0\n');(repo/'tools/version.sh').chmod(0o755)
     (repo/'Containerfile').write_text('FROM fixture\n')
@@ -51,7 +51,7 @@ elif args[0]=='run':print('fixture-package\\t1.0')
 else:sys.exit(2)
 ''');stub.chmod(0o755)
     env=dict(os.environ,PATH=str(binaries)+':'+os.environ['PATH'],TMPDIR=str(root/'tmp'),FIXTURE_IMAGE=str(root/'image.json'),PYTHONDONTWRITEBYTECODE='1')
-    result=subprocess.run([str(repo/'build.sh')],env=env,capture_output=True,text=True)
+    result=subprocess.run([str(repo/'image_build.sh')],env=env,capture_output=True,text=True)
     assert result.returncode==0,result.stderr
     receipt=json.loads((repo/'results/last-build.json').read_text())
     assert receipt['revision']==original and receipt['dirty'] is False

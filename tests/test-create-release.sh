@@ -20,7 +20,7 @@ new_repository() {
 #!/usr/bin/env bash
 exec "$fixture_version_tool" "$(dirname -- "${BASH_SOURCE[0]}")/.."
 SH
-    cat > "$repository/build.sh" <<'SH'
+    cat > "$repository/image_build.sh" <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
 version=$(./tools/version.sh)
@@ -28,7 +28,7 @@ version=$(./tools/version.sh)
 echo "$version" >> "$fixture_events"
 [[ "$fixture_build_fail" == false ]]
 SH
-    chmod +x "$repository/tools/version.sh" "$repository/build.sh"
+    chmod +x "$repository/tools/version.sh" "$repository/image_build.sh"
     git -C "$repository" init --quiet --initial-branch=main
     git -C "$repository" config user.name 'Release Test'
     git -C "$repository" config user.email 'release-test@example.invalid'

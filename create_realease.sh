@@ -14,7 +14,7 @@ case "${1:-}" in
     --offline) offline=true; shift ;;
     --help|-h)
         echo 'Usage: ./create_realease.sh [--offline]'
-        echo 'Verify release history, create the semrel release tag, then run build.sh.'
+        echo 'Verify release history, create the semrel release tag, then run image_build.sh.'
         exit 0
         ;;
     *) echo 'Error: unknown option. Use --help.' >&2; exit 2 ;;
@@ -98,5 +98,5 @@ export BONSAI_RELEASE_REVISION="$revision"
 export BONSAI_RELEASE_VERSION="$version"
 # Tagging establishes the same version as the build baseline. This final action
 # builds both the versioned image and latest through the existing build script.
-bonsai_step image-build "Building release $version through build.sh."
-./build.sh
+bonsai_step image-build "Building release $version through image_build.sh."
+./image_build.sh

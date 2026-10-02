@@ -225,13 +225,13 @@ old flock-based containers before sharing their cache with this downloader.
 
 ```bash
 ./prepare.sh
-./build.sh
+./image_build.sh
 BONSAI_MODEL_DIR="$HOME/bonsai-models" ./run.sh
 ```
 
 Use the same `BONSAI_MODEL_DIR` for `prepare.sh` if downloading models there.
 Preparation downloads and verifies model pins and both published backend
-bundles; image creation belongs to `build.sh`. Models remain outside the image.
+bundles; image creation belongs to `image_build.sh`. Models remain outside the image.
 The build verifies immutable source/backend snapshots, records dependency
 inventories in `results/last-build.json`, and tags the result with its calculated
 SemVer and `localhost/bonsai2-27b:latest`. Development builds retain a dirty label.
@@ -253,7 +253,7 @@ workflow (run `./prepare.sh` first if the published bundles are missing):
 
 ```bash
 ./tools/build-ada-backend.sh
-./build.sh --ada-source
+./image_build.sh --ada-source
 ./run.sh
 ```
 
@@ -264,7 +264,7 @@ several minutes. `BONSAI_BUILD_JOBS` accepts 1–64 and defaults to 8; reduce it
 hosts with little RAM. The prepared runtime, licenses, complete file inventory,
 and build provenance stay under `data/backends/ada-source/runtime/` and are
 excluded from Git. The build receipt includes the optional runtime identity and
-compiler inventory. Rebuilding `./build.sh` without the option uses the original
+compiler inventory. Rebuilding `./image_build.sh` without the option uses the original
 bundles again.
 
 The optional image selects this backend only on compute capability 8.9. The

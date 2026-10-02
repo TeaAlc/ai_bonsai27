@@ -49,7 +49,7 @@ The helper does not build, push, or publish. Tag the completed build before
 starting work on the next release so semrel has the correct baseline.
 
 The root `create_realease.sh` orchestrates release creation before its final
-`build.sh` invocation. `published-release.py` reads public GHCR manifest/config
+`image_build.sh` invocation. `published-release.py` reads public GHCR manifest/config
 metadata, validates the project's source labels, and reports the latest release
 version and source commit without downloading image layers. Python runs with
 bytecode disabled. Online releases recover missing published baseline tags;

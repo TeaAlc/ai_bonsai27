@@ -41,14 +41,14 @@ bundles with `prepare.sh` beforehand. The online workflow:
 2. Reads the published GHCR `latest` image's OCI labels without downloading its
    layers, restoring a missing release tag at the image's actual source commit.
 3. Uses the pinned semrel tool to calculate the next version from Git history.
-4. Creates an annotated local release tag at HEAD, then calls `build.sh` as its
+4. Creates an annotated local release tag at HEAD, then calls `image_build.sh` as its
    final action to build the versioned image and `latest`.
 
 If the build fails, the newly created release tag is removed; recovered tags
 for already published releases remain. Existing tags are never moved. Repeating
 at the same release commit rebuilds the same version. A docs-only commit after
 an existing release is rejected because it cannot create a new Git release tag
-at the same version. To build and publish that commit anyway, use `./build.sh`
+at the same version. To build and publish that commit anyway, use `./image_build.sh`
 and `./image_push.sh`. The release script does not manufacture patch bumps for
 non-releasable commits.
 
@@ -123,7 +123,7 @@ Use a registry digest when you need an immutable image reference. Serialize
 publication across machines because the two tag updates are separate operations.
 
 ```bash
-./build.sh                              # build the image to publish
+./image_build.sh                              # build the image to publish
 ./image_push.sh                          # ask for the token with hidden input
 ./image_push.sh --token 'YOUR_GHCR_TOKEN' # alternatively pass the token explicitly
 ```

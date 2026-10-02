@@ -51,7 +51,7 @@ source tools/project.sh
 bonsai_step build-selection "Reading the last successful build receipt."
 lock_project
 readonly receipt_file=results/last-build.json
-[[ -r "$receipt_file" ]] || { echo 'Error: missing build receipt; run build.sh.' >&2; exit 2; }
+[[ -r "$receipt_file" ]] || { echo 'Error: missing build receipt; run image_build.sh.' >&2; exit 2; }
 # The last successful build is publishable independently of Git release tags.
 # Keep its exact identity even when HEAD or local tags changed after building.
 read -r source_id version revision < <(python3 -B - "$receipt_file" <<'PYCODE'
@@ -78,7 +78,7 @@ case "$engine" in
         elif engine_ready docker; then
             engine=docker
         else
-            fail 'No usable container engine with a local build. Run ./build.sh first.'
+            fail 'No usable container engine with a local build. Run ./image_build.sh first.'
         fi
         ;;
     podman|docker)
@@ -105,7 +105,7 @@ if [[ "$engine" == docker ]]; then
         # An explicitly selected Docker can publish a Podman build by importing
         # its docker-archive. No rebuilding or model files are required.
         engine_ready podman || fail 'Docker has no local build and Podman cannot export it.'
-        podman image inspect "$local_image" >/dev/null 2>&1 || fail 'No local image. Run ./build.sh first.'
+        podman image inspect "$local_image" >/dev/null 2>&1 || fail 'No local image. Run ./image_build.sh first.'
         echo 'Importing the latest Podman build into Docker.'
         podman save --format docker-archive --output "$work_dir/image.tar" "$local_image"
         "${engine_command[@]}" load --input "$work_dir/image.tar"

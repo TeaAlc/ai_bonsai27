@@ -143,7 +143,7 @@ separate authorized action.
 
 ### 2. Make release/build provenance consistent across all entry points
 
-- [x] Align `create_realease.sh`, `build.sh`, `tools/tag-release.sh`, and
+- [x] Align `create_realease.sh`, `image_build.sh`, `tools/tag-release.sh`, and
   `tools/version.sh` around one release validation policy.
 
 **Finding (reproduced):** `tools/tag-release.sh` accepts an existing bare `1.2.0`
@@ -151,7 +151,7 @@ tag at one commit and creates `v1.2.0` at a different commit. The newer release
 script checks both spellings, but the older helper does not.
 
 **Finding (code inspection):** only release creation takes a lock. Its initial
-cleanliness/HEAD snapshot precedes that lock; `build.sh` later reads the live
+cleanliness/HEAD snapshot precedes that lock; `image_build.sh` later reads the live
 working tree independently. Concurrent edits or builds can invalidate recorded
 provenance. A build may also assign a stable version to uncommitted contents.
 
@@ -366,7 +366,7 @@ retain `create_realease.sh` for compatibility with the requested filename.
 5. Update README and RECHERCHE with actual results and remaining untested rows;
    commit each cohesive change using Conventional Commits ending `(by Codex)`.
 
-Runtime changes must be built through `build.sh` and validated against the real
+Runtime changes must be built through `image_build.sh` and validated against the real
 OpenAI-compatible API. Retain GPU-only LLM/MTP/cache allocation, CPU BF16 vision,
 MTP n_max=2, Flash Attention, q8_0 caches, and the 16k default throughout. A plan
 item is complete only when its regression checks and applicable runtime checks
