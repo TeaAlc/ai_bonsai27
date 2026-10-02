@@ -20,4 +20,3 @@ Follow-up after toolkit installation: Toolkit 1.20.1 generated CDI 0.7.0 in
 in `/tmp/bonsai27/`. The host specification has not been replaced and inference
 has not been tested. The installer now offers `--repair-cdi` and persists that
 flag for Podman 4 refreshes. Existing APT sources offer only Podman 4.9.3.
-

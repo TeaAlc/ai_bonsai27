@@ -1,6 +1,6 @@
 # Repository optimization and acceptance plan
 
-Status: **implementation and runtime acceptance complete; final clean-build verification pending**. Date: 2026-10-02.
+Status: **completed on the available WSL2 Blackwell host; unavailable environments remain pending**. Date: 2026-10-02.
 Reviewed baseline: `33013d2818ddff8cf197d397666b63154ca2490d`.
 The earlier audit remains available as
 [the September 30 audit](docs/history/repository-audit-20260930.md).
@@ -395,7 +395,7 @@ backends remain available for recovery; no rollback moves a published Git tag.
 - [x] Complete offline regression suite passed.
 - [x] Actual 32000 reasoning benchmark and fresh 16k/8k functional QA passed.
 - [x] Alternating baseline/candidate performance and VRAM comparison completed.
-- [ ] Final clean image, acceptance summary and Conventional Commit completed.
+- [x] Final clean image, acceptance summary and Conventional Commit completed.
 - [x] Unavailable hardware/publication rows explicitly recorded as pending.
 
 ## Execution record
@@ -410,4 +410,7 @@ harness passed. Baseline/candidate means were 61.91/61.73 tokens/s and the
 highest global memory was 9,562/9,583 MiB. The initial image-ID normalization
 probe and failed cancellation attempt are retained as diagnostics, excluded
 from performance averages. Unavailable environments remain explicitly pending.
-The final clean image is built and checked after the implementation commit.
+The clean image from implementation commit 378e52a passed actual default
+32000/medium/MTP=2 API and unicorn-vision checks. Its runtime files, backend
+inventories and system package versions match the measured candidate. The
+final documentation commit is rebuilt with the same runtime and a fresh receipt.

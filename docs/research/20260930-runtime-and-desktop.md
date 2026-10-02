@@ -471,4 +471,3 @@ container was removed. It supplements, rather than edits, the earlier recorded
 benchmark. Eight HTTP-fixture tests cover weighted aggregation, real zero hits,
 fallback counters, missing/partial/invalid counters, and the previous benchmark
 behaviors. Cache totals were also checked against the fresh API timing records.
-

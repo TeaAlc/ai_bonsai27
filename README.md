@@ -489,6 +489,12 @@ second. Initial GPU activity was 1–4%, with temperatures of 63–71°C; therma
 state was not strictly fixed. This conversation does not fill the 32k window.
 The candidate includes initial health/props requests in its client wall interval;
 the baseline starts that interval after them. Decode rates use server timings.
+Fresh functional QA passed all **18 checks**, including CPU vision, a 15,009-token
+prompt and **23 executed coding assertions**. Corrected parent-stop cleanup and
+an additional complete conversation passed. The clean image also passed actual
+default 32000/medium/MTP=2 API and unicorn-vision checks, with runtime content
+matching the measured candidate.
+
 These are three observations on one host, not a throughput guarantee or a
 full-window capacity test. Cleanup acceptance uses locally built images;
 registry publication and anonymous-pull validation remain separate release checks. See the

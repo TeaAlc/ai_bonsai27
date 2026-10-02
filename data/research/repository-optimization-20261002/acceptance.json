@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "date": "2026-10-02",
-  "scope": "Fresh WSL2 RTX 5070 Ti Laptop acceptance; final clean-build verification recorded separately in ignored results.",
+  "scope": "Fresh WSL2 RTX 5070 Ti Laptop acceptance, including clean-image runtime equivalence and actual default-context API/vision checks.",
   "baseline_image_id": "sha256:12a4ea5443376e64d67eb576b9cf9c97ea1c467d21d827a7cd978e962fae8cc7",
   "candidate_image_id": "sha256:c7f89397aac718bcc6f3f879be13114e53ecb583fc24654815f17bfaa06a37fe",
   "candidate_source_state": "Development image; exact image and measured runtime inventories are bound by evidence.",
@@ -285,5 +285,18 @@
     "status": "passed",
     "evidence": "results/optimization/20261002-cleanup/final-harness",
     "scope": "Additional full ten-exchange run verifies the corrected process supervisor; excluded from the three-pair performance means."
+  },
+  "verified_clean_image": {
+    "status": "passed",
+    "image_id": "sha256:60fbae521d4550cde71b9fa97ba378decb47bee731a73d47e341b4c73a22bccc",
+    "revision": "378e52a1cd75f09dd81fc105466fb0497bbcb1ec",
+    "measured_image_id": "sha256:c7f89397aac718bcc6f3f879be13114e53ecb583fc24654815f17bfaa06a37fe",
+    "runtime_equivalence": true,
+    "default_context": 32000,
+    "default_reasoning": "medium",
+    "default_mtp_depth": 2,
+    "api_arithmetic": true,
+    "vision_unicorn_rainbow_castle": true,
+    "evidence": "results/optimization/20261002-cleanup/clean-smoke-378e52a1"
   }
 }
