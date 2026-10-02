@@ -219,7 +219,7 @@ a WSL2 GPU container also passed /health and the arithmetic API check (42).
 
 ## Follow-up repository audit (2026-09-30)
 
-[TODO_PLAN.md](TODO_PLAN.md) records the audit of source revision
+[September 30 audit](docs/history/repository-audit-20260930.md) records the audit of source revision
 `845d89edac88094f65009d874b243d20024cf7ac`, including reproduced edge cases and
 prioritized acceptance criteria. Both pinned backend archives and extracted
 checksum manifests passed verification. The existing clean 1.3.1 image passed
@@ -239,7 +239,8 @@ historical and do not validate another host or GPU backend.
 
 ## Hardening implementation and validation (2026-09-30)
 
-The follow-up audit's implementation is tracked in [TODO_PLAN.md](TODO_PLAN.md).
+The follow-up audit's implementation is tracked in the
+[archived September 30 audit](docs/history/repository-audit-20260930.md).
 Release/build/preparation/push operations now share a checkout-local lock;
 committed sources and verified backend trees are snapshotted before building.
 A successful build atomically records its exact image ID, source, semrel version,

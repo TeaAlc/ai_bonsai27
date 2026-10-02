@@ -727,7 +727,9 @@ checks. Never alter verified upstream bundles to make a check pass. Driver
 compatibility notes and upstream references are in [RECHERCHE.md](RECHERCHE.md).
 
 See [AGENTS.md](AGENTS.md) for project rules and [TODO_PLAN.md](TODO_PLAN.md) for
-the dated repository audit. Documentation and script messages are English;
+the detailed optimization plan and acceptance checklist. The original
+[September 30 audit](docs/history/repository-audit-20260930.md) is archived.
+Documentation and script messages are English;
 project configuration uses `BONSAI_`. Keep local test evidence in `results/`,
 temporary work in `/tmp/bonsai27/`, and downloaded models/binaries out of Git.
 Run Python with `python3 -B`; do not create bytecode caches. Completed changes
