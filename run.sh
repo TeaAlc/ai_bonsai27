@@ -14,7 +14,7 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 # official Bonsai 2 chat template: low, medium, xhigh. xhigh is the model
 # default; medium gives shorter reasoning. low is accepted but may behave
 # much like xhigh. high is not accepted by this model.
-ctx_size=${BONSAI_CTX_SIZE:-16384}
+ctx_size=${BONSAI_CTX_SIZE:-32000}
 reasoning_effort=${BONSAI_REASONING_EFFORT:-medium}
 # latest points to the last successful local build; use a versioned tag to pin it.
 image=${BONSAI_IMAGE:-localhost/bonsai2-27b:latest}

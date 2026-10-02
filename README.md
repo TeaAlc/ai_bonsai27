@@ -7,8 +7,11 @@ and its OpenAI-compatible API. The language model, embeddings, MTP head, KV
 caches, and recurrent state stay on CUDA0. The separate BF16 vision encoder
 and projector run on CPU and system RAM.
 
-Defaults: **16,384-token context, MTP=2, Flash Attention, q8_0 main/draft KV
-caches**, and API model ID **`bonsai2-27b`**. The host API binds to localhost.
+Defaults: **32,000-token context, MTP=2, Flash Attention, q8_0 main/draft KV
+caches**, and API model ID **`bonsai2-27b`**. MTP=2 is the standard on
+**Ampere, Ada, and Blackwell**, including both published and native backends.
+Performance benchmarks always enable thinking with **`medium`** reasoning.
+The host API binds to localhost.
 
 - [Quick start](#quick-start)
 - [GPU requirements and host setup](#gpu-requirements-and-host-setup)
@@ -79,8 +82,9 @@ specialized backends: Ada source is selected only on 8.9, Blackwell source
 only on 12.0, and Ampere 8.6 keeps its published bundle.
 
 Enough VRAM is required for the entire LLM and context state: memory pressure
-fails startup rather than automatically offloading to CPU. The 16k setup has
-been tested on a 12 GB RTX 5070 Ti Laptop GPU and a 16 GB RTX 4070 Ti SUPER.
+fails startup rather than automatically offloading to CPU. A 32,000-token allocation and medium-reasoning benchmark passed on a 12 GB
+RTX 5070 Ti Laptop GPU, with 9,516 MiB peak total GPU memory. Earlier 16k
+setups were tested on that GPU and a 16 GB RTX 4070 Ti SUPER.
 Larger context windows need additional memory; support limits do not guarantee
 that a requested window fits your GPU.
 
@@ -159,7 +163,7 @@ These are all environment variables read by `run.sh`:
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `BONSAI_MODEL_DIR` | Caller’s current directory | Host directory mounted read/write at `/models`; created if missing |
-| `BONSAI_CTX_SIZE` | `16384` | Context window in tokens; integer 512–262144 (VRAM permitting) |
+| `BONSAI_CTX_SIZE` | `32000` | Context window in tokens; integer 512–262144 (VRAM permitting) |
 | `BONSAI_REASONING_EFFORT` | `medium` | Reasoning effort: `low`, `medium`, or `xhigh` |
 | `BONSAI_PORT` | `8080` | Available host TCP port, 1–65535; bound to localhost |
 | `BONSAI_IMAGE` | `localhost/bonsai2-27b:latest` | Preferred local image; if missing, prompts for a remote reference (default `ghcr.io/teaalc/ai_bonsai27:latest`) |
@@ -282,7 +286,7 @@ The optional image selects this backend only on compute capability 8.9. The
 original Ampere 8.6 and Blackwell 12.0 bundles remain available. Runtime testing
 of this optional build was performed only on an RTX 4070 Ti SUPER in a native
 Linux KVM guest with NVIDIA CDI. GPU-only language-model placement, CPU BF16
-vision, 16,384-token default context, MTP=2, q8_0 caches, and batch invariance
+vision, 32,000-token default context, MTP=2, q8_0 caches, and batch invariance
 remain unchanged.
 ## Specialized Blackwell source backend
 
@@ -309,7 +313,7 @@ are verified and recorded. Files remain under
 Internet access, working GPU injection, temporary disk space, and several
 minutes; `BONSAI_BUILD_JOBS` accepts 1–64 (default 8). The host needs no CUDA SDK
 or sudo. Default inference retains MTP=2, main/draft q8_0, Flash Attention,
-16,384-token context, GPU-only LLM placement, and BF16 vision on CPU.
+32,000-token context, GPU-only LLM placement, and BF16 vision on CPU.
 
 A failed native Blackwell compilation retains its temporary directory and logs
 its path. Resume that exact pinned build with
@@ -384,24 +388,45 @@ With a running server, run `simple_text_benchmark.sh`:
 ```
 
 It simulates **20 messages: 10 user prompts and 10 assistant answers**, retaining
-all previous messages in each request. The conversation develops a community
-library plan. It uses `/v1/chat/completions` with model `bonsai2-27b`, temperature
-zero, thinking disabled, prompt caching enabled, and at most 128 output tokens
-per answer. Python 3 is the only client dependency.
+all previous user prompts and final answers in each request. The conversation
+develops a community library plan. It uses `/v1/chat/completions` with model
+`bonsai2-27b`, temperature zero, **thinking enabled**, explicit **`medium`**
+reasoning, prompt caching, and up to **4,096 output tokens per answer**, including
+reasoning. It verifies nonempty `reasoning_content`, a final answer, and normal
+completion for every exchange. Python 3 is the only client dependency.
 
 The target is approximately **16,000 cumulative input + output tokens**, measured
 from the API's `usage` fields across the ten requests. Repeated history counts
 again on every request. This is not 16k distinct conversation tokens or a test
 that fills the entire context window. The script applies the server's chat
 template and tokenizer to budget neutral planning notes, adjusts after each
-response, and checks that each request fits the advertised context. A final
-total outside ±5% exits with an error.
+response, and checks that the prompt plus completion allowance fits the
+advertised context. Full reasoning and retained history can exceed the target;
+a total outside ±5% prints a warning and sets `within_5_percent=false`. Actual
+usage is preserved. Failed inference, missing reasoning, empty answers, or
+truncation still fail the benchmark and preserve partial evidence.
+
+The standard is exactly **32,000 context tokens** in the image, `run.sh`,
+and backend benchmarks. Increase it only when the individual
+request needs more room, and check VRAM capacity first. A cumulative total above
+16k across ten requests does not itself require a 32k context.
 
 The terminal shows every answer and each request's usage, followed by an
 indented summary. `decode_tokens_per_second` uses the server's generation
-timings, when available; `output_tokens_per_wall_second` includes HTTP,
+timings, when available, including reasoning and final-answer tokens;
+`output_tokens_per_wall_second` includes HTTP,
 template/tokenizer requests, and prompt processing. Missing decode timings
 produce `null`, rather than an estimated generation speed.
+
+Thinking-token counts are reported per exchange and in the JSON summary as
+`reasoning_tokens`. The script prefers the API's
+`usage.completion_tokens_details.reasoning_tokens`. If absent, it uses the
+server tokenizer on returned `reasoning_content` without special tokens.
+This fallback is marked `reasoning_tokens_are_estimated=true` because decoded
+text boundaries may differ from the original generation. Each exchange records
+`reasoning_tokens_source`; missing counts remain `null`, including the aggregate
+if any exchange lacks a count. Completion-token usage already includes thinking;
+do not add `reasoning_tokens` to the usage total again.
 
 Prompt-cache results are printed per exchange and in the JSON summary:
 `cached_prompt_tokens` counts reused input tokens, `processed_prompt_tokens`
@@ -420,10 +445,48 @@ requests provided valid counters.
 hostname argument overrides it. The full transcript, per-request timing and
 usage, and summary are saved to a unique JSON file under
 `results/text-benchmark/`. Set `BONSAI_BENCHMARK_RESULT=/path/report.json` to
-choose the output file. Failed inference saves the completed exchanges as a
+choose the output file. Full API responses, including reasoning, are saved
+beside that file under `<report-name>/responses/`. Failed inference saves the completed exchanges as a
 partial report. Start the server separately and wait for `/health` to return
 HTTP 200 before benchmarking.
 ## Performance and validation
+
+**Current policy:** MTP=2 on every supported architecture; benchmarks enable
+thinking at `medium`. On Blackwell, the recorded reasoning comparison favored
+MTP=2 over MTP=1 by 9.3% in decode speed, and over DFlash2 depth 4 by 8.6%
+(60.98 versus 55.78 and 56.13 tokens/s respectively). These are single-run,
+workload-specific observations, not guaranteed throughput. The Ada figures
+below used thinking disabled and have not been repeated with the new policy.
+
+### Current 32,000-token default — measured on Blackwell
+
+The rebuilt image completed one fresh-container run on the RTX 5070 Ti Laptop
+GPU (12 GB, WSL2), with MTP=2, thinking enabled at `medium`, q8_0 main/draft
+caches, Flash Attention, and CPU BF16 vision:
+
+| Metric | Recorded value |
+| --- | ---: |
+| Context allocation | 32,000 tokens |
+| Decode speed | 62.77 tokens/s |
+| Ten-exchange conversation | 231.195 s |
+| Mean / peak total VRAM | 9,504.85 / **9,516 MiB (9.29 GiB peak)** |
+| Thinking tokens | **12,800**, server-retokenized estimate |
+| Completion / cumulative API usage | 13,752 / 20,352 tokens |
+| Prompt-cache hit rate | 80.45% |
+| Subsequent quality probes | 9/9 passed |
+
+The actual API and process arguments confirm the 32,000-token setting. This
+conversation did not fill the context window; cumulative usage counts repeated
+history. The 16k cumulative usage target was exceeded and reported explicitly.
+Thinking tokens are already part of completion usage. VRAM figures include
+other processes and were sampled once per second. This is one run, not a mean
+or proof that every 32k prompt fits. See the
+[32k measurement record](data/research/blackwell-32000-20261002/validation.json).
+
+<details>
+<summary>Historical comparisons with thinking disabled</summary>
+
+### Historical Ada comparison — thinking disabled
 
 On the RTX 4070 Ti SUPER, three fresh-container runs per mode with the optimized
 Ada backend produced the following means. All nine benchmark conversations were
@@ -442,6 +505,8 @@ DFlash2 checkpoint in BF16 and Q8_0, were slower on this conversation. Paired qu
 image found no degradation. These are workload-specific results, not universal
 speed or quality guarantees. Measurements, confidence intervals, model/build
 identities, and research sources are in [RECHERCHE.md](RECHERCHE.md).
+
+### Historical Blackwell backend comparison — thinking disabled
 
 On the RTX 5070 Ti Laptop (12 GB, WSL2), the October 2 Blackwell comparison
 was repeated after the user stopped a GPU-intensive background application.
@@ -480,7 +545,7 @@ DFlash/DFlash2 repetitions succeeded with CUDA PDL enabled; the known older
 Blackwell PDL race is already fixed in the pinned source. Full details and
 limits are in [Blackwell research](RECHERCHE.md#native-blackwell-and-dflash-experiments-october-2-2026).
 
-### Blackwell MTP depth comparison
+### Historical Blackwell depth comparison — thinking disabled
 
 A separate October 2 comparison used the same native SM120 image for MTP=1,
 MTP=2, and MTP=4, with three fresh containers per depth and rotated orders
@@ -513,7 +578,9 @@ See the
 [measurement record](data/research/blackwell-mtp-20261002/measurements.json)
 for repetitions, cache hits, acceptance rates, and evidence checksums.
 
-### Reasoning on/off on Blackwell
+</details>
+
+### Recorded reasoning on/off comparison — 16k context
 
 Two additional single runs enabled actual thinking with reasoning effort
 `medium`, one each for MTP=1 and MTP=2. The disabled comparison below reuses
@@ -568,8 +635,11 @@ BONSAI_MODEL_DIR="$HOME/bonsai-models" \
 ```
 
 The helper owns its containers on localhost port 18084 (`BONSAI_PORT` overrides
-it), uses a 16k window and medium reasoning, and saves image identity, executable,
-API timing/cache counters, timestamped GPU telemetry, logs, and nine quality probes under `results/`.
+it), uses a 32,000-token window and explicitly enabled medium reasoning. It saves image
+identity, executable, API timing/cache counters, timestamped GPU telemetry,
+`gpu-memory-<run>.json` with mean/peak total VRAM during the measured interval,
+logs, and nine quality probes under `results/`. Unknown memory counters remain
+`null`; one-second sampling can miss transient peaks.
 `BONSAI_TEST_RUN_DIR` selects the evidence directory. Set
 `BONSAI_EXPERIMENT_CODING=1` to add the restricted coding tests after the last
 run. Optional server arguments follow the repetition count.
@@ -581,7 +651,7 @@ CUDA0; it does not download draft models or permit CPU fallback. Draft trials us
 `GGML_CUDA_PDL=1`; `BONSAI_EXPERIMENT_PDL` accepts `0` (disabled) or `1`
 (enabled, default) for controlled comparisons. Successful startup does not establish draft
 stability or sufficient memory for every prompt. Benchmark requests have a
-120-second overall deadline; failed runs preserve partial evidence.
+600-second overall deadline per conversation; failed runs preserve partial evidence.
 
 | Platform | Runtime evidence |
 | --- | --- |

@@ -13,7 +13,7 @@ fi
 port=${BONSAI_PORT:-18084}
 validate_decimal BONSAI_PORT "$port" 1 65535
 port=$((10#$port))
-export BONSAI_CTX_SIZE=16384
+export BONSAI_CTX_SIZE=${BONSAI_CTX_SIZE:-32000}
 export BONSAI_REASONING_EFFORT=medium
 validate_bonsai_settings
 mkdir -p /tmp/bonsai27
@@ -114,7 +114,7 @@ for ((repeat=1; repeat<=repetitions; repeat++)); do
             -v "$model_dir:/models:rw" \
             -v "$draft_model:/draft/model.gguf:ro" \
             -v "$work/entrypoint.sh:/experiment-entrypoint.sh:ro" \
-            -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium \
+            -e "BONSAI_CTX_SIZE=$BONSAI_CTX_SIZE" -e BONSAI_REASONING_EFFORT=medium \
             -e "BONSAI_GPU_BACKEND=${BONSAI_GPU_BACKEND:-}" \
             -e "GGML_CUDA_PDL=$draft_pdl" \
             --entrypoint bash "$image" /experiment-entrypoint.sh "$@"
@@ -148,8 +148,12 @@ PY
     if [[ -n "$nvidia_smi" ]]; then
         "$nvidia_smi" --query-gpu=name,memory.used,utilization.gpu,power.draw,temperature.gpu --format=csv > "$root/gpu-$repeat.csv"
     fi
-    timeout --signal=INT --kill-after=10s 120s env BONSAI_BENCHMARK_RESULT="$root/benchmark-$repeat.json" ./simple_text_benchmark.sh "127.0.0.1:$port"
+    timeout --signal=INT --kill-after=10s 600s env BONSAI_BENCHMARK_RESULT="$root/benchmark-$repeat.json" ./simple_text_benchmark.sh "127.0.0.1:$port"
     stop_monitor
+    if [[ -n "$nvidia_smi" ]]; then
+        python3 -B tests/summarize-gpu-memory.py "$root/benchmark-$repeat.json" \
+            "$root/gpu-monitor-$repeat.csv" "$root/gpu-memory-$repeat.json"
+    fi
     podman logs "$name" > "$root/server-$repeat.log" 2>&1
     if ((repeat==repetitions)); then
         BONSAI_BASE_URL="http://127.0.0.1:$port" BONSAI_TEST_CONTAINER="$name" \

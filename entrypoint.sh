@@ -6,7 +6,7 @@ bonsai_step configuration "Validating container settings."
 
 # Read container settings. run.sh supplies these values through environment
 # variables; defaults also allow the image to be started directly with Podman.
-ctx_size=${BONSAI_CTX_SIZE:-16384}
+ctx_size=${BONSAI_CTX_SIZE:-32000}
 model=${BONSAI_MODEL:-/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf}
 vision_projector=${BONSAI_MMPROJ:-/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf}
 reasoning_effort=${BONSAI_REASONING_EFFORT:-medium}

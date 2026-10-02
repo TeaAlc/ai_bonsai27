@@ -84,7 +84,22 @@ commits do not change this built image's source identity or release tag.
 
 `python3 -B tests/test-quality.py` adds nine reasoning, instruction, JSON, and
 tool-call probes. Use the same identified `BONSAI_TEST_*` settings as the other
-API tests. Final performance verification uses `./simple_text_benchmark.sh`.
+API tests. Final performance verification uses `./simple_text_benchmark.sh`:
+thinking is always enabled at explicit `medium` effort, with a 4096-token
+completion cap. Missing reasoning or truncated answers fail validation. The
+approximate 16k cumulative usage target may be exceeded by complete reasoning;
+that deviation is recorded and warned about, rather than classified as failed
+inference. Functional QA probes retain their own task-specific settings.
+
+Repeated performance runs use `tests/benchmark-backends.sh`, with a 600-second
+deadline per conversation and interval-filtered GPU memory summaries beside
+the timestamped telemetry. Report total VRAM usage as a global measurement,
+not a container allocation. All architectures default to MTP=2; alternative
+draft strategies remain explicit experiments. Image, run.sh, and benchmark
+defaults use exactly 32,000 context tokens; the owned long-context QA suite
+still explicitly tests 16k/8k windows. Thinking-token totals prefer actual API
+counters, with clearly labeled server-retokenization estimates as a fallback. Historical benchmarks with
+thinking disabled are labeled and do not represent the current policy.
 The October 1–2 Ada experiments and paired comparisons against the original
 GHCR image are documented in [RECHERCHE.md](../RECHERCHE.md). Small regression
 probes do not establish general model quality.

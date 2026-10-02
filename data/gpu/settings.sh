@@ -13,7 +13,7 @@ validate_decimal() {
 }
 
 validate_bonsai_settings() {
-    validate_decimal BONSAI_CTX_SIZE "${BONSAI_CTX_SIZE:-16384}" 512 262144 || return
+    validate_decimal BONSAI_CTX_SIZE "${BONSAI_CTX_SIZE:-32000}" 512 262144 || return
     validate_decimal BONSAI_DOWNLOAD_WAIT_SECONDS "${BONSAI_DOWNLOAD_WAIT_SECONDS:-600}" 1 86400 || return
     validate_decimal BONSAI_DOWNLOAD_TIMEOUT "${BONSAI_DOWNLOAD_TIMEOUT:-3600}" 1 86400 || return
     case "${BONSAI_REASONING_EFFORT:-medium}" in

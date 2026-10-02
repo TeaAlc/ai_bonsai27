@@ -2,7 +2,7 @@
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 source data/gpu/settings.sh
-for value in 512 8192 16384 262144 000016384; do BONSAI_CTX_SIZE=$value validate_bonsai_settings; done
+for value in 512 8192 16384 32000 262144 000016384; do BONSAI_CTX_SIZE=$value validate_bonsai_settings; done
 for value in 0 -1 ' 16384' 511 262145 18446744073709552128; do
     if BONSAI_CTX_SIZE=$value validate_bonsai_settings; then exit 1; fi
 done

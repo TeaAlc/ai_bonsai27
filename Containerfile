@@ -20,7 +20,7 @@ COPY data/gpu/settings.sh /opt/bonsai/settings.sh
 COPY data/gpu/detect.sh /opt/bonsai/detect-gpu.sh
 COPY data/gpu/check-runtime.sh /opt/bonsai/check-runtime.sh
 COPY --from=gpu-probe-build /cuda-compute-capability /opt/bonsai/cuda-compute-capability
-ENV BONSAI_CTX_SIZE=16384 BONSAI_MODEL=/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf GGML_CUDA_BATCH_INVARIANT=1
+ENV BONSAI_CTX_SIZE=32000 BONSAI_MODEL=/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf GGML_CUDA_BATCH_INVARIANT=1
 # Docker's NVIDIA runtime must inject CUDA compute libraries, not just NVML tools.
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 # Copies through Windows filesystems can lose executable permission bits.

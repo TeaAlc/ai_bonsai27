@@ -5,6 +5,6 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 for test in test-logging test-version test-create-release test-release-tag test-model-download test-gpu-backend test-cuda-probe test-settings test-simple-request test-run-image; do
     bash "tests/$test.sh"
 done
-for test in test-image-push test-registry test-published-release test-download-signals test-backend-prepare test-ada-source test-blackwell-source test-build-snapshot test-qa-evidence test-api-support test-text-benchmark test-nvidia-setup; do
+for test in test-image-push test-registry test-published-release test-download-signals test-backend-prepare test-ada-source test-blackwell-source test-build-snapshot test-qa-evidence test-api-support test-text-benchmark test-gpu-memory-summary test-nvidia-setup; do
     python3 -B "tests/$test.py"
 done

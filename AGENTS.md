@@ -11,9 +11,9 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   backend override. Keep NVIDIA_DRIVER_CAPABILITIES=compute,utility in the image.
 - The separate BF16 vision encoder/projector runs on CPU and system RAM through
   `--no-mmproj-offload`.
-- MTP uses `draft-mtp` with `n_max=2`; Flash Attention is enabled; main and draft
+- All GPU architectures default to MTP `draft-mtp` with `n_max=2`; Flash Attention is enabled; main and draft
   K/V cache types are `q8_0`.
-- Context defaults to 16,384 tokens; validate 512–262144 before Bash arithmetic. The API model ID is `bonsai2-27b`, and the
+- Context defaults to exactly 32,000 tokens; validate 512–262144 before Bash arithmetic. The API model ID is `bonsai2-27b`, and the
   host API is published only on localhost, port 8080 by default.
 - Do not claim stock Podman Desktop Hyper-V supports NVIDIA CUDA. A separately
   GPU-provisioned Hyper-V Linux guest is conditional on working guest drivers,
@@ -84,13 +84,20 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
   sends the existing image asset and prints indented JSON; it must not generate
   an image. `simple_text_benchmark.sh` is the user-requested text benchmark: 10
   exchanges / 20 messages, approximately 16k cumulative API usage tokens, with
-  full history retained. Distinguish cumulative usage from unique context
-  tokens and decode speed from wall-clock throughput. Report per-exchange and
+  full visible-answer history retained. Benchmarks always enable thinking with
+  explicit `medium` reasoning, use a 4096-token completion cap, and verify
+  nonempty reasoning and normally completed answers. Preserve actual usage;
+  exceeding the approximate cumulative target is a warning, not failed inference.
+  Distinguish cumulative usage from unique context tokens and decode speed from wall-clock throughput. Report per-exchange and
   token-weighted total prompt cache hits from actual API counters, including
-  the first request; unknown counters must remain null. Save reports in results/.
+  the first request; unknown counters must remain null. Count thinking tokens
+  per exchange and in total: prefer actual API counters, otherwise label server
+  retokenization of reasoning_content as an estimate. Never double-count them
+  on top of completion usage. Save reports in results/.
 - `tests/benchmark-backends.sh`: repeated fresh-container backend experiments,
-  16k context, image/executable evidence, bounded API requests, and final quality
-  probes. Optional DFlash replaces MTP and keeps draft weights on CUDA0; failed
+  32,000-token context, thinking enabled at medium effort, image/executable evidence,
+  a 600-second deadline per conversation, GPU telemetry and memory summaries,
+  and final quality probes. Optional DFlash replaces MTP and keeps draft weights on CUDA0; failed
   runs must not count as completed benchmarks. DFlash remains workload-specific
   and experimental; earlier timeout/load evidence was contaminated by an
   external GPU workload. Clean PDL-enabled DFlash/DFlash2 runs passed, and

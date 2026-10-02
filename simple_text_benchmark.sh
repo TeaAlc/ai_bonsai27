@@ -2,7 +2,8 @@
 set -euo pipefail
 
 # Simulate 10 user/assistant exchanges (20 messages), retaining full history.
-# The ~16k target is cumulative API input + output, including repeated history.
+# Benchmarks always enable thinking at medium effort. The ~16k cumulative
+# usage target can be exceeded by complete reasoning; never truncate to fit it.
 if (( $# > 1 )); then
     echo 'Usage: ./simple_text_benchmark.sh [hostname[:port]]' >&2
     exit 2
@@ -38,7 +39,8 @@ from pathlib import Path
 
 TARGET = 16000
 TURNS = 10
-MAX_OUTPUT = 128
+MAX_OUTPUT = 4096
+OUTPUT_RESERVE = 512
 base = os.environ['BONSAI_BASE_URL'].rstrip('/')
 if base.endswith('/v1'):
     base = base[:-3]
@@ -76,7 +78,7 @@ def prompt_tokens(candidate):
     # Render the same template/options as chat, then use the actual tokenizer.
     rendered = call('/apply-template', {
         'messages': candidate,
-        'chat_template_kwargs': {'enable_thinking': False},
+        'chat_template_kwargs': {'enable_thinking': True, 'reasoning_effort': 'medium'},
     })['prompt']
     return len(call('/tokenize', {
         'content': rendered, 'add_special': True, 'parse_special': True,
@@ -129,6 +131,29 @@ def cache_metrics(response):
     }
 
 
+def reasoning_metrics(response, reasoning):
+    # Prefer actual API accounting. This backend may omit its reasoning counter;
+    # retokenizing decoded thinking then gives a count with boundary uncertainty.
+    details = response['usage'].get('completion_tokens_details') or {}
+    tokens = details.get('reasoning_tokens')
+    if type(tokens) is int and 0 <= tokens <= response['usage']['completion_tokens']:
+        return {'reasoning_tokens': tokens,
+                'reasoning_tokens_source': 'usage.completion_tokens_details.reasoning_tokens',
+                'reasoning_tokens_are_estimated': False}
+    try:
+        encoded = call('/tokenize', {
+            'content': reasoning, 'add_special': False, 'parse_special': False,
+        })['tokens']
+        if not isinstance(encoded, list):
+            raise ValueError('Invalid tokenizer response')
+        return {'reasoning_tokens': len(encoded),
+                'reasoning_tokens_source': 'tokenizer.reasoning_content',
+                'reasoning_tokens_are_estimated': True}
+    except (urllib.error.URLError, KeyError, ValueError, OSError):
+        return {'reasoning_tokens': None, 'reasoning_tokens_source': None,
+                'reasoning_tokens_are_estimated': None}
+
+
 def summary(elapsed):
     input_tokens = sum(row['prompt_tokens'] for row in records)
     output_tokens = sum(row['completion_tokens'] for row in records)
@@ -151,7 +176,15 @@ def summary(elapsed):
         'completion_tokens': output_tokens, 'total_tokens': total,
         'within_5_percent': abs(total - TARGET) <= TARGET * 0.05,
         'accounting': 'Sum of chat API usage; repeated conversation history counts again.',
-        'thinking_enabled': False, 'cache_prompt': True,
+        'thinking_enabled': True, 'reasoning_effort': 'medium',
+        'maximum_completion_tokens': MAX_OUTPUT, 'output_budget_reserve': OUTPUT_RESERVE,
+        'reasoning_characters': sum(row['reasoning_characters'] for row in records),
+        'reasoning_tokens': sum(row['reasoning_tokens'] for row in records)
+        if records and all(row['reasoning_tokens'] is not None for row in records) else None,
+        'reasoning_metrics_exchanges': sum(row['reasoning_tokens'] is not None for row in records),
+        'reasoning_tokens_are_estimated': any(row['reasoning_tokens_are_estimated'] for row in records)
+        if records and all(row['reasoning_tokens'] is not None for row in records) else None,
+        'cache_prompt': True,
         'cache_metrics_exchanges': cache_exchanges,
         'cached_prompt_tokens': cached_tokens if complete_cache_metrics else None,
         'processed_prompt_tokens': input_tokens - cached_tokens if complete_cache_metrics else None,
@@ -170,18 +203,20 @@ def main():
     call('/health')
     props = call('/props')
     context = props['default_generation_settings']['n_ctx']
-    print(f'Endpoint: {base}; context: {context}; target: {TARGET} cumulative tokens.', flush=True)
+    print(f'Endpoint: {base}; context: {context}; target: {TARGET} cumulative tokens; '
+          f'thinking: enabled; reasoning: medium; completion cap: {MAX_OUTPUT}.', flush=True)
     started = time.monotonic()
     try:
         for turn, question in enumerate(questions, 1):
             remaining_turns = TURNS - turn + 1
             consumed = sum(row['prompt_tokens'] + row['completion_tokens'] for row in records)
             remaining = TARGET - consumed
-            # Reserve future answers and prompt growth from retained conversation.
+            # Reserve typical reasoning output separately from its hard completion cap.
+            # Only final answers are replayed, so visible history grows more slowly.
             # Recalculate after each measured response; the final turn uses the
-            # remaining budget directly, allowing at most one short answer's drift.
-            future_growth = MAX_OUTPUT + 100
-            desired = int((remaining - MAX_OUTPUT * remaining_turns
+            # remaining budget directly; complete reasoning can still exceed the target.
+            future_growth = 128 + 100
+            desired = int((remaining - OUTPUT_RESERVE * remaining_turns
                            - future_growth * remaining_turns * (remaining_turns - 1) / 2)
                           / remaining_turns)
             candidate, estimate = padded_question(question, max(1, desired))
@@ -191,28 +226,42 @@ def main():
             response = call('/v1/chat/completions', {
                 'model': 'bonsai2-27b', 'messages': candidate,
                 'temperature': 0, 'max_tokens': MAX_OUTPUT, 'cache_prompt': True,
-                'chat_template_kwargs': {'enable_thinking': False},
+                'reasoning_effort': 'medium',
+                'chat_template_kwargs': {'enable_thinking': True, 'reasoning_effort': 'medium'},
             })
             seconds = time.monotonic() - request_started
             usage = response['usage']
             for key in ('prompt_tokens', 'completion_tokens'):
                 if type(usage.get(key)) is not int or usage[key] < 1:
                     raise RuntimeError(f'Missing or invalid API usage: {usage}')
+            result_path.parent.mkdir(parents=True, exist_ok=True)
+            response_dir = result_path.with_suffix('') / 'responses'
+            response_dir.mkdir(parents=True, exist_ok=True)
+            (response_dir / f'turn-{turn:02d}.json').write_text(json.dumps(response, indent=2) + '\n')
             assistant = response['choices'][0]['message']['content']
+            reasoning = response['choices'][0]['message'].get('reasoning_content') or ''
+            if not isinstance(reasoning, str) or not reasoning.strip():
+                raise RuntimeError('No reasoning content returned with thinking enabled.')
+            if response['choices'][0].get('finish_reason') != 'stop':
+                raise RuntimeError('Reasoning response was truncated.')
             if not isinstance(assistant, str) or not assistant.strip():
                 raise RuntimeError('The API returned an empty assistant response.')
             messages[:] = candidate + [{'role': 'assistant', 'content': assistant}]
             cache = cache_metrics(response)
+            thinking = reasoning_metrics(response, reasoning)
             records.append({
+                'reasoning_characters': len(reasoning),
                 'exchange': turn, 'prompt_tokens': usage['prompt_tokens'],
                 'completion_tokens': usage['completion_tokens'],
                 'estimated_prompt_tokens': estimate, 'wall_seconds': round(seconds, 3),
                 'finish_reason': response['choices'][0].get('finish_reason'),
                 'timings': response.get('timings') or {},
-                **cache,
+                **cache, **thinking,
             })
             print(f'\nMessage {2 * turn - 1}/20 (user): {question}', flush=True)
             print(f'Message {2 * turn}/20 (assistant): {assistant}', flush=True)
+            qualifier = 'retokenized estimate' if thinking['reasoning_tokens_are_estimated'] else 'API counter'
+            print(f"Thinking tokens: {thinking['reasoning_tokens']} ({qualifier if thinking['reasoning_tokens'] is not None else 'unknown'}).", flush=True)
             print(f"Usage: {usage['prompt_tokens']} input + {usage['completion_tokens']} output; "
                   f'{seconds:.2f}s.', flush=True)
             if cache['cached_prompt_tokens'] is None:
@@ -230,8 +279,9 @@ def main():
         visible = {key: value for key, value in report.items() if key not in ('messages', 'exchanges')}
         print('\n' + json.dumps(visible, ensure_ascii=False, indent=2), flush=True)
         print(f'Report: {result_path}', flush=True)
+    # A usage-budget deviation is reported, not treated as an inference failure.
     if not report['within_5_percent']:
-        raise RuntimeError('Measured token total missed the 16k target by more than 5%; see the report.')
+        print('Warning: cumulative API usage is outside the approximate 16k target (plus/minus 5%); report preserves actual usage.', file=sys.stderr)
 
 
 try:

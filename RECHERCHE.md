@@ -1437,3 +1437,75 @@ remain unchanged. Raw evidence is in
 `results/blackwell-dflash2-reasoning-20261002-174558/`; the committed
 [DFlash2 reasoning record](data/research/blackwell-mtp-20261002/dflash2-reasoning.json)
 contains actual counters, response-integrity evidence, and memory statistics.
+
+## Standard policy and 32,000-token validation — October 2, 2026
+
+The project standard is now explicitly **MTP maximum depth 2 on every
+supported architecture** (Ampere 8.6, Ada 8.9, Blackwell 12.0), including native
+and published backends. The common runtime argument group already applied
+that setting to all backends and remains unchanged. Alternative strategies
+are explicit experiments. Performance benchmarks now always enable thinking
+at **medium** effort, both in template rendering and chat requests. Short
+functional QA probes retain their task-specific settings.
+
+Exactly **32,000 context tokens** is the new default in the Containerfile,
+entrypoint fallback, run.sh, shared settings validation, and backend benchmark
+helper. The context remains configurable through BONSAI_CTX_SIZE. It is
+32,000, not 32,768. Explicit 16k/8k QA allocations remain unchanged.
+
+The conversation benchmark permits 4,096 completion tokens, rejects missing
+reasoning/final content and abnormal completion, and warns rather than fails
+when complete reasoning exceeds the approximate cumulative 16k usage target.
+The backend helper allows 600 seconds per conversation. Full responses and
+interval-filtered total GPU memory statistics are saved alongside reports.
+
+Thinking tokens are counted per exchange and in total. Actual
+`usage.completion_tokens_details.reasoning_tokens` is preferred. This pinned
+server does not provide that counter, so `/tokenize` counts returned
+`reasoning_content` with special tokens disabled. Decoded-text boundaries may
+differ from original generated tokens, so this method is explicitly marked
+as an **estimate**, with its source recorded. Unavailable counts remain null,
+and an incomplete set yields an unknown aggregate. Thinking tokens must not
+be added to completion usage a second time.
+
+The new image was built through image_build.sh and verified via actual API
+properties and `/proc/1/cmdline`: context 32,000, draft-mtp depth 2, medium
+reasoning, CUDA0, Flash Attention, and q8_0. Both specialized Ada and Blackwell
+runtimes remain included. A fresh Blackwell benchmark completed all ten
+exchanges / twenty messages:
+
+| Metric | Result |
+| --- | ---: |
+| Decode tokens/s | 62.77 |
+| Conversation wall time | 231.195 s |
+| End-to-end output tokens/s | 59.48 |
+| Input / completion tokens | 6,600 / 13,752 |
+| Cumulative API tokens | 20,352 |
+| Thinking tokens, retokenized estimate | 12,800 |
+| Cached / processed prompt tokens | 5,310 / 1,290 |
+| Token-weighted prompt-cache hits | 80.45% |
+| Mean / peak total GPU memory | 9,504.85 / 9,516 MiB |
+| Memory samples during benchmark | 231 |
+| Post-benchmark quality probes | 9/9 passed |
+
+The VRAM peak is **9.29 GiB** on a GPU reporting 12,227 MiB total. It includes
+desktop and other processes; one-second samples can miss transient peaks.
+The same library questions produce 20,352 cumulative tokens, so the usage
+budget deviation is visible rather than hidden. This conversation does not
+fill the allocated context, and the run does not prove full-32k recall or
+worst-case capacity. It is one measurement, not an averaged comparison with
+earlier 16k measurements.
+
+All offline regression fixtures passed, including reasoning-counter preference,
+retokenization fallback, unknown thinking counts, missing/truncated reasoning,
+cumulative-budget deviations, and GPU-memory interval filtering. An earlier
+intermediate validation was not accepted because the development script
+changed while its wrapper was running; its timings are excluded from the
+final 32,000-token result.
+
+The committed [validation record](data/research/blackwell-32000-20261002/validation.json)
+identifies the exact development image used for measurement and binds saved
+API, runtime, quality, and memory evidence by SHA256. Raw evidence remains
+under `results/blackwell-32000-medium-validation/`, excluded from Git.
+Historical thinking-disabled comparisons are explicitly labeled in README;
+Ada reasoning-medium performance has not been remeasured here.

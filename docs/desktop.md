@@ -80,7 +80,7 @@ For **native Linux/CDI**, or a WSL2 engine with working CDI API support, use:
 | Basic → Command | Leave empty |
 | Basic → Volumes | Host model directory accessible to the engine → `/models`, writable |
 | Basic → Port mapping | Host port `8080` → container port `8080` |
-| Basic → Environment variables | Optional `BONSAI_CTX_SIZE=16384`, `BONSAI_REASONING_EFFORT=medium`; backend detection is automatic |
+| Basic → Environment variables | Optional `BONSAI_CTX_SIZE=32000`, `BONSAI_REASONING_EFFORT=medium`; backend detection is automatic |
 | Advanced → Devices → Host Device | `nvidia.com/gpu=all` — enter only this selector, without `--device` |
 | Advanced → Devices → Container Device | Leave empty; the UI uses the host value |
 | Advanced → Devices → Permissions | Enable **Read**, **Write**, and **Mknod** |
@@ -132,7 +132,7 @@ For a GPU-enabled CDI engine with models at `/mnt/g/models_podman`, create a
 new container with the following single-line command (PowerShell or Bash):
 
 ```bash
-podman run -d --name bonsai2-27b-cdi --device=nvidia.com/gpu=all --security-opt label=disable -p 127.0.0.1:8080:8080 --mount type=bind,source=/mnt/g/models_podman,target=/models -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
+podman run -d --name bonsai2-27b-cdi --device=nvidia.com/gpu=all --security-opt label=disable -p 127.0.0.1:8080:8080 --mount type=bind,source=/mnt/g/models_podman,target=/models -e BONSAI_CTX_SIZE=32000 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
 podman logs -f bonsai2-27b-cdi
 ```
 
@@ -273,7 +273,7 @@ It uses a persistent named volume; the container detects the GPU backend:
 
 ```bash
 docker volume create bonsai-models
-docker run -d --name bonsai2-27b --gpus all -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
+docker run -d --name bonsai2-27b --gpus all -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_CTX_SIZE=32000 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
 docker logs -f bonsai2-27b
 ```
 
@@ -294,7 +294,7 @@ On native Linux, use the host's configured NVIDIA CDI setup.
 
 ```bash
 podman volume create bonsai-models
-podman run -d --name bonsai2-27b --device nvidia.com/gpu=all --security-opt label=disable -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
+podman run -d --name bonsai2-27b --device nvidia.com/gpu=all --security-opt label=disable -p 127.0.0.1:8080:8080 --mount type=volume,source=bonsai-models,target=/models -e BONSAI_CTX_SIZE=32000 -e BONSAI_REASONING_EFFORT=medium ghcr.io/teaalc/ai_bonsai27:latest
 podman logs -f bonsai2-27b
 ```
 
@@ -311,7 +311,7 @@ podman run -d --name bonsai2-27b \
   --device /dev/dxg -v /usr/lib/wsl:/usr/lib/wsl:ro \
   --security-opt label=disable \
   -p 127.0.0.1:8080:8080 -v "$PWD:/models:rw" \
-  -e BONSAI_CTX_SIZE=16384 -e BONSAI_REASONING_EFFORT=medium \
+  -e BONSAI_CTX_SIZE=32000 -e BONSAI_REASONING_EFFORT=medium \
   ghcr.io/teaalc/ai_bonsai27:latest
 ```
 
