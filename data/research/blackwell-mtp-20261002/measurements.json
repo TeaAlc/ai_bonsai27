@@ -1,0 +1,1534 @@
+{
+  "recorded_date": "2026-10-02",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU (12 GB)",
+  "platform": "WSL2",
+  "image_id": "sha256:63f0fab88587e1a3d3f2e111191d27db47168427545cf90a038eff46e97bf4bf",
+  "source_commit": "9a7de448a37d828b02782014f79704b6cc484806",
+  "backend": "blackwell-source / native SM120",
+  "evidence_directory": "results/blackwell-mtp-20261002-171334",
+  "protocol": {
+    "blocks": [
+      [
+        1,
+        2,
+        4
+      ],
+      [
+        2,
+        4,
+        1
+      ],
+      [
+        4,
+        1,
+        2
+      ]
+    ],
+    "fresh_container_and_empty_prompt_cache_each_run": true,
+    "context_size": 16384,
+    "messages": 20,
+    "exchanges": 10,
+    "thinking": false,
+    "reasoning_effort": "medium",
+    "cache_types": "main/draft K/V q8_0",
+    "flash_attention": true,
+    "language_model_device": "CUDA0",
+    "vision": "BF16 CPU, no-mmproj-offload",
+    "only_changed_setting": "--spec-draft-n-max",
+    "quality_checks": "Nine probes once per depth, including three thinking probes",
+    "gpu_telemetry": "One-second samples, saved per trial; not proof of exclusive GPU ownership",
+    "depth_selection": "Extract image entrypoint, replace its single --spec-draft-n-max 2 value and matching status text, mount read-only; assert the actual /proc/1/cmdline value. No backend binary changes.",
+    "quality_checks_after_benchmark": "Quality probes run after each depth in block 3, outside measured conversation time."
+  },
+  "modes": {
+    "1": {
+      "runs": [
+        {
+          "block": 1,
+          "recorded_at": "2026-10-02T17:14:17.418202+00:00",
+          "decode_tokens_per_second": 49.69,
+          "wall_seconds": 30.678,
+          "output_tokens_per_wall_second": 26.83,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "total_tokens": 15949,
+          "cached_prompt_tokens": 13209,
+          "processed_prompt_tokens": 1917,
+          "cache_hit_rate_percent": 87.33,
+          "draft_tokens": 509,
+          "accepted_draft_tokens": 309,
+          "draft_acceptance_percent": 60.70726915520628,
+          "assistant_messages_sha256": "e7b7f44c4dd31fd0f0769d2ed87723bc973a48da4d24af4066f60f13aed31187",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "evidence_sha256": {
+            "benchmark.json": "9241785977ed8154450abecb72cfc25a42373eae8a6b374dd80f4317b6e1528a",
+            "server.log": "8419b438286b0cfd98d8f4d4bc3e95637fb0d70429da660c3134100272757d46",
+            "process-arguments.bin": "3d929ec1b2bb7e09ce9efdef103e6ee72b56cf3ec75e6db0d349d80e239d59dd",
+            "container.json": "ca8808e37576e6fa0e33818d479dced9f7f3ec07a68db3e641cffba4c11265a6",
+            "gpu-monitor.csv": "c838c853b99890bb38831b5fe6444739f17fd361f5517559ec480433793543b9",
+            "idle-before.csv": "9d88e6c095f2f635064a583863268c5abfb12e2dd0d0452f678a0e8050e544f9"
+          },
+          "gpu_idle_before": {
+            "used_memory_mib": 1350,
+            "utilization_percent": 1,
+            "power_watts": 14.2,
+            "temperature_celsius": 51
+          }
+        },
+        {
+          "block": 2,
+          "recorded_at": "2026-10-02T17:17:52.654665+00:00",
+          "decode_tokens_per_second": 47.09,
+          "wall_seconds": 31.177,
+          "output_tokens_per_wall_second": 26.4,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "total_tokens": 15949,
+          "cached_prompt_tokens": 13209,
+          "processed_prompt_tokens": 1917,
+          "cache_hit_rate_percent": 87.33,
+          "draft_tokens": 509,
+          "accepted_draft_tokens": 309,
+          "draft_acceptance_percent": 60.70726915520628,
+          "assistant_messages_sha256": "e7b7f44c4dd31fd0f0769d2ed87723bc973a48da4d24af4066f60f13aed31187",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "evidence_sha256": {
+            "benchmark.json": "d4e9df9931efffc355ea721bf6da70b83caf0c4988bfb0e9c4de4de6a56fb8d7",
+            "server.log": "845fa4f450a3d69236712c46ddf06f549f33bb498e69b2ddba19ab1fac2ce98c",
+            "process-arguments.bin": "3d929ec1b2bb7e09ce9efdef103e6ee72b56cf3ec75e6db0d349d80e239d59dd",
+            "container.json": "68960f562f783e843781d43e9f75cc36d81e10327341f6e310d4d14ae0f71bff",
+            "gpu-monitor.csv": "a255019dc08351a1dd666836449d812c6610e6d8cba33fbc619818437790a74e",
+            "idle-before.csv": "b72fa6c33d0aa1bc296b5cfcdabcd62931b151e7303b090f8d548af931ba261a"
+          },
+          "gpu_idle_before": {
+            "used_memory_mib": 1271,
+            "utilization_percent": 2,
+            "power_watts": 14.1,
+            "temperature_celsius": 63
+          }
+        },
+        {
+          "block": 3,
+          "recorded_at": "2026-10-02T17:19:44.370752+00:00",
+          "decode_tokens_per_second": 48.3,
+          "wall_seconds": 30.903,
+          "output_tokens_per_wall_second": 26.63,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "total_tokens": 15949,
+          "cached_prompt_tokens": 13209,
+          "processed_prompt_tokens": 1917,
+          "cache_hit_rate_percent": 87.33,
+          "draft_tokens": 509,
+          "accepted_draft_tokens": 309,
+          "draft_acceptance_percent": 60.70726915520628,
+          "assistant_messages_sha256": "e7b7f44c4dd31fd0f0769d2ed87723bc973a48da4d24af4066f60f13aed31187",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "evidence_sha256": {
+            "benchmark.json": "906acfa06b7e7d981504e28746422339be847d14144489f13e4cec4f363dae8a",
+            "server.log": "79c53177a5d8c510617bc425418530fed9f2cc052e0dda055310c2b0781fb6b8",
+            "process-arguments.bin": "3d929ec1b2bb7e09ce9efdef103e6ee72b56cf3ec75e6db0d349d80e239d59dd",
+            "container.json": "cc514f0492f64df8be972992c84f89d8ba987151d5046ddfbaedf1b2ddf36733",
+            "gpu-monitor.csv": "e111c9846d64291577527dd5347b99ae02d391de705657afddfa286d6b47ca15",
+            "idle-before.csv": "c69af8fc3073cd9255129886f033252a00a753c48cc86b76d38bde57bc69729d"
+          },
+          "gpu_idle_before": {
+            "used_memory_mib": 1271,
+            "utilization_percent": 2,
+            "power_watts": 15.26,
+            "temperature_celsius": 66
+          }
+        }
+      ],
+      "means": {
+        "decode_tokens_per_second": 48.36,
+        "wall_seconds": 30.919333333333334,
+        "output_tokens_per_wall_second": 26.619999999999997
+      },
+      "sample_standard_deviation": {
+        "decode_tokens_per_second": 1.3010380470993124,
+        "wall_seconds": 0.24990064692459893
+      },
+      "token_weighted_prompt_cache_hit_percent": 87.32645775485918,
+      "draft_acceptance_percent": 60.70726915520628,
+      "assistant_outputs_identical_across_repetitions": true,
+      "quality": {
+        "run_id": "e837b96a63674cd3b7ff8c4cf0571e50",
+        "summary_sha256": "b15f6f2ccedf6c1c729f4a588a07397a7f067cdca55c392a5443f3ce32dea751",
+        "passed": 9,
+        "total": 9,
+        "cases": [
+          {
+            "case": "arithmetic",
+            "expected": "4477",
+            "actual": "4477",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 29,
+              "prompt_ms": 286.915,
+              "prompt_per_token_ms": 9.893620689655172,
+              "prompt_per_second": 101.07523134029242,
+              "predicted_n": 128,
+              "predicted_ms": 2126.003,
+              "predicted_per_token_ms": 16.740181102362207,
+              "predicted_per_second": 59.73651024951516,
+              "draft_n": 67,
+              "draft_n_accepted": 60
+            }
+          },
+          {
+            "case": "modular",
+            "expected": "15",
+            "actual": "15",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 41,
+              "prompt_ms": 220.464,
+              "prompt_per_token_ms": 5.377170731707317,
+              "prompt_per_second": 185.97140576239207,
+              "predicted_n": 571,
+              "predicted_ms": 9568.768,
+              "predicted_per_token_ms": 16.787312280701755,
+              "predicted_per_second": 59.56879715340575,
+              "draft_n": 295,
+              "draft_n_accepted": 276
+            }
+          },
+          {
+            "case": "logic",
+            "expected": "Oranges",
+            "actual": "Oranges",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 72,
+              "prompt_ms": 263.385,
+              "prompt_per_token_ms": 3.658125,
+              "prompt_per_second": 273.36408679309756,
+              "predicted_n": 515,
+              "predicted_ms": 8834.609,
+              "predicted_per_token_ms": 17.18795525291829,
+              "predicted_per_second": 58.18027713507185,
+              "draft_n": 272,
+              "draft_n_accepted": 243
+            }
+          },
+          {
+            "case": "json-sort",
+            "expected": [
+              -1,
+              2,
+              5
+            ],
+            "actual": [
+              -1,
+              2,
+              5
+            ],
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 44,
+              "prompt_ms": 235.831,
+              "prompt_per_token_ms": 5.359795454545455,
+              "prompt_per_second": 186.57428412719278,
+              "predicted_n": 11,
+              "predicted_ms": 214.503,
+              "predicted_per_token_ms": 21.4503,
+              "predicted_per_second": 46.61939460054172,
+              "draft_n": 6,
+              "draft_n_accepted": 4
+            }
+          },
+          {
+            "case": "extraction",
+            "expected": {
+              "id": "BON-7429",
+              "quantity": 3
+            },
+            "actual": {
+              "id": "BON-7429",
+              "quantity": 3
+            },
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 49,
+              "prompt_ms": 260.212,
+              "prompt_per_token_ms": 5.310448979591836,
+              "prompt_per_second": 188.30799501944568,
+              "predicted_n": 16,
+              "predicted_ms": 256.279,
+              "predicted_per_token_ms": 17.085266666666666,
+              "predicted_per_second": 58.52996148728535,
+              "draft_n": 8,
+              "draft_n_accepted": 8
+            }
+          },
+          {
+            "case": "quoted-instruction",
+            "expected": "SAFE",
+            "actual": "SAFE",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 51,
+              "prompt_ms": 405.777,
+              "prompt_per_token_ms": 7.956411764705882,
+              "prompt_per_second": 125.68479731478128,
+              "predicted_n": 2,
+              "predicted_ms": 38.43,
+              "predicted_per_token_ms": 38.43,
+              "predicted_per_second": 26.021337496747332,
+              "draft_n": 1,
+              "draft_n_accepted": 1
+            }
+          },
+          {
+            "case": "updated-fact",
+            "expected": "BLUE",
+            "actual": "BLUE",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 52,
+              "prompt_ms": 399.873,
+              "prompt_per_token_ms": 7.689865384615384,
+              "prompt_per_second": 130.0412881089746,
+              "predicted_n": 2,
+              "predicted_ms": 41.444,
+              "predicted_per_token_ms": 41.444,
+              "predicted_per_second": 24.12894508252099,
+              "draft_n": 1,
+              "draft_n_accepted": 1
+            }
+          },
+          {
+            "case": "unknown-fact",
+            "expected": "UNKNOWN",
+            "actual": "UNKNOWN",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 43,
+              "prompt_ms": 241.074,
+              "prompt_per_token_ms": 5.606372093023256,
+              "prompt_per_second": 178.3684677733808,
+              "predicted_n": 2,
+              "predicted_ms": 45.519,
+              "predicted_per_token_ms": 45.519,
+              "predicted_per_second": 21.968848173290276,
+              "draft_n": 1,
+              "draft_n_accepted": 1
+            }
+          },
+          {
+            "case": "tool-call",
+            "passed": true,
+            "actual": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_inventory",
+                  "arguments": "{\"sku\":\"B-17\"}"
+                },
+                "id": "hMxGkeLDuxqVaPLrSegB4t9uIOzbWY6I"
+              }
+            ],
+            "finish_reason": "tool_calls"
+          }
+        ]
+      }
+    },
+    "2": {
+      "runs": [
+        {
+          "block": 1,
+          "recorded_at": "2026-10-02T17:15:00.575807+00:00",
+          "decode_tokens_per_second": 42.42,
+          "wall_seconds": 32.827,
+          "output_tokens_per_wall_second": 25.07,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "total_tokens": 15949,
+          "cached_prompt_tokens": 13215,
+          "processed_prompt_tokens": 1911,
+          "cache_hit_rate_percent": 87.37,
+          "draft_tokens": 886,
+          "accepted_draft_tokens": 382,
+          "draft_acceptance_percent": 43.11512415349887,
+          "assistant_messages_sha256": "e7b7f44c4dd31fd0f0769d2ed87723bc973a48da4d24af4066f60f13aed31187",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "evidence_sha256": {
+            "benchmark.json": "694fd6308805e8c0588cb0da9c1e613cdf50bf01dbbe0f084ed771274e0fb522",
+            "server.log": "1615106766761889e67d1101d0e66268df293d460a66e63ee999453f9e628c4e",
+            "process-arguments.bin": "ed6b5610bfa8c564f38c1af3ea4daec2dd6a2ce806920081dd51aaa4ba15e214",
+            "container.json": "fb0347b3557bb131f98333c6adbb12ab0cb378443de51c35411b75648e60f28b",
+            "gpu-monitor.csv": "ac5c25cf52d1d68c4c1406558590d16706106fd06a3d49ac185d211310b6677f",
+            "idle-before.csv": "0aad046438dc0550f0ac8266036a6812d5c69400d4632c248a74deb740e2fbbc"
+          },
+          "gpu_idle_before": {
+            "used_memory_mib": 1350,
+            "utilization_percent": 2,
+            "power_watts": 15.81,
+            "temperature_celsius": 57
+          }
+        },
+        {
+          "block": 2,
+          "recorded_at": "2026-10-02T17:16:27.932093+00:00",
+          "decode_tokens_per_second": 44.54,
+          "wall_seconds": 32.386,
+          "output_tokens_per_wall_second": 25.41,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "total_tokens": 15949,
+          "cached_prompt_tokens": 13215,
+          "processed_prompt_tokens": 1911,
+          "cache_hit_rate_percent": 87.37,
+          "draft_tokens": 886,
+          "accepted_draft_tokens": 382,
+          "draft_acceptance_percent": 43.11512415349887,
+          "assistant_messages_sha256": "e7b7f44c4dd31fd0f0769d2ed87723bc973a48da4d24af4066f60f13aed31187",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "evidence_sha256": {
+            "benchmark.json": "08050225ea526e24ee2fab0c338545ab59ab904df93620c9077c30ea3cd77023",
+            "server.log": "927fb9deaf214775fe2ce72a60844a66b456069da4c263373ee7298e55fab450",
+            "process-arguments.bin": "ed6b5610bfa8c564f38c1af3ea4daec2dd6a2ce806920081dd51aaa4ba15e214",
+            "container.json": "1379bf7a2632ed85ef540a01a4ea1ace0f8e84e70e7a2a04a928fa5a2d99afaf",
+            "gpu-monitor.csv": "269ca4c65ff163771796fd7e9c6c71e8f109d7ae3a42b0d9fd9b2bff3253bbdd",
+            "idle-before.csv": "2d80ad1bedbf34765cf6b06358013c4fced5833f4ee30f911104e7afa5d18cc5"
+          },
+          "gpu_idle_before": {
+            "used_memory_mib": 1271,
+            "utilization_percent": 4,
+            "power_watts": 13.03,
+            "temperature_celsius": 61
+          }
+        },
+        {
+          "block": 3,
+          "recorded_at": "2026-10-02T17:20:54.781458+00:00",
+          "decode_tokens_per_second": 43.51,
+          "wall_seconds": 32.707,
+          "output_tokens_per_wall_second": 25.16,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "total_tokens": 15949,
+          "cached_prompt_tokens": 13215,
+          "processed_prompt_tokens": 1911,
+          "cache_hit_rate_percent": 87.37,
+          "draft_tokens": 886,
+          "accepted_draft_tokens": 382,
+          "draft_acceptance_percent": 43.11512415349887,
+          "assistant_messages_sha256": "e7b7f44c4dd31fd0f0769d2ed87723bc973a48da4d24af4066f60f13aed31187",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "evidence_sha256": {
+            "benchmark.json": "42a04294d7cb7bb5d58b0cf9532d24569ac554f525f5808433dea92136e0cd6c",
+            "server.log": "ab19599f4cfb5d7ebfd45f08b8d764aaa43f3fd29fc26e7b13de551048b8512a",
+            "process-arguments.bin": "ed6b5610bfa8c564f38c1af3ea4daec2dd6a2ce806920081dd51aaa4ba15e214",
+            "container.json": "1b89279a214c059e08b90a4d3a2aa89d9a09b2732746fe406002caa45152760e",
+            "gpu-monitor.csv": "4ba615fb7645ecca3c1ce9f5fb2942e3c4437be52a7d78ba4cc3d3cd7fa92013",
+            "idle-before.csv": "4b49b9c3d0fce5e343c109483eaf56421398426d129062699cd504aef6195ba5"
+          },
+          "gpu_idle_before": {
+            "used_memory_mib": 1271,
+            "utilization_percent": 2,
+            "power_watts": 13.8,
+            "temperature_celsius": 66
+          }
+        }
+      ],
+      "means": {
+        "decode_tokens_per_second": 43.49,
+        "wall_seconds": 32.64,
+        "output_tokens_per_wall_second": 25.213333333333335
+      },
+      "sample_standard_deviation": {
+        "decode_tokens_per_second": 1.060141499989505,
+        "wall_seconds": 0.2280065788524511
+      },
+      "token_weighted_prompt_cache_hit_percent": 87.3661245537485,
+      "draft_acceptance_percent": 43.11512415349887,
+      "assistant_outputs_identical_across_repetitions": true,
+      "quality": {
+        "run_id": "03fe8dfa7feb42e1ad5f666d0575ec65",
+        "summary_sha256": "897318cc0e5b1a02856bff29611b4d46ead2371a9b7f78d0a0de74929f3665b5",
+        "passed": 9,
+        "total": 9,
+        "cases": [
+          {
+            "case": "arithmetic",
+            "expected": "4477",
+            "actual": "4477",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 29,
+              "prompt_ms": 225.549,
+              "prompt_per_token_ms": 7.777551724137931,
+              "prompt_per_second": 128.57516548510523,
+              "predicted_n": 128,
+              "predicted_ms": 1978.672,
+              "predicted_per_token_ms": 15.580094488188976,
+              "predicted_per_second": 64.18446311465468,
+              "draft_n": 94,
+              "draft_n_accepted": 82
+            }
+          },
+          {
+            "case": "modular",
+            "expected": "15",
+            "actual": "15",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 41,
+              "prompt_ms": 281.049,
+              "prompt_per_token_ms": 6.854853658536585,
+              "prompt_per_second": 145.88203480531865,
+              "predicted_n": 571,
+              "predicted_ms": 8456.098,
+              "predicted_per_token_ms": 14.835259649122808,
+              "predicted_per_second": 67.40697659842637,
+              "draft_n": 410,
+              "draft_n_accepted": 366
+            }
+          },
+          {
+            "case": "logic",
+            "expected": "Oranges",
+            "actual": "Oranges",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 72,
+              "prompt_ms": 259.172,
+              "prompt_per_token_ms": 3.5996111111111113,
+              "prompt_per_second": 277.80778787832014,
+              "predicted_n": 515,
+              "predicted_ms": 8787.709,
+              "predicted_per_token_ms": 17.09671011673152,
+              "predicted_per_second": 58.49078525472338,
+              "draft_n": 406,
+              "draft_n_accepted": 311
+            }
+          },
+          {
+            "case": "json-sort",
+            "expected": [
+              -1,
+              2,
+              5
+            ],
+            "actual": [
+              -1,
+              2,
+              5
+            ],
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 44,
+              "prompt_ms": 268.963,
+              "prompt_per_token_ms": 6.112795454545455,
+              "prompt_per_second": 163.59127463628826,
+              "predicted_n": 11,
+              "predicted_ms": 217.034,
+              "predicted_per_token_ms": 21.7034,
+              "predicted_per_second": 46.07573006994296,
+              "draft_n": 10,
+              "draft_n_accepted": 6
+            }
+          },
+          {
+            "case": "extraction",
+            "expected": {
+              "id": "BON-7429",
+              "quantity": 3
+            },
+            "actual": {
+              "id": "BON-7429",
+              "quantity": 3
+            },
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 49,
+              "prompt_ms": 213.465,
+              "prompt_per_token_ms": 4.356428571428571,
+              "prompt_per_second": 229.5458271847844,
+              "predicted_n": 16,
+              "predicted_ms": 231.788,
+              "predicted_per_token_ms": 15.452533333333333,
+              "predicted_per_second": 64.71430790204842,
+              "draft_n": 12,
+              "draft_n_accepted": 11
+            }
+          },
+          {
+            "case": "quoted-instruction",
+            "expected": "SAFE",
+            "actual": "SAFE",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 51,
+              "prompt_ms": 389.373,
+              "prompt_per_token_ms": 7.634764705882353,
+              "prompt_per_second": 130.97980599579324,
+              "predicted_n": 2,
+              "predicted_ms": 44.621,
+              "predicted_per_token_ms": 44.621,
+              "predicted_per_second": 22.41097241209296,
+              "draft_n": 2,
+              "draft_n_accepted": 2
+            }
+          },
+          {
+            "case": "updated-fact",
+            "expected": "BLUE",
+            "actual": "BLUE",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 52,
+              "prompt_ms": 378.34,
+              "prompt_per_token_ms": 7.27576923076923,
+              "prompt_per_second": 137.44251202621982,
+              "predicted_n": 2,
+              "predicted_ms": 45.777,
+              "predicted_per_token_ms": 45.777,
+              "predicted_per_second": 21.845031347619983,
+              "draft_n": 2,
+              "draft_n_accepted": 2
+            }
+          },
+          {
+            "case": "unknown-fact",
+            "expected": "UNKNOWN",
+            "actual": "UNKNOWN",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 43,
+              "prompt_ms": 235.697,
+              "prompt_per_token_ms": 5.481325581395349,
+              "prompt_per_second": 182.4376211831292,
+              "predicted_n": 2,
+              "predicted_ms": 46.12,
+              "predicted_per_token_ms": 46.12,
+              "predicted_per_second": 21.68256721595837,
+              "draft_n": 2,
+              "draft_n_accepted": 2
+            }
+          },
+          {
+            "case": "tool-call",
+            "passed": true,
+            "actual": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_inventory",
+                  "arguments": "{\"sku\":\"B-17\"}"
+                },
+                "id": "bVEBCaXUxF6sbcKuSjtSVFB3DjqYUb29"
+              }
+            ],
+            "finish_reason": "tool_calls"
+          }
+        ]
+      }
+    },
+    "4": {
+      "runs": [
+        {
+          "block": 1,
+          "recorded_at": "2026-10-02T17:15:46.419078+00:00",
+          "decode_tokens_per_second": 32.28,
+          "wall_seconds": 35.686,
+          "output_tokens_per_wall_second": 20.82,
+          "prompt_tokens": 15191,
+          "completion_tokens": 743,
+          "total_tokens": 15934,
+          "cached_prompt_tokens": 13190,
+          "processed_prompt_tokens": 2001,
+          "cache_hit_rate_percent": 86.83,
+          "draft_tokens": 1488,
+          "accepted_draft_tokens": 375,
+          "draft_acceptance_percent": 25.201612903225808,
+          "assistant_messages_sha256": "28b2cb3011c718f5d22c37e1b9d53ea5c33320614d6a05d5f84c0325d8a76452",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "evidence_sha256": {
+            "benchmark.json": "28c5ee04c8455c7d96e5f1f231d219d4455ccee828379beb496e483256341a62",
+            "server.log": "f024ca453ebf73d1d107602a36ff8c3d2afef422c30ae75feccd4f11b0203575",
+            "process-arguments.bin": "2c472628cc27b78e20cf98570a728965b700cd2097f2479717ee2a5e3f07d178",
+            "container.json": "0ed00ca9bd7c9b913a0dd5c6564c06fb43bab9166b601712bcc2269a6bf08cde",
+            "gpu-monitor.csv": "b7bc6179144d727671c21557c7e1023f835826e56a49c80c82e5035588a8495a",
+            "idle-before.csv": "140fd40d609c052bcf4488ccc75ced70dd9339c640923d90e44dc31e6f601125"
+          },
+          "gpu_idle_before": {
+            "used_memory_mib": 1271,
+            "utilization_percent": 3,
+            "power_watts": 14.44,
+            "temperature_celsius": 60
+          }
+        },
+        {
+          "block": 2,
+          "recorded_at": "2026-10-02T17:17:12.243057+00:00",
+          "decode_tokens_per_second": 31.41,
+          "wall_seconds": 35.894,
+          "output_tokens_per_wall_second": 20.7,
+          "prompt_tokens": 15191,
+          "completion_tokens": 743,
+          "total_tokens": 15934,
+          "cached_prompt_tokens": 13190,
+          "processed_prompt_tokens": 2001,
+          "cache_hit_rate_percent": 86.83,
+          "draft_tokens": 1488,
+          "accepted_draft_tokens": 375,
+          "draft_acceptance_percent": 25.201612903225808,
+          "assistant_messages_sha256": "28b2cb3011c718f5d22c37e1b9d53ea5c33320614d6a05d5f84c0325d8a76452",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "evidence_sha256": {
+            "benchmark.json": "8e9ea5f449dcb85fff6e7f83471136687b32fc0d2c080dd29789925f3a14af3e",
+            "server.log": "e339c4af85f35d4812c5435b894fb47b6bdd2d5d6e518f49fb08f02e45be2c9a",
+            "process-arguments.bin": "2c472628cc27b78e20cf98570a728965b700cd2097f2479717ee2a5e3f07d178",
+            "container.json": "28641d25f979b156ce5780e760b106c0ec278b96cd0f0ade19e0c9a6c6f0f702",
+            "gpu-monitor.csv": "c317d4236f021f8a50c4a77655a8dd4e737dbf76729e71e4c33ccbbcbf5ca4f7",
+            "idle-before.csv": "f1957f3fa4d25feb9d81c46fd89bf52058efd7ebc91e5e8a8fd2d2885f3005bc"
+          },
+          "gpu_idle_before": {
+            "used_memory_mib": 1271,
+            "utilization_percent": 4,
+            "power_watts": 15.63,
+            "temperature_celsius": 63
+          }
+        },
+        {
+          "block": 3,
+          "recorded_at": "2026-10-02T17:18:37.730795+00:00",
+          "decode_tokens_per_second": 32.26,
+          "wall_seconds": 37.646,
+          "output_tokens_per_wall_second": 19.74,
+          "prompt_tokens": 15191,
+          "completion_tokens": 743,
+          "total_tokens": 15934,
+          "cached_prompt_tokens": 13190,
+          "processed_prompt_tokens": 2001,
+          "cache_hit_rate_percent": 86.83,
+          "draft_tokens": 1488,
+          "accepted_draft_tokens": 375,
+          "draft_acceptance_percent": 25.201612903225808,
+          "assistant_messages_sha256": "28b2cb3011c718f5d22c37e1b9d53ea5c33320614d6a05d5f84c0325d8a76452",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "evidence_sha256": {
+            "benchmark.json": "bf03d30c4d61c7244ca520c1c42e82b7fddc304c03bbf6653d2f13fa53287472",
+            "server.log": "459003614ddf35fd0217d79949cfaa0586672aab8a54ee1866d87fef029a0a7f",
+            "process-arguments.bin": "2c472628cc27b78e20cf98570a728965b700cd2097f2479717ee2a5e3f07d178",
+            "container.json": "c960db38ed73ae9935ee2c1430657215562dbff24906d3d6a107bb2369145694",
+            "gpu-monitor.csv": "fc30c7a7a2b954c00d8696e88b83db54f45794df84f0637b42990f69a992a4e7",
+            "idle-before.csv": "34bc0c6adb477cb0bfc21d1a97d616cc9d6d6039fd980888b632bb5c7942edf9"
+          },
+          "gpu_idle_before": {
+            "used_memory_mib": 1271,
+            "utilization_percent": 3,
+            "power_watts": 14.86,
+            "temperature_celsius": 64
+          }
+        }
+      ],
+      "means": {
+        "decode_tokens_per_second": 31.983333333333334,
+        "wall_seconds": 36.40866666666667,
+        "output_tokens_per_wall_second": 20.419999999999998
+      },
+      "sample_standard_deviation": {
+        "decode_tokens_per_second": 0.49662192192183086,
+        "wall_seconds": 1.07659710817619
+      },
+      "token_weighted_prompt_cache_hit_percent": 86.82772694358502,
+      "draft_acceptance_percent": 25.201612903225808,
+      "assistant_outputs_identical_across_repetitions": true,
+      "quality": {
+        "run_id": "4c78f9949bde4769b3f3c1f7e350c7f8",
+        "summary_sha256": "8a8180c1d18d91d3e9f2f6b669fbcbf2faf7400a512bdf28b5a20b4e08952aa1",
+        "passed": 9,
+        "total": 9,
+        "cases": [
+          {
+            "case": "arithmetic",
+            "expected": "4477",
+            "actual": "4477",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 29,
+              "prompt_ms": 214.06,
+              "prompt_per_token_ms": 7.381379310344828,
+              "prompt_per_second": 135.4760347566103,
+              "predicted_n": 128,
+              "predicted_ms": 2152.669,
+              "predicted_per_token_ms": 16.950149606299213,
+              "predicted_per_second": 58.996529424635185,
+              "draft_n": 148,
+              "draft_n_accepted": 91
+            }
+          },
+          {
+            "case": "modular",
+            "expected": "15",
+            "actual": "15",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 41,
+              "prompt_ms": 234.033,
+              "prompt_per_token_ms": 5.708121951219512,
+              "prompt_per_second": 175.1889690770105,
+              "predicted_n": 571,
+              "predicted_ms": 7908.863,
+              "predicted_per_token_ms": 13.875198245614035,
+              "predicted_per_second": 72.07104232302419,
+              "draft_n": 552,
+              "draft_n_accepted": 433
+            }
+          },
+          {
+            "case": "logic",
+            "expected": "Oranges",
+            "actual": "Oranges",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 72,
+              "prompt_ms": 311.176,
+              "prompt_per_token_ms": 4.321888888888889,
+              "prompt_per_second": 231.3803121063321,
+              "predicted_n": 515,
+              "predicted_ms": 8835.785,
+              "predicted_per_token_ms": 17.190243190661477,
+              "predicted_per_second": 58.172533623215145,
+              "draft_n": 592,
+              "draft_n_accepted": 368
+            }
+          },
+          {
+            "case": "json-sort",
+            "expected": [
+              -1,
+              2,
+              5
+            ],
+            "actual": [
+              -1,
+              2,
+              5
+            ],
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 44,
+              "prompt_ms": 221.854,
+              "prompt_per_token_ms": 5.042136363636364,
+              "prompt_per_second": 198.3286305408061,
+              "predicted_n": 11,
+              "predicted_ms": 246.35,
+              "predicted_per_token_ms": 24.634999999999998,
+              "predicted_per_second": 40.5926527298559,
+              "draft_n": 16,
+              "draft_n_accepted": 8
+            }
+          },
+          {
+            "case": "extraction",
+            "expected": {
+              "id": "BON-7429",
+              "quantity": 3
+            },
+            "actual": {
+              "id": "BON-7429",
+              "quantity": 3
+            },
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 49,
+              "prompt_ms": 243.271,
+              "prompt_per_token_ms": 4.964714285714286,
+              "prompt_per_second": 201.42146001784022,
+              "predicted_n": 16,
+              "predicted_ms": 247.153,
+              "predicted_per_token_ms": 16.476866666666666,
+              "predicted_per_second": 60.69115082560195,
+              "draft_n": 16,
+              "draft_n_accepted": 13
+            }
+          },
+          {
+            "case": "quoted-instruction",
+            "expected": "SAFE",
+            "actual": "SAFE",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 51,
+              "prompt_ms": 417.024,
+              "prompt_per_token_ms": 8.176941176470589,
+              "prompt_per_second": 122.2951197053407,
+              "predicted_n": 2,
+              "predicted_ms": 65.338,
+              "predicted_per_token_ms": 65.338,
+              "predicted_per_second": 15.305029232605836,
+              "draft_n": 4,
+              "draft_n_accepted": 2
+            }
+          },
+          {
+            "case": "updated-fact",
+            "expected": "BLUE",
+            "actual": "BLUE",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 52,
+              "prompt_ms": 364.852,
+              "prompt_per_token_ms": 7.016384615384615,
+              "prompt_per_second": 142.52354379309966,
+              "predicted_n": 2,
+              "predicted_ms": 65.22,
+              "predicted_per_token_ms": 65.22,
+              "predicted_per_second": 15.332720024532353,
+              "draft_n": 4,
+              "draft_n_accepted": 3
+            }
+          },
+          {
+            "case": "unknown-fact",
+            "expected": "UNKNOWN",
+            "actual": "UNKNOWN",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 43,
+              "prompt_ms": 219.025,
+              "prompt_per_token_ms": 5.093604651162791,
+              "prompt_per_second": 196.32462047711448,
+              "predicted_n": 2,
+              "predicted_ms": 67.069,
+              "predicted_per_token_ms": 67.069,
+              "predicted_per_second": 14.910018041121829,
+              "draft_n": 4,
+              "draft_n_accepted": 2
+            }
+          },
+          {
+            "case": "tool-call",
+            "passed": true,
+            "actual": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_inventory",
+                  "arguments": "{\"sku\":\"B-17\"}"
+                },
+                "id": "RiYlawO2YxbVm8IhWBwN07fTNZAuLcf3"
+              }
+            ],
+            "finish_reason": "tool_calls"
+          }
+        ]
+      }
+    },
+    "off": {
+      "runs": [
+        {
+          "block": 1,
+          "recorded_at": "2026-10-02T17:24:03.210537+00:00",
+          "decode_tokens_per_second": 43.03,
+          "wall_seconds": 31.16,
+          "output_tokens_per_wall_second": 26.41,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "total_tokens": 15949,
+          "cached_prompt_tokens": 13205,
+          "processed_prompt_tokens": 1921,
+          "cache_hit_rate_percent": 87.3,
+          "draft_tokens": null,
+          "accepted_draft_tokens": null,
+          "draft_acceptance_percent": null,
+          "speculative_decoding": "none",
+          "draft_counters_absent_or_zero": true,
+          "assistant_messages_sha256": "e7b7f44c4dd31fd0f0769d2ed87723bc973a48da4d24af4066f60f13aed31187",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "gpu_idle_before": {
+            "used_memory_mib": 1271,
+            "utilization_percent": 2,
+            "power_watts": 13.87,
+            "temperature_celsius": 54
+          },
+          "evidence_sha256": {
+            "benchmark.json": "b0a2d1b2624e7890775f45d7a8809db28f391e2d47775a48e1902d87fc2afdb8",
+            "server.log": "2d967a8f633d14a8fb2fff814983fe5262737568c35494ec9c6a54dc2f77e26b",
+            "process-arguments.bin": "dcc2885d83715f5f3511931736c4620203d5f74dec14bb182a2e09788fbf1bc7",
+            "container.json": "f56a1ae21e076c8d05e205c8bd1e4286a632521a950b1d0167d69a505479f2f6",
+            "gpu-monitor.csv": "0ee463f5c3640faf67c49b8841f125d3ed8caf4dc72dd11ae27ffc1ed9eebe1b",
+            "idle-before.csv": "8af50d895c00801fe9b505c3937f93d25f17a76c20d8746e43a18d62142b42e8"
+          }
+        },
+        {
+          "block": 2,
+          "recorded_at": "2026-10-02T17:24:43.786955+00:00",
+          "decode_tokens_per_second": 42.4,
+          "wall_seconds": 32.919,
+          "output_tokens_per_wall_second": 25.0,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "total_tokens": 15949,
+          "cached_prompt_tokens": 13205,
+          "processed_prompt_tokens": 1921,
+          "cache_hit_rate_percent": 87.3,
+          "draft_tokens": null,
+          "accepted_draft_tokens": null,
+          "draft_acceptance_percent": null,
+          "speculative_decoding": "none",
+          "draft_counters_absent_or_zero": true,
+          "assistant_messages_sha256": "e7b7f44c4dd31fd0f0769d2ed87723bc973a48da4d24af4066f60f13aed31187",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "gpu_idle_before": {
+            "used_memory_mib": 1271,
+            "utilization_percent": 3,
+            "power_watts": 15.29,
+            "temperature_celsius": 61
+          },
+          "evidence_sha256": {
+            "benchmark.json": "36c699d598d0cce6d9cd0aa074794299b0e277f977deb17108f9f9983265cbd2",
+            "server.log": "9b14713267f975cf54580d6a322a15345b0d4ec2f77754fafb789bbd05c43b20",
+            "process-arguments.bin": "dcc2885d83715f5f3511931736c4620203d5f74dec14bb182a2e09788fbf1bc7",
+            "container.json": "bf17a3e396ddde2867c14920993a1d3c03ab0d2247c5ad8e635284229e6e6a18",
+            "gpu-monitor.csv": "0b5c62504582770fcc56ca513d25e85d0d847d210476245a378274b1cab6ce27",
+            "idle-before.csv": "294ab527948f56e7bd82be305d2528e1918589acd943ea8c9f39c20d8ed936e5"
+          }
+        },
+        {
+          "block": 3,
+          "recorded_at": "2026-10-02T17:25:24.868504+00:00",
+          "decode_tokens_per_second": 41.85,
+          "wall_seconds": 31.725,
+          "output_tokens_per_wall_second": 25.94,
+          "prompt_tokens": 15126,
+          "completion_tokens": 823,
+          "total_tokens": 15949,
+          "cached_prompt_tokens": 13205,
+          "processed_prompt_tokens": 1921,
+          "cache_hit_rate_percent": 87.3,
+          "draft_tokens": null,
+          "accepted_draft_tokens": null,
+          "draft_acceptance_percent": null,
+          "speculative_decoding": "none",
+          "draft_counters_absent_or_zero": true,
+          "assistant_messages_sha256": "e7b7f44c4dd31fd0f0769d2ed87723bc973a48da4d24af4066f60f13aed31187",
+          "finish_reasons": [
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop",
+            "stop"
+          ],
+          "executable": "/opt/bonsai/blackwell-source/bin/llama-server",
+          "gpu_idle_before": {
+            "used_memory_mib": 1271,
+            "utilization_percent": 4,
+            "power_watts": 16.28,
+            "temperature_celsius": 62
+          },
+          "evidence_sha256": {
+            "benchmark.json": "c5404a2551954b37c1f1c1be7d64fb516fb372db715bc2998ae4c97502d03c0b",
+            "server.log": "418175aec012e69aebb7583eeca6d6f668f192f72b7240b30aacf7be1a05110a",
+            "process-arguments.bin": "dcc2885d83715f5f3511931736c4620203d5f74dec14bb182a2e09788fbf1bc7",
+            "container.json": "1255abb559c4b1e3e69832baa99d3b20aa20c09db93bedc9d37d463970a49a30",
+            "gpu-monitor.csv": "9b56d2d6f616ad0deb294f523bdcfcb1710b827f7d88253de5edf4ae6bc2c1fb",
+            "idle-before.csv": "a315b25cc85173ddd4391ecd4f7a63e3e98d8ed62733cc8bfb57c828568af208"
+          }
+        }
+      ],
+      "means": {
+        "decode_tokens_per_second": 42.42666666666667,
+        "wall_seconds": 31.934666666666665,
+        "output_tokens_per_wall_second": 25.783333333333335
+      },
+      "sample_standard_deviation": {
+        "decode_tokens_per_second": 0.5904518044119548,
+        "wall_seconds": 0.8980480684981901
+      },
+      "token_weighted_prompt_cache_hit_percent": 87.3000132222663,
+      "draft_acceptance_percent": null,
+      "assistant_outputs_identical_across_repetitions": true,
+      "quality": {
+        "run_id": "cccb543dcd4c4fa19dab4b91c4301ab3",
+        "summary_sha256": "a601d8052ba78a8fcdb4086262d529f1243c8bc7ddcda3e2870bbe90dc49b400",
+        "passed": 9,
+        "total": 9,
+        "cases": [
+          {
+            "case": "arithmetic",
+            "expected": "4477",
+            "actual": "4477",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 29,
+              "prompt_ms": 189.192,
+              "prompt_per_token_ms": 6.523862068965517,
+              "prompt_per_second": 153.28343693179417,
+              "predicted_n": 128,
+              "predicted_ms": 3073.131,
+              "predicted_per_token_ms": 24.197881889763778,
+              "predicted_per_second": 41.325931110649044
+            }
+          },
+          {
+            "case": "modular",
+            "expected": "15",
+            "actual": "15",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 41,
+              "prompt_ms": 236.989,
+              "prompt_per_token_ms": 5.780219512195122,
+              "prompt_per_second": 173.0038103034318,
+              "predicted_n": 571,
+              "predicted_ms": 12889.54,
+              "predicted_per_token_ms": 22.613228070175442,
+              "predicted_per_second": 44.22190396243776
+            }
+          },
+          {
+            "case": "logic",
+            "expected": "Oranges",
+            "actual": "Oranges",
+            "passed": true,
+            "thinking": true,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 72,
+              "prompt_ms": 253.88,
+              "prompt_per_token_ms": 3.526111111111111,
+              "prompt_per_second": 283.5985504962975,
+              "predicted_n": 515,
+              "predicted_ms": 11210.325,
+              "predicted_per_token_ms": 21.809970817120625,
+              "predicted_per_second": 45.850588631462514
+            }
+          },
+          {
+            "case": "json-sort",
+            "expected": [
+              -1,
+              2,
+              5
+            ],
+            "actual": [
+              -1,
+              2,
+              5
+            ],
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 44,
+              "prompt_ms": 190.55,
+              "prompt_per_token_ms": 4.3306818181818185,
+              "prompt_per_second": 230.9105221726581,
+              "predicted_n": 11,
+              "predicted_ms": 229.289,
+              "predicted_per_token_ms": 22.9289,
+              "predicted_per_second": 43.61308218013075
+            }
+          },
+          {
+            "case": "extraction",
+            "expected": {
+              "id": "BON-7429",
+              "quantity": 3
+            },
+            "actual": {
+              "id": "BON-7429",
+              "quantity": 3
+            },
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 49,
+              "prompt_ms": 226.8,
+              "prompt_per_token_ms": 4.628571428571429,
+              "prompt_per_second": 216.04938271604937,
+              "predicted_n": 16,
+              "predicted_ms": 329.642,
+              "predicted_per_token_ms": 21.976133333333333,
+              "predicted_per_second": 45.50391030269201
+            }
+          },
+          {
+            "case": "quoted-instruction",
+            "expected": "SAFE",
+            "actual": "SAFE",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 51,
+              "prompt_ms": 400.461,
+              "prompt_per_token_ms": 7.852176470588236,
+              "prompt_per_second": 127.3532254077176,
+              "predicted_n": 2,
+              "predicted_ms": 29.218,
+              "predicted_per_token_ms": 29.218,
+              "predicted_per_second": 34.22547744541036
+            }
+          },
+          {
+            "case": "updated-fact",
+            "expected": "BLUE",
+            "actual": "BLUE",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 52,
+              "prompt_ms": 326.385,
+              "prompt_per_token_ms": 6.276634615384615,
+              "prompt_per_second": 159.3210472294989,
+              "predicted_n": 2,
+              "predicted_ms": 28.249,
+              "predicted_per_token_ms": 28.249,
+              "predicted_per_second": 35.39948316754575
+            }
+          },
+          {
+            "case": "unknown-fact",
+            "expected": "UNKNOWN",
+            "actual": "UNKNOWN",
+            "passed": true,
+            "thinking": false,
+            "finish_reason": "stop",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 43,
+              "prompt_ms": 187.723,
+              "prompt_per_token_ms": 4.365651162790698,
+              "prompt_per_second": 229.06090356535958,
+              "predicted_n": 2,
+              "predicted_ms": 30.18,
+              "predicted_per_token_ms": 30.18,
+              "predicted_per_second": 33.13452617627568
+            }
+          },
+          {
+            "case": "tool-call",
+            "passed": true,
+            "actual": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "lookup_inventory",
+                  "arguments": "{\"sku\":\"B-17\"}"
+                },
+                "id": "NNfpZq1ZZq4ACxi2dusbvp1my7JFitew"
+              }
+            ],
+            "finish_reason": "tool_calls"
+          }
+        ]
+      }
+    }
+  },
+  "comparison": {
+    "mtp1_decode_change_percent_vs_mtp2": 11.197976546332477,
+    "mtp4_decode_change_percent_vs_mtp2": -26.458189622135354,
+    "mtp1_decode_change_percent_vs_off": 13.984915147705834,
+    "mtp2_decode_change_percent_vs_off": 2.5062853551225617,
+    "mtp4_decode_change_percent_vs_off": -24.615021998742936
+  },
+  "limitations": [
+    "Approximately 16k cumulative API usage, not a filled 16k unique context.",
+    "MTP=4 answers differ from MTP=1/2; decode rate and elapsed time have different output lengths.",
+    "Greedy batched verification may change near-tied choices; the exact cause of changed answers was not profiled.",
+    "Short quality probes do not establish broad quality equivalence.",
+    "Default MTP=2 is unchanged; results are workload and host specific."
+  ],
+  "backend_source_commit": "f13265492743209a0fbedc2a2781af3f5f0eab13",
+  "normalized_server_arguments": [
+    "/opt/bonsai/blackwell-source/bin/llama-server",
+    "--model",
+    "/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf",
+    "--alias",
+    "bonsai2-27b",
+    "--mmproj",
+    "/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf",
+    "--no-mmproj-offload",
+    "--host",
+    "0.0.0.0",
+    "--port",
+    "8080",
+    "--ctx-size",
+    "16384",
+    "--parallel",
+    "1",
+    "--device",
+    "CUDA0",
+    "--split-mode",
+    "none",
+    "--tensor-split",
+    "1",
+    "--n-gpu-layers",
+    "all",
+    "--fit",
+    "off",
+    "--override-tensor",
+    ".*=CUDA0",
+    "--cache-ram",
+    "0",
+    "--flash-attn",
+    "on",
+    "--cache-type-k",
+    "q8_0",
+    "--cache-type-v",
+    "q8_0",
+    "--spec-type",
+    "draft-mtp",
+    "--spec-draft-n-max",
+    "DEPTH",
+    "--spec-draft-device",
+    "CUDA0",
+    "--spec-draft-ngl",
+    "99",
+    "--spec-draft-type-k",
+    "q8_0",
+    "--spec-draft-type-v",
+    "q8_0",
+    "--jinja",
+    "--reasoning-effort",
+    "medium",
+    "--temp",
+    "1.0",
+    "--top-p",
+    "0.95",
+    "--top-k",
+    "20"
+  ],
+  "evidence_sha256": {
+    "build-receipt.json": "c83b2261b97a3f0c6cdd3183c6b19c4b7d6b1cc093886813a74e5154ce4b337f"
+  },
+  "off_protocol": {
+    "evidence_directory": "results/blackwell-mtp-off-20261002-172323",
+    "order": "Three consecutive fresh-container trials after the rotated MTP depth series; not interleaved.",
+    "disabled_with": [
+      "--spec-type none",
+      "--spec-draft-n-max 0"
+    ],
+    "all_other_arguments_unchanged": true,
+    "model_file_unchanged": "Same MTP Lean model, no claim of removing its unused MTP weights or saving VRAM."
+  }
+}

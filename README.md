@@ -480,6 +480,39 @@ DFlash/DFlash2 repetitions succeeded with CUDA PDL enabled; the known older
 Blackwell PDL race is already fixed in the pinned source. Full details and
 limits are in [Blackwell research](RECHERCHE.md#native-blackwell-and-dflash-experiments-october-2-2026).
 
+### Blackwell MTP depth comparison
+
+A separate October 2 comparison used the same native SM120 image for MTP=1,
+MTP=2, and MTP=4, with three fresh containers per depth and rotated orders
+1/2/4, 2/4/1, and 4/1/2. All other settings remained unchanged: 16k context,
+main/draft q8_0 caches, Flash Attention, CUDA0 language model, CPU vision,
+and the 20-message conversation with thinking disabled.
+
+| Maximum MTP draft depth | Mean decode tokens/s | Mean conversation wall time |
+| --- | ---: | ---: |
+| Disabled (`--spec-type none`) | 42.43 | 31.935 s |
+| 1 | **48.36** | **30.919 s** |
+| 2 | 43.49 | 32.640 s |
+| 4 | 31.98 | 36.409 s |
+
+Three additional fresh-container runs with speculation disabled measured
+42.43 tokens/s. MTP=1 was **14.0% faster in decode** than disabled MTP and
+**11.2% faster** than the fresh MTP=2 control; MTP=4 was
+**26.5% slower**. Disabled MTP and MTP=1/2 produced 823 output tokens per
+conversation, while
+MTP=4 produced 743 and different answers. These are approximately 16k
+*cumulative* API tokens, not a filled 16k context. Each depth passed nine
+quality probes, including three thinking probes. This small check does not
+establish broad quality equivalence, and the project default remains MTP=2.
+MTP=2 improved decode by only 2.5% over disabled MTP and took slightly longer
+over the complete conversation; a general improvement is not established.
+The disabled runs followed the rotated series rather than being interleaved.
+Actual process arguments and nonzero API draft/accepted-draft counters confirm
+that each requested depth was active; disabled runs had no draft counters.
+See the
+[measurement record](data/research/blackwell-mtp-20261002/measurements.json)
+for repetitions, cache hits, acceptance rates, and evidence checksums.
+
 To reproduce independent cold-cache runs of an existing local image:
 
 ```bash

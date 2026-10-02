@@ -1210,3 +1210,103 @@ passed, as did the complete offline regression suite. No Python bytecode
 caches were found. Compact identified validation metadata is retained in
 `final-validation.json`. Benchmark image IDs remain bound to their actual
 measured development builds; no measurement is relabeled as a future image.
+
+## Blackwell MTP depth comparison — October 2, 2026
+
+Measured MTP maximum draft depths **1, 2, and 4** on the same native SM120
+Blackwell backend (`f13265492743209a0fbedc2a2781af3f5f0eab13`), using image
+`sha256:63f0fab88587e1a3d3f2e111191d27db47168427545cf90a038eff46e97bf4bf`
+from clean project commit `9a7de448a37d828b02782014f79704b6cc484806`.
+This is a new comparison with a fresh MTP=2 control, separate from the earlier
+published/native backend and DFlash measurements.
+
+Each depth ran three times in a fresh container, with block orders **1/2/4,
+2/4/1, 4/1/2**. The image entrypoint was extracted and its single
+`--spec-draft-n-max` value changed in a read-only mounted copy, together with
+its status text. Saved `/proc/1/cmdline` confirms the requested value; all
+other server arguments are identical after normalizing that one value.
+All nine runs used the native Blackwell executable. Nonzero API `draft_n`
+and `draft_n_accepted` counters prove speculation actually occurred.
+The maximum depth controls recursive drafting; it does not add separate
+physical MTP heads to the model.
+
+Settings: 16,384-token context, one slot, CUDA0 language model and draft,
+main/draft q8_0 K/V caches, Flash Attention, BF16 vision on CPU/RAM, medium
+reasoning configuration. The conversation requests disable thinking and use
+greedy sampling. Each benchmark retains ten exchanges / twenty messages and
+approximately 16k cumulative API usage tokens, rather than filling a unique
+16k context. Initial prompt cache is empty in each fresh container.
+
+| MTP maximum depth | Decode repetitions (tokens/s) | Mean decode ± sample SD | Mean wall time | Prompt cache hits | Draft acceptance |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 1 | 49.69 / 47.09 / 48.30 | 48.36 ± 1.30 | 30.919 s | 87.33% | 60.71% |
+| 2 | 42.42 / 44.54 / 43.51 | 43.49 ± 1.06 | 32.640 s | 87.37% | 43.12% |
+| 4 | 32.28 / 31.41 / 32.26 | 31.98 ± 0.50 | 36.409 s | 86.83% | 25.20% |
+
+Cache-hit percentages are token-weighted actual API counters across all three
+runs, including the first request's zero hits. Draft acceptance is total
+accepted draft tokens divided by total drafted tokens. Decode speed uses API
+decode timings; it excludes prefill and request overhead. End-to-end output
+throughput was respectively **26.62, 25.21, and 20.42 tokens/s**.
+MTP=1 improved mean decode speed by **11.2%** over MTP=2; MTP=4 decreased it
+by **26.5%**. More drafting was counterproductive for this conversation.
+
+MTP=1 and MTP=2 produced 823 output tokens and 15,949 cumulative tokens per
+run. MTP=4 produced 743 output tokens and 15,934 cumulative tokens, with
+changed answers. Each depth's assistant responses were identical across its
+three repetitions. Wall times therefore compare different output lengths.
+The PTQ1_0 backend selects MMVQ for up to four columns and MMQ beyond that;
+MTP=4 can verify five rows. Different batched numerical rounding at near-tied
+greedy choices is a plausible explanation for changed text, but kernel
+selection and the exact cause were not profiled in this experiment.
+
+Nine quality probes were run once per depth after the third benchmark,
+including arithmetic, modular arithmetic, and logic with thinking enabled.
+All **27/27** passed. This small check does not establish broad quality
+equivalence, and no additional coding or vision suite was run for this
+depth-only comparison. The existing project default remains MTP=2.
+
+One-second GPU telemetry was retained for every run. Before startup GPU
+utilization was 1–4%, memory usage 1,271–1,350 MiB, and temperature 51–66°C.
+This supports low competing load at startup, not exclusive ownership of the
+GPU. Rotated orders reduce systematic temperature/order bias; the three-run
+sample remains small. An earlier controller preflight stopped before any
+benchmark request and is excluded from these nine successful measurements.
+
+Raw evidence is in `results/blackwell-mtp-20261002-171334/` (ignored). The
+committed [measurement record](data/research/blackwell-mtp-20261002/measurements.json)
+contains per-run counters, actual normalized arguments, quality outcomes,
+and SHA256 bindings to benchmark, process, container, server-log, and GPU
+telemetry evidence. No image defaults or backend binaries were changed.
+
+### Additional control with MTP disabled
+
+At the user's request, three further fresh-container trials followed the
+rotated depth series, using the same immutable image, model, API workload,
+and GPU telemetry. The only argument changes versus MTP=2 were
+`--spec-type none` and `--spec-draft-n-max 0`; the pinned backend's `none`
+implementation does not create a speculative decoder. Saved API timings
+contain no draft counters, consistent with disabled speculation.
+
+Decode rates were **43.03, 42.40, and 41.85 tokens/s**, giving a mean of
+**42.43 ± 0.59 tokens/s** (sample SD). Mean conversation time was **31.935 s**,
+and end-to-end output throughput was **25.78 tokens/s**. Each conversation
+produced 823 output tokens and 15,949 cumulative API tokens. Token-weighted
+prompt cache hits were **87.30%**, including the initial zero-hit request.
+The disabled mode also passed **9/9** quality probes, bringing the complete
+four-mode check to **36/36**.
+
+Relative to disabled MTP, MTP=1 improved decode by **14.0%**, MTP=2 by **2.5%**,
+and MTP=4 decreased it by **24.6%**. MTP=1 shortened the complete conversation
+by only **3.2%**; decode improvement does not translate directly to wall time
+because prefill and request overhead remain. MTP=2's small decode advantage
+coincided with a slightly longer conversation wall time than disabled MTP.
+No general MTP=2 advantage is established by this small workload.
+These three disabled trials were consecutive rather than interleaved with
+the earlier modes, so additional timing/order drift cannot be excluded.
+The same MTP Lean GGUF was retained; unused MTP weights were not removed,
+and this test makes no claim of reducing VRAM usage.
+
+Additional raw evidence is in `results/blackwell-mtp-off-20261002-172323/`.
+The same committed measurement record includes the disabled mode, counters,
+quality outcomes, and evidence checksums. Defaults remain unchanged.
