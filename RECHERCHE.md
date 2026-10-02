@@ -1310,3 +1310,130 @@ and this test makes no claim of reducing VRAM usage.
 Additional raw evidence is in `results/blackwell-mtp-off-20261002-172323/`.
 The same committed measurement record includes the disabled mode, counters,
 quality outcomes, and evidence checksums. Defaults remain unchanged.
+
+## Blackwell MTP with reasoning enabled — October 2, 2026
+
+The missing full-conversation reasoning benchmarks were run once each for
+MTP=1 and MTP=2, using the same native SM120 image and source as the preceding
+depth comparison. Previously completed block-1 runs supply the disabled
+comparison; no redundant disabled trials were run. These four entries are
+single measurements, not means or a contemporaneously interleaved experiment.
+
+The same ten library-planning questions and retained final-answer history
+were used. `/apply-template` and `/v1/chat/completions` both received
+`enable_thinking=true`; chat also explicitly requested the accepted model
+reasoning effort `medium`. Every response was saved in full. All twenty
+responses contained nonempty `reasoning_content`, nonempty final content,
+and `finish_reason=stop`. The two depths produced **identical reasoning and
+final-answer text** on all ten turns. Reasoning was not replayed as assistant
+history, consistent with ordinary chat usage.
+
+The temporary benchmark variant increased the completion cap from 128 to
+4,096, reserved 512 output tokens in adaptive padding, and retained the
+original 228-token estimate for visible-history growth. Natural reasoning
+exceeded that estimate: both runs completed ten exchanges but used **20,352
+cumulative API tokens**, so the approximate 16k ±5% usage target was **not
+met**. The first wrapper exited after saving its complete report because of
+this budget check; this was not a failed request or truncated response. The
+second wrapper explicitly warned about the budget deviation and preserved
+its actual usage. The original project benchmark script was not modified.
+An earlier controller permission preflight failed before any API benchmark
+request and is excluded.
+
+The context remained **16,384** as configured. Thinking runs had a maximum
+input of 1,254 tokens and maximum actual input plus completion of 3,774 tokens.
+The user authorized 32k if necessary, but increasing it was unnecessary.
+GPU-only language/MTP weights and caches, main/draft q8_0, Flash Attention,
+and CPU BF16 vision remained unchanged; saved process arguments bind the
+actual MTP depth to each run.
+
+| MTP | Thinking | Decode tokens/s | Wall seconds | Input tokens | Output tokens incl. thinking | Prompt cache hits | Draft acceptance |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | Off, earlier block 1 | 49.69 | 30.678 | 15,126 | 823 | 87.33% | 60.71% |
+| 2 | Off, earlier block 1 | 42.42 | 32.827 | 15,126 | 823 | 87.37% | 43.12% |
+| 1 | On, medium | 55.78 | 259.639 | 6,600 | 13,752 | 80.45% | 89.73% |
+| 2 | On, medium | 60.98 | 237.738 | 6,600 | 13,752 | 80.45% | 83.50% |
+
+Thinking favors MTP=2 in this single-run comparison: **9.3% faster decoding**
+and **8.4% less conversation time** than MTP=1. Draft acceptance is much
+higher than in the non-thinking conversation. Acceptance percentage alone
+is not throughput: a depth of two can accept more tokens per verification
+step despite a smaller fraction of its drafts being accepted. Neither mode
+is universally faster based on these limited workload-specific observations.
+
+Decode rates count all API decode tokens, including hidden reasoning;
+end-to-end output throughput was 52.97 tokens/s for MTP=1 and 57.85 tokens/s
+for MTP=2. Comparing thinking against disabled thinking changes completion
+limits, adaptive prompt padding, output volume, and response text. It is not
+a controlled comparison of identical token sequences. In particular, longer
+wall time with thinking does not imply a lower token decoding rate.
+
+### VRAM measurement
+
+GPU memory was sampled every second through NVIDIA-SMI, then restricted to
+the benchmark's start/end interval. The device reports **12,227 MiB total**.
+Values below are total GPU usage, including Windows/desktop/other processes;
+idle subtraction is an approximation, not per-container accounting. Short
+transient peaks between samples may be missed.
+
+| MTP | Thinking | Idle before (MiB) | Mean during benchmark (MiB) | Peak (MiB) | Peak minus idle (MiB) |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 1 | Off, earlier | 1,350 | 8,769.1 | 8,773 | 7,423 |
+| 2 | Off, earlier | 1,350 | 8,867.5 | 9,001 | 7,651 |
+| 1 | On | 1,271 | 8,682.2 | 8,688 | 7,417 |
+| 2 | On | 1,276 | 8,900.1 | 8,938 | 7,662 |
+
+MTP=2 with thinking peaked 250 MiB above MTP=1 with thinking. Peaks above
+idle were similar between thinking on/off at the same depth; the different
+absolute baselines do not prove a thinking-related memory saving. Both
+completed without a CUDA allocation error at 16k context. A 32k configuration
+would require a separate capacity test and has not been measured here.
+
+Raw reasoning evidence is in `results/blackwell-mtp-reasoning-20261002-173400/`
+and `results/blackwell-mtp-reasoning-20261002-173904/`. The committed
+[reasoning comparison](data/research/blackwell-mtp-20261002/reasoning-comparison.json)
+retains per-run memory statistics, actual usage, cache/draft counters, and
+SHA256 bindings to reports, full responses, runtime arguments, logs, and GPU
+telemetry. This is a benchmark and response-integrity check, not a new full
+coding/vision quality suite. Container defaults remain unchanged.
+
+### DFlash2 draft depth 4 with reasoning
+
+One additional fresh-container benchmark replaced MTP with `draft-dflash`,
+maximum depth **4**, using the Bonsai-specialized
+`Qwen3.8-27B-DFlash2-r3-Q4_K_M.gguf` from the earlier experiments, SHA256
+`6c11956fde5f52867e3255991b30405ae931d205a35caf3fc87a2c3865aa6530`.
+CUDA PDL was enabled. Actual process arguments confirm `draft-dflash`, depth
+4, the separate draft model, draft tensor override to CUDA0, and the unchanged
+GPU-only target, q8_0 cache, Flash Attention, and CPU-vision settings. MTP was
+not combined with DFlash. The same reasoning benchmark variant, questions,
+completion cap, and adaptive-padding algorithm were used.
+
+| Mode, medium reasoning | Decode tokens/s | Wall seconds | Output tokens incl. thinking | Mean GPU memory (MiB) | Peak GPU memory (MiB) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| MTP=1 | 55.78 | 259.639 | 13,752 | 8,682.2 | 8,688 |
+| MTP=2 | 60.98 | 237.738 | 13,752 | 8,900.1 | 8,938 |
+| DFlash2 depth 4 | 56.13 | 221.643 | 11,782 | 10,464.6 | 10,470 |
+
+DFlash2 was **8.0% slower in decode** than MTP=2 and used **1,532 MiB more
+peak total GPU memory**. Its idle baseline was 1,348 MiB, giving 9,122 MiB
+peak above idle. There were 221 one-second samples within the benchmark
+interval. As before, total VRAM includes other processes and sampling can
+miss shorter peaks. The measured peak leaves 1,757 MiB of the device's
+12,227 MiB capacity; this does not establish capacity at a 32k context.
+
+All ten replies had nonempty reasoning and final content and ended with
+`stop`. No response was truncated. However, DFlash2 produced different text
+and fewer output tokens than the MTP runs: **11,782 output plus 6,316 input
+= 18,098 cumulative tokens**. Its shorter wall time is therefore not evidence
+of faster token decoding. The approximate 16k cumulative budget was exceeded
+and reported explicitly; the context remained 16k. Actual token-weighted
+prompt-cache hits were **79.69%**, and draft acceptance was **75.09%**.
+
+This single-run reasoning workload favors MTP=2 for decode speed and VRAM.
+It does not establish a universal ranking or quality equivalence; no new
+coding/vision suite was run for this additional benchmark. Container defaults
+remain unchanged. Raw evidence is in
+`results/blackwell-dflash2-reasoning-20261002-174558/`; the committed
+[DFlash2 reasoning record](data/research/blackwell-mtp-20261002/dflash2-reasoning.json)
+contains actual counters, response-integrity evidence, and memory statistics.
