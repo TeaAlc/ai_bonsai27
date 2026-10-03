@@ -379,6 +379,8 @@ Run `./simple_request.sh` to send the included [1920×1080 fairyland image](asse
 An explicit argument overrides `BONSAI_BASE_URL`; without an argument, the environment variable remains supported. Remote access requires the server's API to be reachable from your machine; `run.sh` binds to localhost by default.
 ## Text conversation benchmark
 
+Both example clients connect directly, ignoring inherited HTTP(S) proxy variables. Connection errors list failures for every resolved IPv4/IPv6 address. For a remote hostname, the server must publish port 8080 on its LAN interface and the firewall must allow access. The project’s `run.sh` intentionally publishes only on localhost by default; this does not permit access from another PC. A refused IPv4 connection followed by unreachable IPv6 addresses indicates server/network configuration, not an invalid hostname argument.
+
 With a running server, run `simple_text_benchmark.sh`:
 
 ```bash

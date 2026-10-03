@@ -33,11 +33,16 @@ if [[ ! -r "$BONSAI_IMAGE_PATH" ]]; then
 fi
 
 # Disable Python bytecode caches for this request and its imports.
-python3 -B - <<'PY'
+python3 -B - "$script_dir/tests" <<'PY'
+import sys
+sys.dont_write_bytecode = True
+sys.path.insert(0, sys.argv[1])
+from api_http import urlopen
 import base64
 import json
 import os
 import urllib.request
+import urllib.error
 from pathlib import Path
 
 image = base64.b64encode(Path(os.environ['BONSAI_IMAGE_PATH']).read_bytes()).decode('ascii')
@@ -58,7 +63,11 @@ request = urllib.request.Request(
     data=json.dumps(payload).encode('utf-8'),
     headers={'Content-Type': 'application/json'},
 )
-with urllib.request.urlopen(request, timeout=300) as response:
-    result = json.load(response)
+try:
+    with urlopen(request, timeout=300) as response:
+        result = json.load(response)
+except (urllib.error.URLError, OSError, ValueError) as error:
+    print(f'Vision request failed ({os.environ["BONSAI_BASE_URL"]}): {error}', file=sys.stderr)
+    sys.exit(1)
 print(json.dumps(result, ensure_ascii=False, indent=2))
 PY

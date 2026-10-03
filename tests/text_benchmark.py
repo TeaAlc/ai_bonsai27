@@ -11,6 +11,7 @@ import tempfile
 import urllib.error
 import urllib.request
 from pathlib import Path
+from api_http import urlopen
 
 TARGET = 16000
 TURNS = 10
@@ -56,7 +57,7 @@ def call(path, payload=None):
         directory = result_path.with_suffix('') / 'requests'
         directory.mkdir(parents=True, exist_ok=True)
         (directory / f'turn-{len(records) + 1:02d}.json').write_text(json.dumps(payload, indent=2) + '\n')
-    with urllib.request.urlopen(request, timeout=min(600, remaining)) as response:
+    with urlopen(request, timeout=min(600, remaining)) as response:
         answer = json.load(response)
     if path == '/v1/chat/completions':
         directory = result_path.with_suffix('') / 'responses'

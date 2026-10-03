@@ -108,7 +108,8 @@ class BenchmarkTests(unittest.TestCase):
 
     def invoke(self, argument=None, base_suffix=''):
         result_path = Path(self.work.name) / f'report-{len(list(Path(self.work.name).glob("*.json")))}.json'
-        environment = dict(os.environ, BONSAI_BASE_URL=f'http://127.0.0.1:{self.server.server_port}{base_suffix}',
+        environment = dict(os.environ, http_proxy='http://127.0.0.1:1', HTTP_PROXY='http://127.0.0.1:1',
+                           no_proxy='', NO_PROXY='', BONSAI_BASE_URL=f'http://127.0.0.1:{self.server.server_port}{base_suffix}',
                            BONSAI_BENCHMARK_RESULT=str(result_path))
         args = ['bash', str(PROJECT / 'simple_text_benchmark.sh')]
         if argument is not None:
