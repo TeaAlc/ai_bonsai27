@@ -277,21 +277,23 @@ def main():
             })
             print(f'\nMessage {2 * turn - 1}/20 (user): {question}', flush=True)
             print(f'Message {2 * turn}/20 (assistant): {assistant}', flush=True)
-            qualifier = 'retokenized estimate' if thinking['reasoning_tokens_are_estimated'] else 'API counter'
-            print(f"Thinking tokens: {thinking['reasoning_tokens']} ({qualifier if thinking['reasoning_tokens'] is not None else 'unknown'}).", flush=True)
-            print(f"Usage: {usage['prompt_tokens']} input + {usage['completion_tokens']} output; "
-                  f'{seconds:.2f}s.', flush=True)
             reasoning_count = thinking['reasoning_tokens']
-            reasoning_display = (f'{reasoning_count} ({qualifier})'
-                                 if reasoning_count is not None else 'unknown')
-            output_metrics = (f" Reasoning tokens: {reasoning_display}; "
-                              f"output tokens: {usage['completion_tokens']} (including reasoning).")
+            reasoning_display = 'unknown' if reasoning_count is None else str(reasoning_count)
+            if thinking['reasoning_tokens_are_estimated']:
+                reasoning_display += ' (est.)'
             if cache['cached_prompt_tokens'] is None:
-                print('Prompt cache: counters unavailable; hit rate unknown.' + output_metrics, flush=True)
+                cache_display = 'unknown; hit rate unknown'
             else:
-                print(f"Prompt cache: {cache['cached_prompt_tokens']} cached + "
-                      f"{cache['processed_prompt_tokens']} processed input tokens; "
-                      f"hit rate {cache['cache_hit_rate_percent']:.2f}%." + output_metrics, flush=True)
+                cache_display = (f"{cache['cached_prompt_tokens']} cached + "
+                                 f"{cache['processed_prompt_tokens']} processed; "
+                                 f"hit rate {cache['cache_hit_rate_percent']:.2f}%")
+            metrics = (f"Tokens: {usage['prompt_tokens']} in | {usage['completion_tokens']} out "
+                       f"(incl. {reasoning_display} reasoning) | "
+                       f"Cache: {cache_display} | {seconds:.2f}s")
+            # Highlight terminal output; keep redirected logs free of ANSI escapes.
+            if sys.stdout.isatty() and 'NO_COLOR' not in os.environ:
+                metrics = f'\033[1;36m{metrics}\033[0m'
+            print(metrics, flush=True)
         run_status = 'completed'
     except BaseException as error:
         run_status = 'cancelled' if isinstance(error, KeyboardInterrupt) else 'failed'
