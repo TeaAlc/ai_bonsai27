@@ -295,7 +295,7 @@ def main():
                                  f"{cache['processed_prompt_tokens']} processed; "
                                  f"hit rate {cache['cache_hit_rate_percent']:.2f}%")
             metrics = (f"Tokens: {usage['prompt_tokens']} in | {usage['completion_tokens']} out "
-                       f"(incl. {reasoning_display} reasoning) | "
+                       f"(+{reasoning_display} reasoning) | "
                        f"Cache: {cache_display} | {seconds:.2f}s")
             # Highlight terminal output; keep redirected logs free of ANSI escapes.
             if use_color:
