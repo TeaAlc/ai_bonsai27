@@ -1,9 +1,50 @@
 # Bonsai 2 research and measurement index
 
-## Long prompt batch comparison — October 3, 2026
+## Corrected 30,000-token batch comparison — October 3, 2026
 
-The new `longcontext.msg` contains exactly 30,000 characters and produced
-6,547 API prompt tokens. Six fresh containers used the same image 1.5.0,
+`longcontext.msg` now contains exactly 30,000 tokens verified with the actual
+backend `/tokenize` endpoint, using `add_special=false` and `parse_special=false`.
+The 135,577-character ledger was calibrated through tokenization/detokenization;
+its medium-thinking chat template yields 30,009 API prompt tokens. These counts
+were rechecked in each of six fresh measurement containers.
+
+| Setting | Prompt seconds, three runs | Mean ± sample SD | Mean prompt tokens/s | Sampled global peak VRAM |
+|---|---|---|---|---|
+| Defaults: batch 2048 / microbatch 512 | 54.965 / 54.468 / 56.193 | 55.209 ± 0.888 s | 543.65 | 10,715 MiB |
+| Batch 4096 / microbatch 2048 | 59.268 / 60.129 / 57.163 | 58.853 ± 1.526 s | 510.13 | 11,333 MiB |
+
+The larger-batch variant took 6.60% longer on average and used 618 MiB more
+sampled peak global VRAM. Three baseline runs preceded three candidate runs;
+they were not interleaved. This result concerns one full 30,000-token prompt
+on this WSL2 RTX 5070 Ti Laptop host and does not establish general performance.
+
+All six runs used the same image 1.5.0, native Blackwell executable, model hashes,
+and request payload, retaining 32,000 context, MTP=2, medium thinking, CPU BF16
+vision, q8_0 caches, Flash Attention and `GGML_CUDA_BATCH_INVARIANT=1`. The
+completion cap remained 4096, while the prompt left 1,991 context tokens; all
+responses stopped normally without truncation or overflow. Every run processed
+all 30,009 prompt tokens with zero cached input. The three ledger risks and
+plausible mitigations appeared in every final answer. This scoped check does
+not replace general functional QA.
+
+Prompt times come from API `timings.prompt_ms`, corroborated by server logs.
+HTTP wall times including generation were 69.40–77.16 seconds. Concurrent global
+GPU telemetry targeted 200 ms plus query duration (per-run median 243–254 ms).
+It includes other host GPU memory and may miss short-lived peaks.
+
+The [corrected retained record](data/research/longcontext-30k-tokens-20261003.json)
+contains image/executable/model identities, tokenizer verification, arguments,
+all six timings, completion checks and per-run evidence checksums. Raw data,
+generation code and frozen benchmark driver are stored locally under
+`results/longcontext-30k-tokens-20261003T170547Z/`. The earlier character-based
+measurement below remains historical; runtime defaults are unchanged.
+
+## Earlier 30,000-character batch comparison — October 3, 2026
+
+The earlier prompt snapshot contained exactly 30,000 characters and produced
+6,547 API prompt tokens. That snapshot remains in the raw evidence directory;
+`longcontext.msg` has since been corrected to 30,000 tokenizer tokens. Six fresh
+containers used the same image 1.5.0,
 native Blackwell executable, model hashes and request payload, with 32,000
 context, MTP=2, medium thinking, 4096 completion tokens maximum, CPU BF16
 vision and batch invariance enabled. All six returned nonempty reasoning and

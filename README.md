@@ -468,21 +468,34 @@ and `completed`, `failed`, `cancelled`, or `timed-out` status. Failed inference 
 partial report. Start the server separately and wait for `/health` to return
 HTTP 200 before benchmarking.
 
-`longcontext.msg` is a 30,000-character English ledger prompt for isolated
-prompt-processing measurements. On this WSL2 RTX 5070 Ti Laptop host, three
-fresh-container runs with image 1.5.0 processed 6,547 prompt tokens each in
-14.85 ± 0.20 seconds with backend defaults (batch 2048, microbatch 512).
-Three further runs adding `./run.sh --batch-size 4096 --ubatch-size 2048`
-took 14.83 ± 0.36 seconds (sample SD): no material improvement in this test.
-Sampled global VRAM peaks rose from 10,612 to 11,211 MiB. All runs retained
-32,000 context, MTP=2, medium thinking, a 4096-token completion cap, and
-`GGML_CUDA_BATCH_INVARIANT=1`; every request had zero cached input tokens.
+`longcontext.msg` contains exactly 30,000 tokens according to the tested
+backend's `/tokenize` endpoint (`add_special=false`, `parse_special=false`),
+not 30,000 characters. It is 135,577 characters; the medium-thinking chat
+template produces 30,009 API prompt tokens. Each fresh measurement container
+verified both counts before inference.
+
+On this WSL2 RTX 5070 Ti Laptop host, three fresh-container runs using image
+1.5.0 processed the full prompt in 55.21 ± 0.89 seconds with backend defaults
+(batch 2048, microbatch 512). Three further runs adding
+`./run.sh --batch-size 4096 --ubatch-size 2048` took 58.85 ± 1.53 seconds
+(sample SD): 6.60% longer mean prompt-processing time in this test.
+Sampled global VRAM peaks rose from 10,715 to 11,333 MiB (+618 MiB).
+All runs retained 32,000 context, MTP=2, medium thinking, a 4096-token completion
+cap, CPU BF16 vision and `GGML_CUDA_BATCH_INVARIANT=1`; each had zero cached
+input tokens. Only 1,991 context tokens remained for completion, but all six
+answers stopped normally without truncation or context overflow.
+
 Times are server prompt-processing timings, excluding answer generation.
-See the [measurement record](data/research/longcontext-batch-20261003.json).
-Local raw requests, responses, container identities, checksums, server logs,
-the benchmark driver, and concurrent GPU samples are under
-`results/longcontext-20261003T163345Z/`. GPU sampling targeted 200 ms plus query
-overhead and includes other host GPU memory; short peaks may be missed.
+See the [corrected measurement record](data/research/longcontext-30k-tokens-20261003.json).
+Local raw requests, responses, tokenizer outputs, container identities,
+checksums, server logs, the frozen benchmark driver, and concurrent GPU samples
+are under `results/longcontext-30k-tokens-20261003T170547Z/`.
+GPU sampling targeted 200 ms plus query overhead and includes other host GPU
+memory; short peaks may be missed. Baseline runs preceded candidate runs,
+so this is a scoped single-prompt comparison, not a general performance claim.
+The [earlier 30,000-character measurement](data/research/longcontext-batch-20261003.json)
+is retained as historical evidence; its prompt snapshot is in the earlier
+raw-results directory, rather than the current `longcontext.msg`.
 
 ## Performance and validation
 
