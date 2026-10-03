@@ -14,7 +14,8 @@ Bonsai-compatible llama-server in rootless Podman. Preserve these defaults:
 - All GPU architectures default to MTP `draft-mtp` with `n_max=2`; Flash Attention is enabled; main and draft
   K/V cache types are `q8_0`.
 - Context defaults to exactly 32,000 tokens; validate 512–262144 before Bash arithmetic. The API model ID is `bonsai2-27b`, and the
-  host API is published only on localhost, port 8080 by default.
+  host API is published on all IPv4 interfaces (0.0.0.0), port 8080 by default.
+  BONSAI_BIND_ADDRESS overrides the host IPv4 bind address; 127.0.0.1 is local-only.
 - Do not claim stock Podman Desktop Hyper-V supports NVIDIA CUDA. A separately
   GPU-provisioned Hyper-V Linux guest is conditional on working guest drivers,
   NVIDIA CDI, and actual CUDA checks; it has not been tested here.
@@ -125,7 +126,7 @@ short functions, commented option groups, and Bash arrays for argument lists.
 Quote variables and preserve the boundaries of forwarded arguments.
 
 Project-specific environment variables use the `BONSAI_` prefix:
-`BONSAI_CTX_SIZE`, `BONSAI_REASONING_EFFORT`, `BONSAI_MODEL_DIR`, `BONSAI_PORT`, and
+`BONSAI_CTX_SIZE`, `BONSAI_REASONING_EFFORT`, `BONSAI_MODEL_DIR`, `BONSAI_PORT`, `BONSAI_BIND_ADDRESS`, and
 `BONSAI_BASE_URL`, `BONSAI_IMAGE`, `BONSAI_GHCR_USER`, and
 `BONSAI_PUSH_ENGINE`. `BONSAI_BENCHMARK_RESULT` selects the text benchmark JSON
 report path. Container settings also include `BONSAI_GPU_BACKEND`,

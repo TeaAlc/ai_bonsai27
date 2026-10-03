@@ -11,7 +11,8 @@ Defaults: **32,000-token context, MTP=2, Flash Attention, q8_0 main/draft KV
 caches**, and API model ID **`bonsai2-27b`**. MTP=2 is the standard on
 **Ampere, Ada, and Blackwell**, including both published and native backends.
 Performance benchmarks always enable thinking with **`medium`** reasoning.
-The host API binds to localhost.
+The host API binds to all IPv4 interfaces (`0.0.0.0`) by default.
+Set `BONSAI_BIND_ADDRESS=127.0.0.1` for local-only access.
 
 - [Quick start](#quick-start)
 - [GPU requirements and host setup](#gpu-requirements-and-host-setup)
@@ -61,6 +62,7 @@ podman rm bonsai2-27b
 BONSAI_IMAGE=ghcr.io/teaalc/ai_bonsai27:latest \
 BONSAI_MODEL_DIR="$HOME/bonsai-models" \
 BONSAI_CTX_SIZE=16384 BONSAI_PORT=8081 ./run.sh
+BONSAI_BIND_ADDRESS=127.0.0.1 ./run.sh  # Explicit local-only access
 ```
 
 ## GPU requirements and host setup
@@ -165,7 +167,8 @@ These are all environment variables read by `run.sh`:
 | `BONSAI_MODEL_DIR` | Caller’s current directory | Host directory mounted read/write at `/models`; created if missing |
 | `BONSAI_CTX_SIZE` | `32000` | Context window in tokens; integer 512–262144 (VRAM permitting) |
 | `BONSAI_REASONING_EFFORT` | `medium` | Reasoning effort: `low`, `medium`, or `xhigh` |
-| `BONSAI_PORT` | `8080` | Available host TCP port, 1–65535; bound to localhost |
+| `BONSAI_PORT` | `8080` | Available host TCP port, 1–65535 |
+| `BONSAI_BIND_ADDRESS` | `0.0.0.0` | Host IPv4 bind address: all interfaces by default; `127.0.0.1` for local-only access, or a specific host IPv4 address |
 | `BONSAI_IMAGE` | `localhost/bonsai2-27b:latest` | Preferred local image; if missing, prompts for a remote reference (default `ghcr.io/teaalc/ai_bonsai27:latest`) |
 | `BONSAI_GPU_BACKEND` | Automatic | Empty, `blackwell` (12.0), or `ampere-ada` (8.6/8.9); override must match CUDA device 0 |
 | `BONSAI_CONTAINER_NAME` | `bonsai2-27b` | Container name; select a unique name for independent instances |
@@ -189,7 +192,7 @@ Optional positional arguments passed to `run.sh` are forwarded to `llama-server`
 
 The startup table's context, reasoning, backend, and download-limit settings are
 passed into the container by `run.sh`; model directory, image, port, and container
-name configure the host engine. In a Desktop dialog, mount `/models`, publish the localhost port,
+name configure the host engine. In a Desktop dialog, mount `/models`, publish port 8080 on the desired host interface,
 and enable GPU devices separately. Keep the image entrypoint. Missing files at
 custom container model paths receive the same pinned artifacts, not models
 selected by filename. CUDA device 0 is checked through the bundled driver probe,
@@ -376,10 +379,10 @@ Run `./simple_request.sh` to send the included [1920×1080 fairyland image](asse
 ./simple_request.sh notebook:8081      # notebook:8081
 ```
 
-An explicit argument overrides `BONSAI_BASE_URL`; without an argument, the environment variable remains supported. Remote access requires the server's API to be reachable from your machine; `run.sh` binds to localhost by default.
+An explicit argument overrides `BONSAI_BASE_URL`; without an argument, the environment variable remains supported. Remote access requires the server's API to be reachable from your machine; `run.sh` publishes on all IPv4 interfaces by default; `BONSAI_BIND_ADDRESS=127.0.0.1` restricts access to the host.
 ## Text conversation benchmark
 
-Both example clients connect directly, ignoring inherited HTTP(S) proxy variables. Connection errors list failures for every resolved IPv4/IPv6 address. For a remote hostname, the server must publish port 8080 on its LAN interface and the firewall must allow access. The project’s `run.sh` intentionally publishes only on localhost by default; this does not permit access from another PC. A refused IPv4 connection followed by unreachable IPv6 addresses indicates server/network configuration, not an invalid hostname argument.
+Both example clients connect directly, ignoring inherited HTTP(S) proxy variables. Connection errors list failures for every resolved IPv4/IPv6 address. For a remote hostname, the server must publish port 8080 on its LAN interface and the firewall must allow access. The project’s `run.sh` publishes on `0.0.0.0` by default. Use the server’s LAN hostname/address in clients, not `0.0.0.0`. A refused IPv4 connection followed by unreachable IPv6 addresses indicates server/network configuration, not an invalid hostname argument.
 
 With a running server, run `simple_text_benchmark.sh`:
 

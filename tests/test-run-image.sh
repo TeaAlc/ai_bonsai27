@@ -21,7 +21,7 @@ MOCK
 chmod +x "$work/bin/podman"
 export PATH="$work/bin:$PATH" BONSAI_MODEL_DIR="$work/models"
 export RUN_TEST_TRACE="$work/trace"
-unset BONSAI_IMAGE
+unset BONSAI_IMAGE BONSAI_BIND_ADDRESS BONSAI_PORT
 
 run_case() {
     local expected=$1 input=$2
@@ -38,6 +38,21 @@ run_case 0 ''
 ! rg -q 'Remote image to download' "$work/err"
 rg -q '^--pull=never$' "$RUN_TEST_TRACE"
 rg -q '^--log-verbose$' "$RUN_TEST_TRACE"
+
+# Default LAN access, explicit local-only binding, and a selected interface.
+rg -q '^0\.0\.0\.0:8080:8080$' "$RUN_TEST_TRACE"
+export BONSAI_BIND_ADDRESS=127.0.0.1 BONSAI_PORT=8081
+run_case 0 ''
+rg -q '^127\.0\.0\.1:8081:8080$' "$RUN_TEST_TRACE"
+export BONSAI_BIND_ADDRESS=192.168.178.35
+run_case 0 ''
+rg -q '^192\.168\.178\.35:8081:8080$' "$RUN_TEST_TRACE"
+for invalid in 'host' '0.0.0.0:8080' '256.1.1.1' '1.2.3' '1.2.3.4 extra'; do
+    export BONSAI_BIND_ADDRESS="$invalid"
+    run_case 2 ''
+    ! rg -q '^run$|^pull$' "$RUN_TEST_TRACE"
+done
+unset BONSAI_BIND_ADDRESS BONSAI_PORT
 
 # Enter accepts GHCR, while a supplied address selects another registry/tag.
 export RUN_TEST_EXISTS=1

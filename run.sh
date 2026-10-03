@@ -22,6 +22,17 @@ image=${BONSAI_IMAGE:-localhost/bonsai2-27b:latest}
 source data/gpu/settings.sh
 validate_bonsai_settings
 validate_decimal BONSAI_PORT "${BONSAI_PORT:-8080}" 1 65535
+# Publish on all IPv4 interfaces by default. Set 127.0.0.1 for local-only
+# access, or a specific host IPv4 address to select one network interface.
+bind_address=${BONSAI_BIND_ADDRESS:-0.0.0.0}
+if [[ ! "$bind_address" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+    bonsai_log ERROR "BONSAI_BIND_ADDRESS must be an IPv4 address."
+    exit 2
+fi
+IFS=. read -r -a address_octets <<< "$bind_address"
+for octet in "${address_octets[@]}"; do
+    validate_decimal BONSAI_BIND_ADDRESS "$octet" 0 255
+done
 ctx_size=$((10#$ctx_size))
 port=$((10#${BONSAI_PORT:-8080}))
 
@@ -64,15 +75,15 @@ else
 fi
 # Detection runs inside the container against its actual CUDA device 0.
 # An explicit override is checked against that device before any downloads.
-# Publish only on localhost and mount the persistent model cache. Arguments after
+# Publish on the configured host address and mount the persistent cache. Arguments after
 # the image name are forwarded to the container's llama-server entrypoint.
-bonsai_step container-create "Creating ${BONSAI_CONTAINER_NAME:-bonsai2-27b}: image=$image; cache=$model_dir; endpoint=http://127.0.0.1:$port; context=$ctx_size; reasoning=$reasoning_effort."
+bonsai_step container-create "Creating ${BONSAI_CONTAINER_NAME:-bonsai2-27b}: image=$image; cache=$model_dir; endpoint=http://$bind_address:$port; context=$ctx_size; reasoning=$reasoning_effort."
 podman run \
     -d \
     --pull=never \
     --name "${BONSAI_CONTAINER_NAME:-bonsai2-27b}" \
     "${gpu_args[@]}" \
-    -p "127.0.0.1:$port:8080" \
+    -p "$bind_address:$port:8080" \
     -v "$model_dir:/models:rw" \
     -e "BONSAI_CTX_SIZE=$ctx_size" \
     -e "BONSAI_GPU_BACKEND=${BONSAI_GPU_BACKEND:-}" \
