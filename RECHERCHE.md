@@ -1,5 +1,35 @@
 # Bonsai 2 research and measurement index
 
+## Long prompt batch comparison — October 3, 2026
+
+The new `longcontext.msg` contains exactly 30,000 characters and produced
+6,547 API prompt tokens. Six fresh containers used the same image 1.5.0,
+native Blackwell executable, model hashes and request payload, with 32,000
+context, MTP=2, medium thinking, 4096 completion tokens maximum, CPU BF16
+vision and batch invariance enabled. All six returned nonempty reasoning and
+answers with `finish_reason=stop`; no input tokens were cached.
+
+| Setting | Prompt seconds, three runs | Mean ± sample SD | Mean prompt tokens/s | Sampled global peak VRAM |
+|---|---|---|---|---|
+| Defaults: batch 2048 / microbatch 512 | 14.862 / 14.639 / 15.048 | 14.850 ± 0.205 s | 440.94 | 10,612 MiB |
+| Batch 4096 / microbatch 2048 | 14.761 / 14.502 / 15.219 | 14.827 ± 0.363 s | 441.72 | 11,211 MiB |
+
+The observed mean processing-time reduction was 0.15%, smaller than run
+variation, with 599 MiB more peak global VRAM. This single prompt provides no
+material evidence of a speed gain. Baseline runs preceded candidate runs;
+they were not interleaved. These are new measurements from the WSL2 RTX
+5070 Ti Laptop host, not other platforms or a 30,000-token context test.
+Prompt times come from API `timings.prompt_ms`, corroborated by server logs;
+HTTP wall times including generation were 29.64–30.51 seconds. Global GPU
+telemetry ran concurrently, targeting 200 ms plus query duration, and does
+not attribute all memory to the container or guarantee capture of brief peaks.
+
+The [retained record](data/research/longcontext-batch-20261003.json) includes
+image, executable and model identities, arguments, timings and per-run
+evidence checksums. Raw data and the frozen benchmark driver are stored
+locally under `results/longcontext-20261003T163345Z/`. This scoped measurement
+does not replace the general functional QA suite. Runtime defaults are unchanged.
+
 Current runtime policy: GPU-only language model/MTP/cache, CPU BF16 vision,
 Flash Attention, q8_0 main/draft caches, MTP depth 2, exactly 32,000 context
 tokens, and medium reasoning for benchmarks. See [README.md](README.md) for
