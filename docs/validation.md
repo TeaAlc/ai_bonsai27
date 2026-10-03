@@ -140,3 +140,11 @@ cleanup stops the worker and monitor, removes only the owned container, and
 finalizes a cancelled/partial index without replacing the primary exit status.
 Direct-parent signal fixtures and a real container cancellation check cover the
 nested-timeout escape discovered during cleanup acceptance.
+
+## Planned PTQ1 optimization qualification
+
+The [PTQ1 optimization plan](ptq1-optimization-plan.md) extends the existing smoke
+QA with exact differential comparisons, short/long analysis, multi-turn tool
+calling, repository coding agents, sanitizers and memory/progress stress. Those
+new campaign gates are planned, not already implemented or passed. Blackwell is
+the only measurement target; Ampere/Ada use native compile and theoretical review.

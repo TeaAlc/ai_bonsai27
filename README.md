@@ -701,3 +701,9 @@ project configuration uses `BONSAI_`. Keep local test evidence in `results/`,
 temporary work in `/tmp/bonsai27/`, and downloaded models/binaries out of Git.
 Run Python with `python3 -B`; do not create bytecode caches. Completed changes
 use English Conventional Commits ending with `(by Codex)`.
+
+The [PTQ1 optimization plan](docs/ptq1-optimization-plan.md) specifies exact
+quality-preservation gates, short/long analysis/tool/coding coverage and
+memory/progress qualification. Runtime measurements are limited to Blackwell;
+Ampere/Ada changes require native compilation and explicit theoretical review.
+This is a planned campaign, not a completed optimization or measured speedup.
