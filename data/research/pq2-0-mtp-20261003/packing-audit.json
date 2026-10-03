@@ -1,0 +1,7674 @@
+{
+  "scope": "All 402 PQ2 main tensor code counts; first 128 groups per tensor decoded against PTQ using pinned codecs",
+  "models": [
+    {
+      "file": "Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf",
+      "bytes": 6297658848,
+      "sha256": "1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685",
+      "packing_type": 143
+    },
+    {
+      "file": "Bonsai-2-27B-PQ2_0-MTP.gguf",
+      "bytes": 7557178656,
+      "sha256": "78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847",
+      "packing_type": 142
+    }
+  ],
+  "pq2_codes": [
+    9042815129,
+    8802946533,
+    9023998338,
+    0
+  ],
+  "pq2_code3_percent": 0.0,
+  "pq2_code3_nonzero_scale": 0,
+  "per_tensor": [
+    {
+      "name": "output.weight",
+      "weights": 1271398400,
+      "codes": [
+        426728686,
+        416900991,
+        427768723,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "token_embd.weight",
+      "weights": 1271398400,
+      "codes": [
+        435905253,
+        417024640,
+        418468507,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.0.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10569191,
+        10310834,
+        10577255,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.0.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17627236,
+        17187385,
+        17614179,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.0.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29957402,
+        29214453,
+        29957105,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.0.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29934523,
+        29210649,
+        29983788,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.0.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29962005,
+        29207868,
+        29959087,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.0.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10574894,
+        10309421,
+        10572965,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.1.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10560856,
+        10311654,
+        10584770,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.1.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17620782,
+        17186293,
+        17621725,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.1.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29960945,
+        29216040,
+        29951975,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.1.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29994774,
+        29212540,
+        29921646,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.1.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29951892,
+        29210196,
+        29966872,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.1.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10572661,
+        10310210,
+        10574409,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.2.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10576170,
+        10312526,
+        10568584,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.2.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17619075,
+        17187961,
+        17621764,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.2.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29958328,
+        29216993,
+        29953639,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.2.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29986585,
+        29214590,
+        29927785,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.2.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29959283,
+        29210754,
+        29958923,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.2.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10568297,
+        10310616,
+        10578367,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.3.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1763099,
+        1718613,
+        1761168,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.3.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10574927,
+        10310405,
+        10571948,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.3.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21151282,
+        20630343,
+        21132935,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.3.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1763048,
+        1718063,
+        1761769,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.3.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29962368,
+        29218534,
+        29948058,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.3.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29953625,
+        29216971,
+        29958364,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.3.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29956913,
+        29214845,
+        29957202,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.4.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10582443,
+        10313316,
+        10561521,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.4.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17622496,
+        17187892,
+        17618412,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.4.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29961534,
+        29216995,
+        29950431,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.4.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29962367,
+        29216553,
+        29950040,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.4.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29952281,
+        29214815,
+        29961864,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.4.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10571873,
+        10311560,
+        10573847,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.5.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10568617,
+        10313582,
+        10575081,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.5.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17619435,
+        17188427,
+        17620938,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.5.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29965781,
+        29216959,
+        29946220,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.5.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29978559,
+        29217743,
+        29932658,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.5.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29964007,
+        29214628,
+        29950325,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.5.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10575130,
+        10311258,
+        10570892,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.6.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10566550,
+        10312476,
+        10578254,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.6.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17623051,
+        17188275,
+        17617474,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.6.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29964551,
+        29215221,
+        29949188,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.6.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30025142,
+        29215202,
+        29888616,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.6.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29961279,
+        29212182,
+        29955499,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.6.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10575842,
+        10310677,
+        10570761,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.7.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1761412,
+        1718311,
+        1763157,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.7.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10575326,
+        10309420,
+        10572534,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.7.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21155572,
+        20626980,
+        21132008,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.7.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1761434,
+        1718158,
+        1763288,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.7.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29958439,
+        29216656,
+        29953865,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.7.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29977144,
+        29216969,
+        29934847,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.7.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29954818,
+        29213722,
+        29960420,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.8.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10579345,
+        10312741,
+        10565194,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.8.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17620792,
+        17187981,
+        17620027,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.8.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29960311,
+        29216438,
+        29952211,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.8.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29981124,
+        29217337,
+        29930499,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.8.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29952489,
+        29213776,
+        29962695,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.8.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10576827,
+        10310883,
+        10569570,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.9.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10575672,
+        10312834,
+        10568774,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.9.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17616864,
+        17187724,
+        17624212,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.9.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29958054,
+        29216213,
+        29954693,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.9.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29949286,
+        29216320,
+        29963354,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.9.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29952493,
+        29213976,
+        29962491,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.9.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10574939,
+        10310751,
+        10571590,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.10.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10585262,
+        10312348,
+        10559670,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.10.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17620016,
+        17187841,
+        17620943,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.10.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29959462,
+        29215667,
+        29953831,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.10.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29954582,
+        29214464,
+        29959914,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.10.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29957376,
+        29212586,
+        29958998,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.10.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10576421,
+        10309838,
+        10571021,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.11.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1761921,
+        1718140,
+        1762819,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.11.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10575168,
+        10308383,
+        10573729,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.11.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21157140,
+        20624110,
+        21133310,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.11.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1761343,
+        1718094,
+        1763443,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.11.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29954890,
+        29216352,
+        29957718,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.11.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29940152,
+        29215198,
+        29973610,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.11.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29965198,
+        29213439,
+        29950323,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.12.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10574489,
+        10311832,
+        10570959,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.12.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17621541,
+        17187763,
+        17619496,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.12.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29961872,
+        29215726,
+        29951362,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.12.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29953649,
+        29214394,
+        29960917,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.12.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29959755,
+        29212440,
+        29956765,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.12.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10571016,
+        10310162,
+        10576102,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.13.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10580058,
+        10311451,
+        10565771,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.13.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17623165,
+        17186726,
+        17618909,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.13.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29958704,
+        29215021,
+        29955235,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.13.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29953164,
+        29213308,
+        29962488,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.13.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29959064,
+        29211530,
+        29958366,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.13.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10571912,
+        10309155,
+        10576213,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.14.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10571642,
+        10311263,
+        10574375,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.14.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17621601,
+        17187880,
+        17619319,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.14.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29947283,
+        29214509,
+        29967168,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.14.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29959747,
+        29211819,
+        29957394,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.14.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29959241,
+        29211023,
+        29958696,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.14.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10572774,
+        10309266,
+        10575240,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.15.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1762674,
+        1717538,
+        1762668,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.15.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10574879,
+        10306024,
+        10576377,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.15.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21143362,
+        20617304,
+        21153894,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.15.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1762783,
+        1718292,
+        1761805,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.15.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29953457,
+        29213739,
+        29961764,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.15.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29965575,
+        29211417,
+        29951968,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.15.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29957924,
+        29210145,
+        29960891,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.16.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10579448,
+        10311522,
+        10566310,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.16.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17620132,
+        17187096,
+        17621572,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.16.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29966364,
+        29214596,
+        29948000,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.16.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29977324,
+        29211744,
+        29939892,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.16.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29955834,
+        29210859,
+        29962267,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.16.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10575864,
+        10309082,
+        10572334,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.17.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10579811,
+        10311006,
+        10566463,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.17.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17622381,
+        17185745,
+        17620674,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.17.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29961180,
+        29213497,
+        29954283,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.17.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29975153,
+        29210939,
+        29942868,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.17.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29959620,
+        29209677,
+        29959663,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.17.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10574088,
+        10308185,
+        10575007,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.18.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10582049,
+        10310744,
+        10564487,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.18.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17613318,
+        17187271,
+        17628211,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.18.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29953796,
+        29212085,
+        29963079,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.18.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29976703,
+        29210028,
+        29942229,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.18.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29960749,
+        29208452,
+        29959759,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.18.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10573658,
+        10309669,
+        10573953,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.19.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1761678,
+        1717344,
+        1763858,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.19.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10579691,
+        10305414,
+        10572175,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.19.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21165380,
+        20617134,
+        21132046,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.19.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1761540,
+        1718271,
+        1763069,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.19.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29960826,
+        29212369,
+        29955765,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.19.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29975972,
+        29210303,
+        29942685,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.19.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29958466,
+        29207677,
+        29962817,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.20.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10591241,
+        10311457,
+        10554582,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.20.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17617978,
+        17186544,
+        17624278,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.20.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29962405,
+        29211343,
+        29955212,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.20.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29969480,
+        29211626,
+        29947854,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.20.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29956674,
+        29208166,
+        29964120,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.20.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10574210,
+        10309292,
+        10573778,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.21.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10584931,
+        10312150,
+        10560199,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.21.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17619184,
+        17187351,
+        17622265,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.21.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29955975,
+        29210747,
+        29962238,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.21.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29985157,
+        29211059,
+        29932744,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.21.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29961276,
+        29208111,
+        29959573,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.21.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10570338,
+        10309419,
+        10577523,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.22.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10587012,
+        10311222,
+        10559046,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.22.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17621015,
+        17187092,
+        17620693,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.22.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29959170,
+        29210496,
+        29959294,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.22.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29985532,
+        29211149,
+        29932279,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.22.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29963662,
+        29207783,
+        29957515,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.22.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10573756,
+        10308637,
+        10574887,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.23.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1761621,
+        1717260,
+        1763999,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.23.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10576855,
+        10304659,
+        10575766,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.23.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21142977,
+        20613735,
+        21157848,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.23.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1762688,
+        1718088,
+        1762104,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.23.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29965251,
+        29208644,
+        29955065,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.23.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29961522,
+        29210174,
+        29957264,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.23.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29959321,
+        29207036,
+        29962603,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.24.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10586472,
+        10308695,
+        10562113,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.24.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17626161,
+        17184431,
+        17618208,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.24.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29969105,
+        29206949,
+        29952906,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.24.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29984991,
+        29210109,
+        29933860,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.24.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29958363,
+        29208285,
+        29962312,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.24.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10577853,
+        10307562,
+        10571865,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.25.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10578933,
+        10307426,
+        10570921,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.25.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17618417,
+        17182758,
+        17627625,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.25.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29969580,
+        29203356,
+        29956024,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.25.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29962931,
+        29205941,
+        29960088,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.25.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29959599,
+        29207123,
+        29962238,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.25.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10573420,
+        10305867,
+        10577993,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.26.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10576919,
+        10305326,
+        10575035,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.26.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17622846,
+        17181080,
+        17624874,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.26.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29965054,
+        29202044,
+        29961862,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.26.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29977034,
+        29201515,
+        29950411,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.26.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29965815,
+        29206034,
+        29957111,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.26.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10579293,
+        10304505,
+        10573482,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.27.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1764107,
+        1716084,
+        1762689,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.27.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10580416,
+        10298698,
+        10578166,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.27.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21145061,
+        20594338,
+        21175161,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.27.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1763294,
+        1717351,
+        1762235,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.27.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29970098,
+        29196071,
+        29962791,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.27.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29965706,
+        29193323,
+        29969931,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.27.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29967235,
+        29202159,
+        29959566,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.28.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10577329,
+        10300693,
+        10579258,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.28.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17623973,
+        17178032,
+        17626795,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.28.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29961540,
+        29192597,
+        29974823,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.28.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29959235,
+        29188490,
+        29981235,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.28.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29962145,
+        29199418,
+        29967397,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.28.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10577380,
+        10301777,
+        10578123,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.29.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10583044,
+        10299644,
+        10574592,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.29.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17631418,
+        17173490,
+        17623892,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.29.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29972108,
+        29189360,
+        29967492,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.29.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29964394,
+        29183084,
+        29981482,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.29.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29973790,
+        29197629,
+        29957541,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.29.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10580202,
+        10299677,
+        10577401,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.30.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10587725,
+        10298083,
+        10571472,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.30.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17628519,
+        17176039,
+        17624242,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.30.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29963620,
+        29185733,
+        29979607,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.30.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29977270,
+        29178978,
+        29972712,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.30.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29965239,
+        29196753,
+        29966968,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.30.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10578925,
+        10298824,
+        10579531,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.31.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1764307,
+        1714645,
+        1763928,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.31.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10582997,
+        10292623,
+        10581660,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.31.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21175175,
+        20577865,
+        21161520,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.31.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1763624,
+        1715662,
+        1763594,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.31.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29971951,
+        29179543,
+        29977466,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.31.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30008885,
+        29166261,
+        29953814,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.31.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29972424,
+        29190562,
+        29965974,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.32.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10589247,
+        10291800,
+        10576233,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.32.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17626271,
+        17171801,
+        17630728,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.32.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29972487,
+        29184585,
+        29971888,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.32.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29991565,
+        29165988,
+        29971407,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.32.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29965443,
+        29193106,
+        29970411,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.32.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10577265,
+        10296601,
+        10583414,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.33.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10596759,
+        10292342,
+        10568179,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.33.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17632768,
+        17167038,
+        17628994,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.33.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29979406,
+        29186052,
+        29963502,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.33.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29984711,
+        29159751,
+        29984498,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.33.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29966533,
+        29190301,
+        29972126,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.33.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10581383,
+        10292782,
+        10583115,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.34.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10598548,
+        10293085,
+        10565647,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.34.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17629390,
+        17171594,
+        17627816,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.34.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29966951,
+        29192250,
+        29969759,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.34.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29988319,
+        29155306,
+        29985335,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.34.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29970752,
+        29190360,
+        29967848,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.34.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10574750,
+        10298455,
+        10584075,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.35.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1764870,
+        1713962,
+        1764048,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.35.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10581138,
+        10290528,
+        10585614,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.35.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21202388,
+        20556371,
+        21155801,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.35.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1764465,
+        1714828,
+        1763587,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.35.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29962939,
+        29196981,
+        29969040,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.35.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29984150,
+        29159272,
+        29985538,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.35.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29962736,
+        29196528,
+        29969696,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.36.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10590180,
+        10298221,
+        10568879,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.36.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17627973,
+        17173124,
+        17627703,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.36.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29961684,
+        29199449,
+        29967827,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.36.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29990389,
+        29173498,
+        29965073,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.36.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29959027,
+        29201432,
+        29968501,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.36.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10577962,
+        10302447,
+        10576871,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.37.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10582753,
+        10302829,
+        10571698,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.37.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17620809,
+        17180351,
+        17627640,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.37.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29965234,
+        29195909,
+        29967817,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.37.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30006611,
+        29173388,
+        29948961,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.37.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29961937,
+        29197676,
+        29969347,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.37.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10576743,
+        10303591,
+        10576946,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.38.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10582951,
+        10301699,
+        10572630,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.38.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17625115,
+        17177466,
+        17626219,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.38.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29965865,
+        29202835,
+        29960260,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.38.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29968262,
+        29177839,
+        29982859,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.38.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29969296,
+        29205734,
+        29953930,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.38.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10575249,
+        10302798,
+        10579233,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.39.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1764011,
+        1715304,
+        1763565,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.39.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10582847,
+        10292836,
+        10581597,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.39.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21190751,
+        20564669,
+        21159140,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.39.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1763849,
+        1715231,
+        1763800,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.39.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29965505,
+        29198185,
+        29965270,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.39.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29993486,
+        29172526,
+        29962948,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.39.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29963547,
+        29200927,
+        29964486,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.40.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10595432,
+        10297604,
+        10564244,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.40.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17626117,
+        17175076,
+        17627607,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.40.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29961447,
+        29201410,
+        29966103,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.40.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30001286,
+        29177439,
+        29950235,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.40.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29957457,
+        29207994,
+        29963509,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.40.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10578325,
+        10302591,
+        10576364,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.41.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10590926,
+        10296780,
+        10569574,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.41.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17625273,
+        17172516,
+        17631011,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.41.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29970165,
+        29193427,
+        29965368,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.41.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29997969,
+        29167747,
+        29963244,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.41.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29959925,
+        29198877,
+        29970158,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.41.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10574856,
+        10301703,
+        10580721,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.42.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10594131,
+        10293924,
+        10569225,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.42.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17626543,
+        17171829,
+        17630428,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.42.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29971795,
+        29187101,
+        29970064,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.42.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30012990,
+        29157149,
+        29958821,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.42.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29964772,
+        29190652,
+        29973536,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.42.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10583495,
+        10300076,
+        10573709,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.43.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1763090,
+        1714889,
+        1764901,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.43.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10581993,
+        10293072,
+        10582215,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.43.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21200902,
+        20560835,
+        21152823,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.43.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1764713,
+        1714173,
+        1763994,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.43.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29975796,
+        29186288,
+        29966876,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.43.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30008642,
+        29143217,
+        29977101,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.43.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29968212,
+        29188077,
+        29972671,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.44.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10603411,
+        10284050,
+        10569819,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.44.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17637051,
+        17167076,
+        17624673,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.44.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29971542,
+        29183307,
+        29974111,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.44.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30015050,
+        29138472,
+        29975438,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.44.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29976008,
+        29185642,
+        29967310,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.44.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10574673,
+        10297767,
+        10584840,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.45.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10606640,
+        10281470,
+        10569170,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.45.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17635553,
+        17163635,
+        17629612,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.45.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29977396,
+        29177428,
+        29974136,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.45.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30003089,
+        29130385,
+        29995486,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.45.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29973563,
+        29181921,
+        29973476,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.45.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10582284,
+        10295234,
+        10579762,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.46.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10595297,
+        10283794,
+        10578189,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.46.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17633470,
+        17167752,
+        17627578,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.46.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29971549,
+        29175522,
+        29981889,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.46.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30008465,
+        29121828,
+        29998667,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.46.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29976693,
+        29175993,
+        29976274,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.46.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10579627,
+        10296552,
+        10581101,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.47.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1763071,
+        1713628,
+        1766181,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.47.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10581181,
+        10289284,
+        10586815,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.47.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21208757,
+        20546017,
+        21159786,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.47.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1764918,
+        1713484,
+        1764478,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.47.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29978275,
+        29175877,
+        29974808,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.47.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30026278,
+        29110901,
+        29991781,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.47.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29979971,
+        29172507,
+        29976482,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.48.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10598194,
+        10281061,
+        10578025,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.48.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17629956,
+        17164482,
+        17634362,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.48.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29974552,
+        29184370,
+        29970038,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.48.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30040681,
+        29120154,
+        29968125,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.48.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29971320,
+        29177912,
+        29979728,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.48.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10580509,
+        10294713,
+        10582058,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.49.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10602664,
+        10279297,
+        10575319,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.49.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17644205,
+        17153450,
+        17631145,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.49.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29973525,
+        29191188,
+        29964247,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.49.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30021186,
+        29126552,
+        29981222,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.49.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29982712,
+        29183150,
+        29963098,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.49.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10585363,
+        10291057,
+        10580860,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.50.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10586686,
+        10287203,
+        10583391,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.50.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17633225,
+        17160748,
+        17634827,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.50.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29968766,
+        29201095,
+        29959099,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.50.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30020261,
+        29139148,
+        29969551,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.50.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29975781,
+        29185405,
+        29967774,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.50.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10581657,
+        10296412,
+        10579211,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.51.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1763338,
+        1715536,
+        1764006,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.51.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10577206,
+        10300663,
+        10579411,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.51.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21213266,
+        20563474,
+        21137820,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.51.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1763618,
+        1716845,
+        1762417,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.51.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29960019,
+        29208518,
+        29960423,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.51.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30015303,
+        29161487,
+        29952170,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.51.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29958750,
+        29200047,
+        29970163,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.52.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10571328,
+        10298008,
+        10587944,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.52.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17627177,
+        17168728,
+        17632895,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.52.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29968584,
+        29211062,
+        29949314,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.52.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29980065,
+        29179612,
+        29969283,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.52.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29954081,
+        29208614,
+        29966265,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.52.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10574575,
+        10302014,
+        10580691,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.53.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10578773,
+        10300629,
+        10577878,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.53.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17623817,
+        17174376,
+        17630607,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.53.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29959413,
+        29210734,
+        29958813,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.53.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29979284,
+        29188564,
+        29961112,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.53.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29955357,
+        29207784,
+        29965819,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.53.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10577336,
+        10302992,
+        10576952,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.54.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10569882,
+        10302984,
+        10584414,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.54.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17621183,
+        17172910,
+        17634707,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.54.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29959832,
+        29214920,
+        29954208,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.54.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29959759,
+        29199124,
+        29970077,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.54.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29960613,
+        29212907,
+        29955440,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.54.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10576725,
+        10301764,
+        10578791,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.55.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1762447,
+        1716362,
+        1764071,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.55.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10578710,
+        10301510,
+        10577060,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.55.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21170910,
+        20586107,
+        21157543,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.55.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1761664,
+        1717336,
+        1763880,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.55.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29961146,
+        29212831,
+        29954983,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.55.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29958958,
+        29202171,
+        29967831,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.55.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29955054,
+        29210345,
+        29963561,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.56.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10570222,
+        10304669,
+        10582389,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.56.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17626512,
+        17179760,
+        17622528,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.56.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29965778,
+        29210715,
+        29952467,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.56.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29959717,
+        29205019,
+        29964224,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.56.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29965038,
+        29209508,
+        29954414,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.56.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10576313,
+        10304170,
+        10576797,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.57.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10577724,
+        10306499,
+        10573057,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.57.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17620111,
+        17180371,
+        17628318,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.57.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29959629,
+        29209225,
+        29960106,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.57.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29935858,
+        29208245,
+        29984857,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.57.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29964844,
+        29209966,
+        29954150,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.57.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10579301,
+        10302921,
+        10575058,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.58.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10571447,
+        10308549,
+        10577284,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.58.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17631094,
+        17182502,
+        17615204,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.58.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29958293,
+        29209227,
+        29961440,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.58.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29941957,
+        29207645,
+        29979358,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.58.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29961695,
+        29210180,
+        29957085,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.58.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10579061,
+        10303904,
+        10574315,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.59.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1762359,
+        1717448,
+        1763073,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.59.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10581250,
+        10299810,
+        10576220,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.59.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21176392,
+        20586152,
+        21152016,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.59.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1764930,
+        1715358,
+        1762592,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.59.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29952177,
+        29209823,
+        29966960,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.59.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29945959,
+        29204429,
+        29978572,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.59.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29957727,
+        29204064,
+        29967169,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.60.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10560238,
+        10306608,
+        10590434,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.60.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17626808,
+        17178027,
+        17623965,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.60.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29968580,
+        29207244,
+        29953136,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.60.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        29983903,
+        29204279,
+        29940778,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.60.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29960499,
+        29199259,
+        29969202,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.60.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10579164,
+        10303634,
+        10574482,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.61.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10564776,
+        10307510,
+        10584994,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.61.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17624611,
+        17182426,
+        17621763,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.61.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29960845,
+        29208559,
+        29959556,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.61.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30012891,
+        29202920,
+        29913149,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.61.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29971050,
+        29195373,
+        29962537,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.61.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10575419,
+        10304889,
+        10576972,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.62.attn_gate.weight",
+      "weights": 31457280,
+      "codes": [
+        10545527,
+        10304682,
+        10607071,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.62.attn_qkv.weight",
+      "weights": 52428800,
+      "codes": [
+        17622333,
+        17179511,
+        17626956,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.62.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29954791,
+        29212689,
+        29961480,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.62.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30019445,
+        29200494,
+        29909021,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.62.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29975250,
+        29182770,
+        29970940,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.62.ssm_out.weight",
+      "weights": 31457280,
+      "codes": [
+        10577350,
+        10304963,
+        10574967,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.63.attn_k.weight",
+      "weights": 5242880,
+      "codes": [
+        1763916,
+        1716062,
+        1762902,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.63.attn_output.weight",
+      "weights": 31457280,
+      "codes": [
+        10573203,
+        10311133,
+        10572944,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.63.attn_q.weight",
+      "weights": 62914560,
+      "codes": [
+        21149174,
+        20602158,
+        21163228,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.63.attn_v.weight",
+      "weights": 5242880,
+      "codes": [
+        1764013,
+        1717868,
+        1760999,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.63.ffn_down.weight",
+      "weights": 89128960,
+      "codes": [
+        29957445,
+        29219732,
+        29951783,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.63.ffn_gate.weight",
+      "weights": 89128960,
+      "codes": [
+        30009944,
+        29202506,
+        29916510,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    },
+    {
+      "name": "blk.63.ffn_up.weight",
+      "weights": 89128960,
+      "codes": [
+        29967997,
+        29185153,
+        29975810,
+        0
+      ],
+      "code3_nonzero_scale": 0
+    }
+  ],
+  "decoded_sample": {
+    "weights": 6586368,
+    "different_weights": 0,
+    "pq2_plus2": 0,
+    "all_scale_bits_identical": true,
+    "tensors": [
+      {
+        "name": "output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "token_embd.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.0.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.0.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.0.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.0.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.0.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.0.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.1.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.1.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.1.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.1.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.1.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.1.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.2.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.2.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.2.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.2.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.2.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.2.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.3.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.3.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.3.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.3.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.3.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.3.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.3.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.4.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.4.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.4.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.4.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.4.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.4.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.5.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.5.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.5.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.5.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.5.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.5.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.6.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.6.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.6.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.6.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.6.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.6.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.7.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.7.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.7.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.7.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.7.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.7.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.7.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.8.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.8.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.8.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.8.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.8.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.8.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.9.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.9.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.9.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.9.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.9.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.9.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.10.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.10.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.10.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.10.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.10.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.10.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.11.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.11.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.11.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.11.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.11.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.11.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.11.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.12.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.12.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.12.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.12.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.12.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.12.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.13.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.13.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.13.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.13.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.13.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.13.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.14.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.14.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.14.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.14.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.14.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.14.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.15.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.15.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.15.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.15.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.15.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.15.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.15.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.16.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.16.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.16.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.16.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.16.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.16.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.17.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.17.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.17.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.17.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.17.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.17.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.18.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.18.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.18.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.18.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.18.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.18.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.19.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.19.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.19.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.19.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.19.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.19.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.19.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.20.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.20.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.20.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.20.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.20.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.20.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.21.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.21.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.21.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.21.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.21.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.21.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.22.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.22.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.22.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.22.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.22.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.22.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.23.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.23.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.23.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.23.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.23.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.23.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.23.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.24.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.24.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.24.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.24.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.24.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.24.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.25.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.25.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.25.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.25.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.25.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.25.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.26.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.26.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.26.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.26.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.26.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.26.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.27.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.27.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.27.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.27.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.27.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.27.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.27.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.28.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.28.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.28.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.28.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.28.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.28.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.29.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.29.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.29.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.29.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.29.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.29.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.30.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.30.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.30.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.30.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.30.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.30.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.31.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.31.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.31.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.31.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.31.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.31.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.31.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.32.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.32.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.32.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.32.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.32.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.32.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.33.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.33.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.33.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.33.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.33.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.33.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.34.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.34.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.34.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.34.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.34.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.34.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.35.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.35.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.35.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.35.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.35.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.35.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.35.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.36.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.36.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.36.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.36.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.36.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.36.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.37.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.37.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.37.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.37.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.37.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.37.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.38.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.38.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.38.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.38.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.38.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.38.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.39.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.39.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.39.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.39.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.39.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.39.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.39.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.40.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.40.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.40.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.40.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.40.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.40.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.41.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.41.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.41.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.41.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.41.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.41.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.42.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.42.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.42.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.42.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.42.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.42.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.43.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.43.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.43.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.43.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.43.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.43.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.43.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.44.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.44.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.44.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.44.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.44.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.44.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.45.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.45.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.45.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.45.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.45.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.45.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.46.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.46.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.46.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.46.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.46.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.46.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.47.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.47.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.47.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.47.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.47.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.47.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.47.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.48.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.48.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.48.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.48.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.48.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.48.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.49.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.49.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.49.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.49.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.49.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.49.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.50.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.50.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.50.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.50.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.50.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.50.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.51.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.51.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.51.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.51.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.51.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.51.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.51.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.52.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.52.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.52.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.52.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.52.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.52.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.53.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.53.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.53.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.53.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.53.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.53.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.54.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.54.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.54.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.54.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.54.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.54.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.55.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.55.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.55.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.55.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.55.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.55.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.55.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.56.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.56.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.56.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.56.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.56.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.56.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.57.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.57.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.57.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.57.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.57.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.57.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.58.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.58.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.58.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.58.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.58.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.58.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.59.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.59.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.59.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.59.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.59.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.59.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.59.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.60.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.60.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.60.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.60.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.60.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.60.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.61.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.61.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.61.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.61.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.61.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.61.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.62.attn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.62.attn_qkv.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.62.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.62.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.62.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.62.ssm_out.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.63.attn_k.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.63.attn_output.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.63.attn_q.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.63.attn_v.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.63.ffn_down.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.63.ffn_gate.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      },
+      {
+        "name": "blk.63.ffn_up.weight",
+        "groups": 128,
+        "scale_bits_identical": true,
+        "different_decoded_weights": 0,
+        "pq2_plus2": 0,
+        "maximum_absolute_difference": 0.0
+      }
+    ]
+  },
+  "backend_revision": "f13265492743209a0fbedc2a2781af3f5f0eab13"
+}

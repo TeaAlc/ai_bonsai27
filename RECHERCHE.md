@@ -1,4 +1,91 @@
 # Bonsai 2 research and measurement index
+## Packing recheck and PTQ kernel review — October 3, 2026
+
+The local model profiles were **not swapped**: PTQ1_0 Lean is GGUF type 143,
+6,297,658,848 bytes, SHA256 `1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685`;
+PQ2_0 MTP is type 142, 7,557,178,656 bytes, SHA256
+`78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847`.
+These hashes agree with all six checksum-verified recorded benchmark selections
+([identity recheck](data/research/pq2-0-mtp-20261003/identity-recheck.json)). The pinned backend
+enum explicitly maps 142 to PQ2_0 and 143 to PTQ1_0.
+
+A deeper search found conflicting first-person reports in
+[CPU kernel PR #206](https://github.com/PrismML-Eng/llama.cpp/pull/206) and
+[model discussion #12](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/discussions/12):
+roughly 0.89% PQ2 codes reportedly represent +2, making PTQ packing lossy.
+The PQ2 codec can represent +2, so that possibility required checking the actual
+files rather than relying on the ternary wording of the model card.
+
+Two independent local scans resolve this for **our exact pins**. A NumPy scan
+counts all 26,869,760,000 main weight codes: 9,042,815,129 minus-one,
+8,802,946,533 zero, 9,023,998,338 plus-one, **zero plus-two**. A separate native
+C++ comparison decodes all 402 main tensors: **zero different codes and zero
+different FP16 scale blocks** between PQ2 and PTQ. All 464 remaining tensor
+stored spans, tokenizer metadata, Hadamard metadata and architecture metadata
+also match. This establishes stored inference-weight equivalence for these files,
+including MTP; it does not guarantee identical floating-point kernel outputs.
+
+If the PQ2 scale bytes are incorrectly treated as 2-bit weights, they yield
+242,976,534 apparent code-3 values. This demonstrates a possible counting trap,
+but does not reproduce the reported 229,633,025 count or establish the cause of
+that upstream report. We have not scanned its exact original artifact, which is
+not identified there by a SHA256; no general claim about all PQ2 checkpoints follows.
+[Full comparison](data/research/pq2-0-mtp-20261003/packing-full-comparison.json),
+[independent histogram and sample](data/research/pq2-0-mtp-20261003/packing-audit.json).
+
+Reproduce the full comparison using the already downloaded model cache and a
+local C++ compiler; it does not run inference, download models or change backends:
+
+```bash
+python3 -B data/research/pq2-0-mtp-20261003/audit-packing.py \
+  --model-dir "$PWD" --output /tmp/bonsai27/packing-recheck.json
+```
+
+### Why the prefill comparison changed
+
+The earlier answer overstated the relevance of the model card's PQ2 prefill lead.
+Merged [PR #214](https://github.com/PrismML-Eng/llama.cpp/pull/214) removes divergent
+PTQ unpacking and enables wider MMQ tiles. Its author reports PTQ pp512 rising
+from 630 to 1304 tok/s on RTX 4070, approximately matching PQ2. A later reviewer
+reports PTQ pp512 1881 to 3962 on RTX 5090. These are external kernel-development
+measurements, not local tests. Our pinned source `f13265492743209a0fbedc2a2781af3f5f0eab13`
+contains the branch-free loader and wide tile entries. The old short-prompt table
+therefore cannot establish a persistent PQ2 speed advantage on this backend.
+This is a concrete reason the local near-parity is plausible, rather than evidence
+of reversed labels; it is not a diagnosis of the measured 4.15% difference.
+
+For long context and MTP, numerical equivalence still needs care: upstream
+[PR #285](https://github.com/PrismML-Eng/llama.cpp/pull/285) reports prompt-dependent
+changes between draft-on and draft-off greedy continuations as Flash Attention
+batching changes its reduction split. Its tiered host KV proposal is not part of
+our CUDA0-only configuration. Neither allocating a large window nor matching one
+continuation proves accuracy across that entire window.
+
+### Further optimization candidates without changing model precision
+
+Static review of the pinned PTQ source identifies these candidates, **not measured
+speedups**. No runtime or kernel has been changed.
+
+| Priority | Candidate | Reason and exactness condition |
+| --- | --- | --- |
+| 1, prefill | Fuse Hadamard and MMQ-compatible activation quantization; reuse prepared activations across compatible consumers | Existing FWHT/Q8 fusion is gated to MMVQ, so it excludes large prefill batches. Shared MMQ Q8 reuse exists for DGX Spark/Q1/Q2/PQ2 but excludes our SM120/PTQ profile. Preserve transform/quantizer arithmetic, padding/layout, alias safety and graph lifetimes; first trace whether repeated preparation is material. |
+| 2, prefill | Reuse the scale already fetched by the PTQ tile unpacker | Word 6 contains the FP16 scale; a separate loop loads scale entries again. Populate the same tile with identical scale conversion and synchronization, avoiding new divergent work or shared-memory races. |
+| 3, decode | Reuse activation loads across the fused main/gate dot products | The `has_gate` path calls the block-dot helper twice with the same activations. Combine independent row sets while preserving each output's integer dots, fold order, FMA and invariant epilogue. Increased registers may cancel any benefit. |
+| 4, graph preparation | Precompute validated consumer/alias relationships | FWHT eligibility scans all later nodes for each candidate. Cache only for a stable graph generation with correct invalidation. CUDA graph replay already avoids this work, limiting the possible gain. |
+| 5, host overhead | Skip DGX-only consumer-map construction on SM120 | `gb10_shared_q8_consumer_counts` is built before the capture/replay conditional on every call; all consumers are gated to DGX Spark (1210), while our GPU is 1200. Architecture gating can preserve exactly the same GPU work. Measure the host-cost share before expecting a material speedup. |
+
+Wide tiles, branch-free unpacking, exact activation sums, eligible FWHT/Q8 fusion
+and CUDA graph reuse are already present. Turning off the invariant flag or
+changing reduction association is not an established quality-free optimization:
+the source itself documents changed near-tie continuations with the faster
+four-accumulator epilogue. Retain precision and current arithmetic when testing
+memory/launch optimizations. Before implementation, profile the 30k workload to
+separate PTQ matmul from attention, recurrent state and preparation. Then validate
+exact affected-kernel outputs and representative logits, followed by identified
+interleaved timing and fresh API/vision/coding QA. No percentage improvement is
+promised without measurement.
+[Source locations and review](data/research/pq2-0-mtp-20261003/kernel-review.json).
+
 ## PTQ1_0 versus PQ2_0: research and local test — October 3, 2026
 
 “PQ1” here means the existing **PTQ1_0 MTP Lean** profile. PQ2_0 is
@@ -56,8 +143,8 @@ The [upstream card](https://huggingface.co/decent-jawfish/bonsai-2-27b-mtp)
 identifies an unchanged official PQ2 body with an added MTP head. Our GGUF
 inventory independently confirms identical tokenizer metadata and byte-identical
 stored spans for all 15 MTP tensors compared with PTQ1_0 Lean. Both have 866
-tensors; 402 main tensors change packing type 143 to 142. We did not independently
-decode every main tensor to prove weight equivalence.
+tensors; 402 main tensors change packing type 143 to 142. The subsequent full
+codec audit now verifies every main weight code and FP16 scale, plus all other tensor spans and runtime metadata (see recheck above).
 [Inventory](data/research/pq2-0-mtp-20261003/gguf-inventory.json).
 
 The image `localhost/bonsai2-27b-pq2-0:1.5.1` is built locally from a dirty

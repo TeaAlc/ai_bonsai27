@@ -288,6 +288,10 @@ checks). Three uncached 30,000-token runs averaged 57.499 s prefill, compared
 with the earlier PTQ baseline of 55.209 s; PQ2 took 4.15% longer here. Global
 VRAM peaks were 11,398 versus 10,715 MiB; they include other host GPU use.
 The baseline was not interleaved. PTQ1_0 therefore remains the default.
+A full codec audit confirms equal main weight codes/scales and equal remaining
+tensor spans for these exact PTQ/PQ pins. The pinned backend already contains
+the newer PTQ prefill optimizations; older throughput tables are not a universal
+packing ranking.
 See [packing research and measured limits](RECHERCHE.md) and
 [identified results](data/research/pq2-0-mtp-20261003/measurements.json).
 

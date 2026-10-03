@@ -20,6 +20,22 @@
     {
       "url": "https://huggingface.co/sudoingx/Ternary-Bonsai-2-27B-PTQ1_0-MTP-GGUF/tree/f04a3bd22b7b482675663e99efaba6719347b419",
       "scope": "Pinned existing PTQ1 MTP Lean profile"
+    },
+    {
+      "url": "https://github.com/PrismML-Eng/llama.cpp/pull/214",
+      "scope": "Merged PTQ prefill tile/unpack optimization and external before/after numbers"
+    },
+    {
+      "url": "https://github.com/PrismML-Eng/llama.cpp/pull/206",
+      "scope": "Conflicting plus-two code report; not reproduced for our exact model hashes"
+    },
+    {
+      "url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/discussions/12",
+      "scope": "Conflicting packing-loss claim and benchmark provenance"
+    },
+    {
+      "url": "https://github.com/PrismML-Eng/llama.cpp/pull/285",
+      "scope": "Long-context MTP rounding caveat; open proposal not applied"
     }
   ],
   "retained_files_sha256": {
@@ -30,6 +46,12 @@
     "upstream-base-LICENSE": "69849221bfb90053de2134ef5e6d540287b4b98062326492f1f96f5da685524b",
     "upstream-hadamard.patch": "c10f622220f4a542c46aef5bb2042a99a279d23e2ab5727c89ea528568ce23b0",
     "upstream-model-card.md": "783316819de93307e27137f779438555c217c27445633e3b92c2a90a921524ca",
-    "validation.json": "2733fffd5b96d1c53e161a53d60c25049744cdc2910ef1086498c2cf821ff0b3"
+    "validation.json": "2733fffd5b96d1c53e161a53d60c25049744cdc2910ef1086498c2cf821ff0b3",
+    "packing-audit.json": "b5b6f853fad5bf3fedf29bcadb1fc16d8692f380541ff24f49388f64d5261fd3",
+    "packing-full-comparison.json": "6d505eb1426da3b99d31722918217db008d02db99ff9979b85a787e0048ae84e",
+    "audit-packing.py": "baea12d9ae98c4c3c917cd8abd5b230893064de01d5aa6392ea130c0a9c9426f",
+    "audit-packing.cpp": "9223026aab6b9ca66d096edb4142e8b94c55cce1ab3a59da240a516e9b9f956a",
+    "kernel-review.json": "96fe9e0a4b0f4dc48dec649010ee0785b08837825b1dd453cc5228db12f869ac",
+    "identity-recheck.json": "ebe4676d5ce8c896c2d20716b73472572ddd4b897c2207d7e31da29d482c9993"
   }
 }

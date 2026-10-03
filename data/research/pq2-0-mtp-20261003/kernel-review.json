@@ -1,0 +1,93 @@
+{
+  "scope": "Static review of pinned source, not profiler findings or measured optimizations",
+  "revision": "f13265492743209a0fbedc2a2781af3f5f0eab13",
+  "files": [
+    {
+      "file": "ggml/src/ggml-cuda/mmq-load-tiles.cuh",
+      "sha256": "4312755ddfc498f23c9be34f1771bb929c9c474fd8089451c41234968e6400ba",
+      "review_lines": [
+        270,
+        362
+      ],
+      "url": "https://github.com/PrismML-Eng/llama.cpp/blob/f13265492743209a0fbedc2a2781af3f5f0eab13/ggml/src/ggml-cuda/mmq-load-tiles.cuh"
+    },
+    {
+      "file": "ggml/src/ggml-cuda/mmq.cu",
+      "sha256": "af008202442146c3e4553fa42b251d09c13967f799ddb2ed4d373697b04fae89",
+      "review_lines": [
+        100,
+        310
+      ],
+      "url": "https://github.com/PrismML-Eng/llama.cpp/blob/f13265492743209a0fbedc2a2781af3f5f0eab13/ggml/src/ggml-cuda/mmq.cu"
+    },
+    {
+      "file": "ggml/src/ggml-cuda/ggml-cuda.cu",
+      "sha256": "8d1e0cc958960561ea56c05429fd2b91d3076b9674eb71799ae8aa4cc43a6193",
+      "review_lines": [
+        2752,
+        4685
+      ],
+      "url": "https://github.com/PrismML-Eng/llama.cpp/blob/f13265492743209a0fbedc2a2781af3f5f0eab13/ggml/src/ggml-cuda/ggml-cuda.cu"
+    },
+    {
+      "file": "ggml/src/ggml-cuda/mmvq-ptq1_0.cuh",
+      "sha256": "715a74abb2e99ee5d7e0620c253c5425d2d16db0d67913948b06d2ead61688b9",
+      "review_lines": [
+        310,
+        370
+      ],
+      "url": "https://github.com/PrismML-Eng/llama.cpp/blob/f13265492743209a0fbedc2a2781af3f5f0eab13/ggml/src/ggml-cuda/mmvq-ptq1_0.cuh"
+    }
+  ],
+  "candidates": [
+    {
+      "priority": 1,
+      "target": "Prefill Hadamard plus Q8 activation preparation",
+      "evidence": "ggml_cuda_try_fwht_q8 permits only consumers routed to MMVQ. Large prefill consumers route to MMQ. MMQ prepares quantized activations per invocation. Existing shared-MMQ Q8 reuse is gated to DGX Spark (1210) and Q1/Q2/PQ2 types; our GPU is SM120 (1200) and PTQ is excluded.",
+      "proposal": "Add an MMQ-compatible fused transform/quantization or share immutable prepared activations between compatible consumers.",
+      "constraints": "Keep Hadamard butterfly order, quantizer rounding/scales/layout, strides/padding, alias checks and CUDA-graph lifetime unchanged; prove applicability and redundancy with a trace."
+    },
+    {
+      "priority": 2,
+      "target": "PTQ MMQ scale loading",
+      "evidence": "Branch-free trit loader already fetches word 6 containing qh and scale; a separate loop reloads the same FP16 block scale for multiple entries.",
+      "proposal": "Evaluate populating scale tile entries using the already loaded scale bits.",
+      "constraints": "Preserve exact FP16-to-F32 conversion and the final shared-memory tile layout; avoid new divergence, race or occupancy loss."
+    },
+    {
+      "priority": 3,
+      "target": "Decode fused gate/up activation reads",
+      "evidence": "has_gate invokes ptq1_0_pt_block_dot twice on the same ycol: primary weights and gate weights.",
+      "proposal": "Process both row sets in one dot helper, reusing activation int4 loads.",
+      "constraints": "Keep per-output integer dots, fold order, FMA operations and invariant warp epilogue; register pressure may erase the benefit."
+    },
+    {
+      "priority": 4,
+      "target": "Graph preparation on uncaptured/rebuilt graphs",
+      "evidence": "ggml_cuda_try_fwht_q8 scans every later node and source slot for each candidate; evaluation loop calls it while CUDA graph work is being prepared.",
+      "proposal": "Precompute validated consumer/alias relationships per stable graph generation.",
+      "constraints": "Invalidate on topology, shapes, addresses, alias changes and dispatch/layout changes. CUDA graph replay already skips this path; likely smaller decode benefit."
+    },
+    {
+      "priority": 5,
+      "target": "Unnecessary host consumer-map construction on SM120",
+      "evidence": "ggml_cuda_graph_evaluate_and_capture builds gb10_shared_q8_consumer_counts for every graph call before its capture/replay conditional. All consuming paths are gated to DGX Spark 1210; our SM120 has cc 1200.",
+      "proposal": "Gate construction to the architecture/features that consume the map, or hoist an immutable map into validated graph-generation state.",
+      "constraints": "Architecture gating can leave the SM120 device work unchanged. Graph-caching requires invalidation. Benefit is host overhead, not established GPU prefill speed."
+    }
+  ],
+  "already_present": [
+    "Wide PTQ MMQ tiles and branch-free unpacking from PR214",
+    "PTQ matvec/MMQ dispatch crossover",
+    "Hadamard+Q8 fusion for eligible MMVQ consumers",
+    "Exact activation sums and integer bias correction",
+    "Invariant warp epilogue and CUDA graph reuse",
+    "Shared MMQ Q8 reuse for DGX Spark and Q1/Q2/PQ2, currently excluding PTQ and SM120"
+  ],
+  "not_quality_preserving_shortcuts": [
+    "Changing floating-point reduction association",
+    "Disabling GGML_CUDA_BATCH_INVARIANT as a presumed free speedup",
+    "Reducing KV precision or dropping Hadamard/state operations"
+  ],
+  "validation": "Before any performance claim: trace current 30k prefill, establish operation share, implement one isolated change, compare exact outputs of affected kernels and representative end-to-end logits; then identified interleaved timing plus API/vision/coding QA."
+}

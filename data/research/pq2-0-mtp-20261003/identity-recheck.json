@@ -1,0 +1,59 @@
+{
+  "scope": "Read-only recheck of recorded default-batch PTQ and PQ benchmark identities",
+  "runs": [
+    {
+      "run": "results/longcontext-30k-tokens-20261003T170547Z/current-1",
+      "model_file": "Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf",
+      "model_sha256": "1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685",
+      "argv_model_verified": true,
+      "raw_checksums_verified": true,
+      "executable_sha256": "dc20438e545a174a75d035ade11f33a69b0e3efdd7cfdb3714b681a5776484f4",
+      "prompt_ms": 54965.351
+    },
+    {
+      "run": "results/longcontext-30k-tokens-20261003T170547Z/current-2",
+      "model_file": "Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf",
+      "model_sha256": "1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685",
+      "argv_model_verified": true,
+      "raw_checksums_verified": true,
+      "executable_sha256": "dc20438e545a174a75d035ade11f33a69b0e3efdd7cfdb3714b681a5776484f4",
+      "prompt_ms": 54467.768
+    },
+    {
+      "run": "results/longcontext-30k-tokens-20261003T170547Z/current-3",
+      "model_file": "Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf",
+      "model_sha256": "1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685",
+      "argv_model_verified": true,
+      "raw_checksums_verified": true,
+      "executable_sha256": "dc20438e545a174a75d035ade11f33a69b0e3efdd7cfdb3714b681a5776484f4",
+      "prompt_ms": 56193.297
+    },
+    {
+      "run": "results/longcontext-pq2-0-20261003T173027Z/pq2-default-1",
+      "model_file": "Bonsai-2-27B-PQ2_0-MTP.gguf",
+      "model_sha256": "78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847",
+      "argv_model_verified": true,
+      "raw_checksums_verified": true,
+      "executable_sha256": "dc20438e545a174a75d035ade11f33a69b0e3efdd7cfdb3714b681a5776484f4",
+      "prompt_ms": 56607.882
+    },
+    {
+      "run": "results/longcontext-pq2-0-20261003T173027Z/pq2-default-2",
+      "model_file": "Bonsai-2-27B-PQ2_0-MTP.gguf",
+      "model_sha256": "78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847",
+      "argv_model_verified": true,
+      "raw_checksums_verified": true,
+      "executable_sha256": "dc20438e545a174a75d035ade11f33a69b0e3efdd7cfdb3714b681a5776484f4",
+      "prompt_ms": 58929.286
+    },
+    {
+      "run": "results/longcontext-pq2-0-20261003T173027Z/pq2-default-3",
+      "model_file": "Bonsai-2-27B-PQ2_0-MTP.gguf",
+      "model_sha256": "78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847",
+      "argv_model_verified": true,
+      "raw_checksums_verified": true,
+      "executable_sha256": "dc20438e545a174a75d035ade11f33a69b0e3efdd7cfdb3714b681a5776484f4",
+      "prompt_ms": 56958.675
+    }
+  ]
+}
