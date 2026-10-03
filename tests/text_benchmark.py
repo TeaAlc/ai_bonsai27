@@ -288,13 +288,18 @@ def main():
             reasoning_display = 'unknown' if reasoning_count is None else str(reasoning_count)
             if thinking['reasoning_tokens_are_estimated']:
                 reasoning_display += ' (est.)'
+            # API completion usage includes reasoning; display only answer tokens.
+            # A retokenized reasoning count also makes this difference an estimate.
+            output_display = 'unknown'
+            if reasoning_count is not None and reasoning_count <= usage['completion_tokens']:
+                output_display = str(usage['completion_tokens'] - reasoning_count)
             if cache['cached_prompt_tokens'] is None:
                 cache_display = 'unknown; hit rate unknown'
             else:
                 cache_display = (f"{cache['cached_prompt_tokens']} cached + "
                                  f"{cache['processed_prompt_tokens']} processed; "
                                  f"hit rate {cache['cache_hit_rate_percent']:.2f}%")
-            metrics = (f"Tokens: {usage['prompt_tokens']} in | {usage['completion_tokens']} out "
+            metrics = (f"Tokens: {usage['prompt_tokens']} in | {output_display} out "
                        f"(+{reasoning_display} reasoning) | "
                        f"Cache: {cache_display} | {seconds:.2f}s")
             # Highlight terminal output; keep redirected logs free of ANSI escapes.

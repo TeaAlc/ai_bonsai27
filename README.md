@@ -438,9 +438,11 @@ Each exchange prints one compact statistics line, highlighted in bold cyan on
 terminals (unless `NO_COLOR` is set); redirected output contains no ANSI escapes.
 Message labels use bold yellow for the user and bold green for the assistant;
 message text retains the normal terminal color.
-For example: `Tokens: 37 in | 1568 out (+1483 (est.) reasoning) | Cache: 33 cached + 4 processed; hit rate 89.19% | 12.16s`.
-Output includes reasoning; `(est.)` marks retokenized estimates, and unavailable
-counts are displayed as `unknown`.
+For example: `Tokens: 37 in | 85 out (+1483 (est.) reasoning) | Cache: 33 cached + 4 processed; hit rate 89.19% | 12.16s`.
+The displayed `out` count excludes reasoning: API completion tokens minus reasoning
+tokens. `(est.)` marks retokenized reasoning, so the answer-token difference is
+also estimated. If reasoning is unavailable or exceeds completion usage, `out`
+is `unknown`. JSON completion usage retains the original API count, including reasoning.
 `cached_prompt_tokens` counts reused input tokens, `processed_prompt_tokens`
 counts input tokens that required processing, and `cache_hit_rate_percent`
 expresses the reused fraction. The total rate is token-weighted:

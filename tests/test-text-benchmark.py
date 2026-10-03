@@ -149,7 +149,8 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(len(cache_lines), 10)
         for line, row in zip(cache_lines, report['exchanges']):
             self.assertIn('(+2 (est.) reasoning) | Cache:', line)
-            self.assertIn(f"Tokens: {row['prompt_tokens']} in | {row['completion_tokens']} out", line)
+            self.assertIn(f"Tokens: {row['prompt_tokens']} in | "
+                          f"{row['completion_tokens'] - row['reasoning_tokens']} out", line)
 
     def test_prefers_actual_api_reasoning_counter(self):
         self.api_reasoning_counter = True
@@ -158,6 +159,10 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(report['reasoning_tokens'], 20)
         self.assertFalse(report['reasoning_tokens_are_estimated'])
         self.assertIn('(+2 reasoning) | Cache:', process.stdout)
+        for row in report['exchanges']:
+            self.assertIn(f"Tokens: {row['prompt_tokens']} in | "
+                          f"{row['completion_tokens'] - row['reasoning_tokens']} out (+2 reasoning)",
+                          process.stdout)
         self.assertEqual(report['exchanges'][0]['reasoning_tokens_source'],
                          'usage.completion_tokens_details.reasoning_tokens')
 
@@ -168,7 +173,7 @@ class BenchmarkTests(unittest.TestCase):
         self.assertIsNone(report['reasoning_tokens'])
         self.assertEqual(report['reasoning_metrics_exchanges'], 0)
         self.assertIsNone(report['reasoning_tokens_are_estimated'])
-        self.assertIn('(+unknown reasoning) | Cache:', process.stdout)
+        self.assertIn('unknown out (+unknown reasoning) | Cache:', process.stdout)
 
     def test_missing_reasoning_is_not_a_valid_benchmark(self):
         self.missing_reasoning = True
