@@ -3,6 +3,22 @@ set -euo pipefail
 repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 source "$repo_dir/data/models/download.sh"
 
+# Model selection must preserve the default pins and independent bundle origin.
+[[ "$MODEL_FILE" == Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf ]]
+BONSAI_MODEL_VARIANT=pq2_0 bash -c '
+    set -euo pipefail
+    source "$1/data/models/download.sh"
+    [[ "$MODEL_FILE" == Bonsai-2-27B-PQ2_0-MTP.gguf ]]
+    [[ "$MODEL_REVISION" == 5edf5f552d45e40b81f0255a8bb443af35850722 ]]
+    [[ "$MODEL_SHA" == 78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847 ]]
+    [[ "$MODEL_REPO" == https://huggingface.co/decent-jawfish/* ]]
+    [[ "$BACKEND_REPO" == https://huggingface.co/sudoingx/* ]]
+' test "$repo_dir"
+if BONSAI_MODEL_VARIANT=invalid bash -c 'set -e; source "$1/data/models/download.sh"' test "$repo_dir"; then
+    echo 'Error: invalid model variant was accepted.' >&2
+    exit 1
+fi
+
 # Small fixtures exercise the real locking, checksum, and atomic rename logic
 # without downloading multi-gigabyte models. Only the HTTP transfer is mocked.
 mkdir -p /tmp/bonsai27
@@ -74,8 +90,10 @@ wait "$lock_owner"
 mkdir "$work_dir/existing"
 printf cached > "$work_dir/existing/$MODEL_FILE"
 printf cached > "$work_dir/existing/$VISION_FILE"
+printf cached > "$work_dir/existing/Bonsai-2-27B-PQ2_0-MTP.gguf"
 (cd "$work_dir/existing" && "$repo_dir/download_models.sh")
 (cd "$work_dir" && BONSAI_MODEL_DIR=existing "$repo_dir/download_models.sh")
+(cd "$work_dir" && BONSAI_MODEL_VARIANT=pq2_0 BONSAI_MODEL_DIR=existing "$repo_dir/download_models.sh")
 [[ $(wc -l < "$fixture_calls") == 4 ]]
 echo 'Passed model download, reuse, integrity, concurrency, and directory checks.'
 

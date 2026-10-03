@@ -13,4 +13,8 @@ assert re.search(r'BONSAI_REASONING_EFFORT=' + values[1] + r'\b', image)
 assert '!data/config.sh' in (root / '.containerignore').read_text()
 assert 'COPY data/config.sh /opt/bonsai/config.sh' in image
 assert values == ['32000', 'medium']
+assert 'ARG BONSAI_MODEL_VARIANT=ptq1_0' in image
+assert 'ARG BONSAI_MODEL_FILE=Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf' in image
+assert 'BONSAI_MODEL_VARIANT=${BONSAI_MODEL_VARIANT}' in image
+assert 'BONSAI_MODEL=/models/${BONSAI_MODEL_FILE}' in image
 print('Shared and image defaults agree.')

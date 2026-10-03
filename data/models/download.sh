@@ -1,12 +1,26 @@
 #!/usr/bin/env bash
 # Shared, pinned model artifacts for host preparation and container startup.
-readonly MODEL_REVISION=f04a3bd22b7b482675663e99efaba6719347b419
 readonly VISION_REVISION=b072e1d3b35a0a630cece372c2127528e0994386
-readonly MODEL_REPO=https://huggingface.co/sudoingx/Ternary-Bonsai-2-27B-PTQ1_0-MTP-GGUF/resolve/$MODEL_REVISION
+readonly BACKEND_REPO=https://huggingface.co/sudoingx/Ternary-Bonsai-2-27B-PTQ1_0-MTP-GGUF/resolve/f04a3bd22b7b482675663e99efaba6719347b419
+# An explicit PQ2_0 image uses the equivalent unmodified Bonsai body with MTP.
+# Keep bundle downloads independent of the selected language-model repository.
+case "${BONSAI_MODEL_VARIANT:-ptq1_0}" in
+    ptq1_0)
+        readonly MODEL_REVISION=f04a3bd22b7b482675663e99efaba6719347b419
+        readonly MODEL_REPO=$BACKEND_REPO
+        readonly MODEL_FILE=Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf
+        readonly MODEL_SHA=1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685
+        ;;
+    pq2_0)
+        readonly MODEL_REVISION=5edf5f552d45e40b81f0255a8bb443af35850722
+        readonly MODEL_REPO=https://huggingface.co/decent-jawfish/bonsai-2-27b-mtp/resolve/$MODEL_REVISION
+        readonly MODEL_FILE=Bonsai-2-27B-PQ2_0-MTP.gguf
+        readonly MODEL_SHA=78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847
+        ;;
+    *) echo 'Error: BONSAI_MODEL_VARIANT must be ptq1_0 or pq2_0.' >&2; return 2 ;;
+esac
 readonly VISION_REPO=https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/$VISION_REVISION
-readonly MODEL_FILE=Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf
 readonly VISION_FILE=Ternary-Bonsai-2-27B-mmproj-BF16.gguf
-readonly MODEL_SHA=1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685
 readonly VISION_SHA=e287342d92332fa3577ed1d42e921dac9370c08da58ba9337fa450f6cc76cfd7
 
 # Standalone download tests also use this helper without the script logger.

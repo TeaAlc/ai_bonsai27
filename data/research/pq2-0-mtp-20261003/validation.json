@@ -1,0 +1,106 @@
+{
+  "scope": "Fresh identified PQ2_0 16k/8k functional QA after model-aware pin audit update",
+  "run_directory": "results/runs/20261003T174029Z-2236546",
+  "checks": {
+    "all_layers_cuda": true,
+    "all_model_buffers_cuda": true,
+    "flash_attention_main_and_mtp": true,
+    "q8_main_and_mtp": true,
+    "mtp_n2": true,
+    "gpu_draft": true,
+    "no_cuda_init_error": true,
+    "context_16k": true,
+    "context_env_8k": true,
+    "pinned_models": true,
+    "api_model": true,
+    "api_chat": true,
+    "api_long_context": true,
+    "vision_cpu_backend": true,
+    "vision_bf16_projector": true,
+    "vision_api_pass": true,
+    "mtp_api_drafting": true,
+    "coding_all_pass": true
+  },
+  "identity": {
+    "run_id": "95bdf1d5264d4935ae5fd1f1eacefae9",
+    "suite_id": "20261003T174029Z-2236546",
+    "image_id": "sha256:a584a3cf0eb2443f165fbf53d96ed4e6b140f494d6f16a490047eacbc1887879",
+    "container_id": "ec5483b14dfaaade0b6e65a7b0f137110406d84f3b3e0ffa05d7c6d418cb8ec1",
+    "revision": "f3afe4c9cbcaa630ab7a3dc3f6823b64b15b8d2f",
+    "version": "1.5.1",
+    "dirty": "true",
+    "base_url": "http://127.0.0.1:18089",
+    "model_variant": "pq2_0",
+    "model_pin_sha256": "78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847",
+    "context": 16384,
+    "compute_capability": "12.0",
+    "backend": "blackwell",
+    "model_hashes": [
+      "78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847  /models/Bonsai-2-27B-PQ2_0-MTP.gguf",
+      "e287342d92332fa3577ed1d42e921dac9370c08da58ba9337fa450f6cc76cfd7  /models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf"
+    ],
+    "host_gpu_inventory": [
+      "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 617.14, GPU-532e2737-ff8e-cf77-841b-13304665cb71"
+    ],
+    "started_at": "2026-10-03T17:40:41.458161+00:00"
+  },
+  "context_8192_identity": {
+    "run_id": "de590043778146579302de707a7fe678",
+    "suite_id": "20261003T174029Z-2236546",
+    "image_id": "sha256:a584a3cf0eb2443f165fbf53d96ed4e6b140f494d6f16a490047eacbc1887879",
+    "container_id": "ab004112088693e7a3fb882677e789dcfc0a06b96e96c967cce2bc4fcc031779",
+    "revision": "f3afe4c9cbcaa630ab7a3dc3f6823b64b15b8d2f",
+    "version": "1.5.1",
+    "dirty": "true",
+    "base_url": "http://127.0.0.1:18089",
+    "model_variant": "pq2_0",
+    "model_pin_sha256": "78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847",
+    "context": 8192,
+    "compute_capability": "12.0",
+    "backend": "blackwell",
+    "model_hashes": [
+      "78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847  /models/Bonsai-2-27B-PQ2_0-MTP.gguf",
+      "e287342d92332fa3577ed1d42e921dac9370c08da58ba9337fa450f6cc76cfd7  /models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf"
+    ],
+    "host_gpu_inventory": [
+      "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 617.14, GPU-532e2737-ff8e-cf77-841b-13304665cb71"
+    ],
+    "started_at": "2026-10-03T17:42:08.537548+00:00"
+  },
+  "evidence_sha256": {
+    "qa-summary.json": "1580429a389d50487f86c876fa0fe1eb80e74736983d275052862f489560a97a",
+    "identity.json": "ff7a9e65cce330c04a9d8c7d719caf529f8b5eb94aa992dc240f3c940a5eabbd",
+    "props.json": "807f3a22a0068aca3b1a58b032cf9c37c43c79e57bc50a730bc9225eafec2814",
+    "last-container.log": "9d7234d7888c3fb1a24276b13c4207af32f6a152076dae4e9f97a9b8416fad31",
+    "server.log": "9d7234d7888c3fb1a24276b13c4207af32f6a152076dae4e9f97a9b8416fad31",
+    "models.json": "ea085a544a9a00cbeeca950be868df2f7aee48ae068a2bbe0d10153a216646aa",
+    "api-test-summary.json": "3c20387f653a4b93a268966ae7f75cd4f86d2f1d607fa12ac590498790242756",
+    "server-log.json": "39d7debb50e21ea610be1b1acb854ed0269b8e1fc698780876cd0719d5fb4437",
+    "unicorn-response.json": "89c62a2595c265d68c0dccabc9b54a11b042f871c1157e7e39773b8ba4ca5ff6",
+    "chat.json": "65f9e63f06279d75ac9e4a359da18eafc3c3908868b0b158fc4f6d0e441d81aa",
+    "context-16k.json": "1467584285c70586e2a322beaf1992a0bf87347838a3340c56461ff908e706fa",
+    "vision/summary.json": "bf0d5bf080738c2c20de933d2ac03224cdc0157d2a5aa572ca7dcddaa3f766e0",
+    "vision/blue-circle.png": "920f8ecef06bc9860b61320a8649fe5b5dad301f86c0ec10d31642348bc8c5d9",
+    "vision/red-square.png": "a2bc7bbfbd8073a34be470bea5f79f9a57fef1f07441ad9052ec2ab5d3d094d7",
+    "vision/blue-circle.json": "924a32b69a32d558f4d2cd450c3f68281b0871e52a9619cf6a5fbeb245588613",
+    "vision/red-square.json": "01e01187c872ae94205b296cace505376483278ebaf24149d3bb250b83d86a9c",
+    "context-8192/identity.json": "65721ad29b85d4ce879c278c568f11178aad202f85f08369e8550067ddcb381d",
+    "context-8192/props.json": "d12da9cb14f2e3432dba39d9256a14a28d8cdeafd0ebf2e28ea360ac0141dcc6",
+    "context-8192/last-container.log": "2bb6bb0ee84b74ab3d6661f3ef5541a6a3f7a87da2f414e30d0771fd4a4546ed",
+    "context-8192/server.log": "2bb6bb0ee84b74ab3d6661f3ef5541a6a3f7a87da2f414e30d0771fd4a4546ed",
+    "coding/summary.json": "26b4a317fb1769311602418d13f5d19739c141be37c4b31521fa4aae9efebe28",
+    "coding/prime.json": "c68c2250107b8f309d1fa6a7d8098f80a3cd9e4e2fc0a273fbd13c14b7b10988",
+    "coding/brackets.json": "e90922c4c93102ff88356d7609e13e00f84f1b440bbe8292c9687a62463a5948",
+    "coding/intervals.harness.py": "b423b12fb3c5f0163d6a4f89f87dd760de14018415f605cf0b47c60135a6773c",
+    "coding/brackets.py": "5918b4f209b06a704cae9daf7d1bf75693c9e4135c4452d45729ba4e08ddc2c6",
+    "coding/intervals.py": "bb2eae8b377ed023931498a566daeb7d653d9f6a4e3835d48836217498348d8b",
+    "coding/intervals.json": "d2e52889bda2abd0fbe7cebebd047ceb69062ee3d203a92170ecff33ec59f468",
+    "coding/prime.py": "40121e43b80d08ab28113eb5940b723baf904ab04860fa4bcedd354e5c8e0c38",
+    "coding/prime.harness.py": "d36f76b7a13af632620795832c18703febbb2a9b23a9d1d09fbe57e387acf0c4",
+    "coding/brackets.harness.py": "99fea6158ea8bfd3125b244ef151111c80dab09718aaa9ec3c0b217c93beac71"
+  },
+  "initial_attempt": {
+    "run_directory": "results/runs/20261003T173515Z-2225607",
+    "outcome": "Functional API/vision/coding checks passed; audit rejected PQ2 because it still required the PTQ1 model hash. Preserved as an unsuccessful audit, not counted as completed QA."
+  }
+}

@@ -184,6 +184,7 @@ Optional positional arguments passed to `run.sh` are forwarded to `llama-server`
 | Variable | Default | Scope / purpose |
 | --- | --- | --- |
 | `BONSAI_MODEL` | `/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf` | Container LLM path |
+| `BONSAI_MODEL_VARIANT` | `ptq1_0`; `pq2_0` in the optional PQ2 image | Pinned download profile baked into the image; also selects host `download_models.sh` / `prepare.sh` artifacts |
 | `BONSAI_MMPROJ` | `/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf` | Container vision-projector path |
 | `NVIDIA_DRIVER_CAPABILITIES` | `compute,utility` | NVIDIA runtime; keep CUDA compute enabled |
 | `GGML_CUDA_BATCH_INVARIANT` | `1` | Container CUDA batch invariance |
@@ -256,6 +257,39 @@ The build entry point is now `image_build.sh` (formerly `build.sh`). Local
 repository copies under `other_repo/` are excluded from Git and build snapshots.
 Preparation, build, release, tag, and push share a checkout lock. Temporary build
 files use `/tmp/bonsai27/`, or the standard `TMPDIR` override.
+
+### Optional PQ2_0 MTP image
+
+The default remains PTQ1_0 MTP Lean. The optional PQ2_0 model is
+[decent-jawfish/Bonsai-2-27B-PQ2_0-MTP.gguf](https://huggingface.co/decent-jawfish/bonsai-2-27b-mtp),
+revision `5edf5f552d45e40b81f0255a8bb443af35850722`, SHA256
+`78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847`.
+Its 7,557,178,656-byte file preserves the official PQ2_0 body and adds a Qwen3.8
+MTP head. The pinned native backend supports its required Hadamard correction.
+It uses the same pinned BF16 vision projector on CPU.
+
+```bash
+# Check actual CUDA access before downloading; then reuse the persistent cache.
+BONSAI_MODEL_VARIANT=pq2_0 ./download_models.sh
+./image_build.sh --pq2
+BONSAI_IMAGE=localhost/bonsai2-27b-pq2-0:latest ./run.sh
+```
+
+The build creates SemVer and `latest` tags under `localhost/bonsai2-27b-pq2-0`,
+preserving the regular PTQ1_0 image tags. `results/last-build.json` identifies
+the most recent build, including its model variant, file, revision and SHA256;
+after a PQ2 build it identifies the PQ2 image. Both variants retain backend
+batch/microbatch defaults, 32,000 context, MTP depth 2, CUDA0-only language
+weights and caches, q8_0 KV, Flash Attention and medium reasoning. Model weights
+remain in the host cache rather than image layers. No image is published by building.
+
+The local `1.5.1` PQ2 test image passed fresh API/vision/coding QA (18 audit
+checks). Three uncached 30,000-token runs averaged 57.499 s prefill, compared
+with the earlier PTQ baseline of 55.209 s; PQ2 took 4.15% longer here. Global
+VRAM peaks were 11,398 versus 10,715 MiB; they include other host GPU use.
+The baseline was not interleaved. PTQ1_0 therefore remains the default.
+See [packing research and measured limits](RECHERCHE.md) and
+[identified results](data/research/pq2-0-mtp-20261003/measurements.json).
 
 ## Optional Ada source backend
 

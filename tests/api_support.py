@@ -75,6 +75,8 @@ def identity():
               'revision': labels['org.opencontainers.image.revision'],
               'version': labels['org.opencontainers.image.version'],
               'dirty': labels['io.bonsai.git.dirty'], 'base_url': BASE_URL,
+              'model_variant': labels.get('io.bonsai.model.variant', environment.get('BONSAI_MODEL_VARIANT', 'ptq1_0')),
+              'model_pin_sha256': labels.get('io.bonsai.model.sha256'),
               'context': int(os.environ.get('BONSAI_CTX_SIZE', '16384')),
               'compute_capability': capability,
               'backend': 'blackwell' if capability == '12.0' else 'ampere-ada',

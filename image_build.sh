@@ -11,12 +11,14 @@ source tools/backend-artifacts.sh
 # --published-only intentionally builds only the two original bundles.
 ada_source=auto
 blackwell_source=auto
+model_variant=ptq1_0
 for option in "$@"; do
     case "$option" in
         --ada-source) ada_source=true ;;
         --blackwell-source) blackwell_source=true ;;
         --published-only) ada_source=false; blackwell_source=false ;;
-        *) echo 'Usage: image_build.sh [--ada-source] [--blackwell-source] [--published-only]' >&2; exit 2 ;;
+        --pq2) model_variant=pq2_0 ;;
+        *) echo 'Usage: image_build.sh [--ada-source] [--blackwell-source] [--published-only] [--pq2]' >&2; exit 2 ;;
     esac
 done
 bonsai_step project-lock "Waiting for the checkout lock."
@@ -124,10 +126,20 @@ for backend in ada blackwell; do
         python3 -B "$staging/tools/verify-$backend-source.py" "$destination"
     fi
 done
-image="localhost/bonsai2-27b:$version"
+# Resolve model pins from the same frozen sources that go into the image.
+BONSAI_MODEL_VARIANT=$model_variant source "$staging/data/models/download.sh"
+image_repository=localhost/bonsai2-27b
+[[ "$model_variant" != pq2_0 ]] || image_repository=localhost/bonsai2-27b-pq2-0
+image="$image_repository:$version"
 echo "Building $image from Git revision $revision (dirty=$dirty)"
 bonsai_step image-build "Building $image and latest (revision=$revision; dirty=$dirty)."
-podman build --tag "$image" --tag localhost/bonsai2-27b:latest \
+podman build --tag "$image" --tag "$image_repository:latest" \
+    --build-arg "BONSAI_MODEL_VARIANT=$model_variant" \
+    --build-arg "BONSAI_MODEL_FILE=$MODEL_FILE" \
+    --label "io.bonsai.model.variant=$model_variant" \
+    --label "io.bonsai.model.file=$MODEL_FILE" \
+    --label "io.bonsai.model.revision=$MODEL_REVISION" \
+    --label "io.bonsai.model.sha256=$MODEL_SHA" \
     --label "org.opencontainers.image.version=$version" \
     --label "org.opencontainers.image.revision=$revision" \
     --label "io.bonsai.git.dirty=$dirty" \

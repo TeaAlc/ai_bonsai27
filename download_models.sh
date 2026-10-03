@@ -11,6 +11,7 @@ case "${1:-}" in
     --repair) mode=repair; shift ;;
     --help|-h)
         echo 'Usage: BONSAI_MODEL_DIR=/path/to/models ./download_models.sh [--verify|--repair]'
+        echo 'BONSAI_MODEL_VARIANT=ptq1_0 (default) or pq2_0 selects the pinned model.'
         echo 'Default: reuse readable nonempty files; --verify hashes without downloading.'
         echo '--repair replaces damaged pinned files only after a verified download.'
         exit 0 ;;

@@ -52,6 +52,33 @@ Ternary-Bonsai-2-27B-mmproj-BF16.gguf
         path.write_text(json.dumps({'run_id':metadata['run_id'],'image_id':metadata['image_id'],'recorded_at':'2026-09-30T00:01:00+00:00','data':data}))
 
     def test_valid(self):self.assertTrue(all(qa.audit(self.root).values()))
+    def test_pq2_variant_pins(self):
+        checksum = '78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847'
+        for identity in (self.identity, self.small):
+            identity['model_variant'] = 'pq2_0'
+            identity['model_pin_sha256'] = checksum
+            identity['model_hashes'] = [checksum + '  /models/Bonsai-2-27B-PQ2_0-MTP.gguf', identity['model_hashes'][1]]
+        (self.root / 'identity.json').write_text(json.dumps(self.identity))
+        (self.root / 'context-8192/identity.json').write_text(json.dumps(self.small))
+        self.assertTrue(all(qa.audit(self.root).values()))
+        self.identity['model_hashes'][0] = '0' * 64 + '  /models/Bonsai-2-27B-PQ2_0-MTP.gguf'
+        self.small['model_hashes'] = self.identity['model_hashes']
+        (self.root / 'identity.json').write_text(json.dumps(self.identity))
+        (self.root / 'context-8192/identity.json').write_text(json.dumps(self.small))
+        with self.assertRaises(AssertionError):qa.audit(self.root)
+
+    def test_wrong_model_variant(self):
+        (self.root / 'context-8192/identity.json').write_text(json.dumps(dict(self.small, model_variant='pq2_0')))
+        with self.assertRaises(ValueError):qa.audit(self.root)
+
+    def test_wrong_image_model_pin(self):
+        (self.root / 'identity.json').write_text(json.dumps(dict(self.identity, model_pin_sha256='0' * 64)))
+        with self.assertRaises(AssertionError):qa.audit(self.root)
+
+    def test_unknown_model_variant(self):
+        for path, identity in ((self.root / 'identity.json', self.identity), (self.root / 'context-8192/identity.json', self.small)):
+            path.write_text(json.dumps(dict(identity, model_variant='unknown')))
+        with self.assertRaises(ValueError):qa.audit(self.root)
     def test_token_byte_log(self):
         path = self.root / 'server.log'
         raw = path.read_bytes() + b'\nverbose token fragment: \xe2\x80\n'

@@ -8,10 +8,10 @@ bonsai_step configuration "Validating container settings."
 # variables; defaults also allow the image to be started directly with Podman.
 source /opt/bonsai/config.sh
 ctx_size=${BONSAI_CTX_SIZE:-$BONSAI_DEFAULT_CTX_SIZE}
-model=${BONSAI_MODEL:-/models/Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf}
 vision_projector=${BONSAI_MMPROJ:-/models/Ternary-Bonsai-2-27B-mmproj-BF16.gguf}
 reasoning_effort=${BONSAI_REASONING_EFFORT:-$BONSAI_DEFAULT_REASONING_EFFORT}
 source /opt/bonsai/download-models.sh
+model=${BONSAI_MODEL:-/models/$MODEL_FILE}
 source /opt/bonsai/detect-gpu.sh
 
 # Validate input before driver initialization or downloading large artifacts.
@@ -122,7 +122,7 @@ model_args=(
     --no-mmproj-offload
 )
 
-# The container listens on port 8080; run.sh publishes it on host localhost.
+# The container listens on port 8080; run.sh uses the configured host IPv4 bind.
 # One slot gives a single request the configured context window.
 server_args=(
     --host 0.0.0.0

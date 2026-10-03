@@ -59,6 +59,13 @@ if args[0]=='build':
     for index,arg in enumerate(args):
         if arg=='--label':
             key,value=args[index+1].split('=',1);labels[key]=value
+    variant=os.environ.get('FIXTURE_VARIANT','ptq1_0')
+    assert labels['io.bonsai.model.variant']==variant
+    repository='localhost/bonsai2-27b-pq2-0' if variant=='pq2_0' else 'localhost/bonsai2-27b'
+    assert [args[i+1] for i,arg in enumerate(args) if arg=='--tag']==[repository+':1.0.0',repository+':latest']
+    model_file='Bonsai-2-27B-PQ2_0-MTP.gguf' if variant=='pq2_0' else 'Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf'
+    assert [args[i+1] for i,arg in enumerate(args) if arg=='--build-arg']==['BONSAI_MODEL_VARIANT='+variant,'BONSAI_MODEL_FILE='+model_file]
+    assert labels['io.bonsai.model.file']==model_file
     pathlib.Path(os.environ['FIXTURE_IMAGE']).write_text(json.dumps([{'Id':'a'*64,'Config':{'Labels':labels}}]))
     original_profile=(stage/'tools/backend-profiles.json').read_bytes()
     pathlib.Path('tools/backend-profiles.json').write_text('{}')
@@ -82,6 +89,20 @@ else:sys.exit(2)
     assert set(receipt['inputs'])=={'blackwell','ampere-ada','ada-source','blackwell-source'}
     assert receipt['ada_source_build']['architectures']==['89-real']
     assert receipt['blackwell_source_build']['architectures']==['120-real']
+    assert receipt['model_variant']=='ptq1_0'
+    # PQ2 uses separate image tags and pins without losing prepared runtimes.
+    shutil.copy2(PROJECT/'tools/backend-profiles.json',repo/'tools/backend-profiles.json')
+    (repo/'entrypoint.sh').write_text('original committed content\n')
+    git('add','entrypoint.sh');git('commit','--quiet','-m','fix: restore fixture source')
+    env['FIXTURE_VARIANT']='pq2_0'
+    result=subprocess.run([str(repo/'image_build.sh'),'--pq2'],env=env,capture_output=True,text=True)
+    assert result.returncode==0,result.stderr
+    variant_receipt=json.loads((repo/'results/last-build.json').read_text())
+    assert variant_receipt['model_variant']=='pq2_0'
+    assert variant_receipt['model_file']=='Bonsai-2-27B-PQ2_0-MTP.gguf'
+    assert variant_receipt['model_revision']=='5edf5f552d45e40b81f0255a8bb443af35850722'
+    assert variant_receipt['model_sha256']=='78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847'
+    assert set(variant_receipt['inputs'])==set(receipt['inputs'])
     # The same project lock is honored by independent processes.
     command=['bash','-c','cd "$1"; source tools/project.sh; lock_project; echo start >> "$2"; sleep .2; echo end >> "$2"','test',str(repo),str(root/'events')]
     one=subprocess.Popen(command,env=env);two=subprocess.Popen(command,env=env)

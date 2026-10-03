@@ -18,7 +18,7 @@ MTP requires actual `nextn` weights in the GGUF. A server flag alone cannot add 
 | --- | --- | --- |
 | [sudoingx PTQ1_0 MTP](https://huggingface.co/sudoingx/Ternary-Bonsai-2-27B-PTQ1_0-MTP-GGUF) | Restored Qwen3.8 MTP head; fat and lean files | **Lean selected** for the 12 GB GPU; requires the backend Hadamard fix |
 | [ProCreations MTP](https://huggingface.co/ProCreations/Ternary-Bonsai-2-27B-MTP) | PQ2_0 body with a further-trained Bonsai-adapted head | Larger body; published n=2 measurements are on other hardware |
-| [decent-jawfish](https://huggingface.co/decent-jawfish/bonsai-2-27b-mtp) | PQ2_0 MTP graft mentioned by sudoingx | No independent performance claim adopted |
+| [decent-jawfish](https://huggingface.co/decent-jawfish/bonsai-2-27b-mtp) | Unmodified official PQ2_0 body with Qwen3.8 MTP graft | Pinned optional `image_build.sh --pq2` profile; local evidence is indexed in RECHERCHE.md |
 | [BoldingBuilds](https://huggingface.co/BoldingBuilds/Ternary-Bonsai-2-27B-Abliterated-PQ2_0-MTP-GGUF) | Abliterated PQ2_0 MTP derivative | Changes model behavior; not selected |
 | [matrixoar](https://huggingface.co/matrixoar/Bonsai-2-27B-PTQ1_0-MTP-Uncensored-Ready-GGUF) | PTQ1_0 with ProCreations Q8_0 head; optional separate LoRA | Alternative with documented n=2 benchmarks; LoRA is not part of this deployment |
 | [signalnine q27](https://huggingface.co/signalnine/Bonsai-2-27B-q27) | Different q27 format with MTP variants | Not a drop-in GGUF/llama-server model |
@@ -39,6 +39,8 @@ The [official Bonsai 2 model card](https://huggingface.co/prism-ml/Ternary-Bonsa
 | --- | --- |
 | sudoingx model repository revision | `f04a3bd22b7b482675663e99efaba6719347b419` |
 | `Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf` | `1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685` |
+| decent-jawfish PQ2_0 MTP repository revision | `5edf5f552d45e40b81f0255a8bb443af35850722` |
+| `Bonsai-2-27B-PQ2_0-MTP.gguf` | `78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847` |
 | CUDA 12.8 sm120 bundle, `ff41412` | `74e1cf451d41e1435d15ef93e76007219cdf28fd1eb59bf335d1f3d31bfbc4da` |
 | CUDA 12.4 sm86/sm89 bundle, `285542d` | `46b0bc960f00352267ed34246b7cb5010fa64618077158647e5d2bbcf0fb60fe` |
 | Official vision repository revision | `b072e1d3b35a0a630cece372c2127528e0994386` |

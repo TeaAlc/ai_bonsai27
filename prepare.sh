@@ -26,7 +26,7 @@ prepare_backend() {
     mkdir -p "$directory"
     backup="$directory/runtime.previous"
     if [[ ! -d "$directory/runtime" && -d "$backup" ]]; then mv -- "$backup" "$directory/runtime"; fi
-    download_missing_model "$MODEL_REPO/$archive_name" "$directory/archive.tar.gz" "$expected_sha" repair
+    download_missing_model "$BACKEND_REPO/$archive_name" "$directory/archive.tar.gz" "$expected_sha" repair
     staging=$(mktemp -d "$TMPDIR/backend-$backend.XXXXXX")
     backup="$directory/runtime.previous"
     if ! tar -xzf "$directory/archive.tar.gz" --strip-components=1 -C "$staging" \

@@ -16,7 +16,7 @@ with tempfile.TemporaryDirectory(prefix='prepare-test.',dir='/tmp/bonsai27') as 
     for name in ('data/logging.sh','prepare.sh','download_models.sh','tools/project.sh','tools/backend-artifacts.sh','tools/verify-backend.py','data/models/download.sh'):
         destination=repo/name;destination.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(PROJECT/name,destination)
     cache=root/'cache';cache.mkdir()
-    for name in ('Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf','Ternary-Bonsai-2-27B-mmproj-BF16.gguf'):(cache/name).write_text('existing fixture')
+    for name in ('Ternary-Bonsai-2-27B-PTQ1_0-mtp-lean.gguf','Bonsai-2-27B-PQ2_0-MTP.gguf','Ternary-Bonsai-2-27B-mmproj-BF16.gguf'):(cache/name).write_text('existing fixture')
     archive_dir=root/'archives';archive_dir.mkdir()
     pins=(repo/'tools/backend-artifacts.sh').read_text()
     for backend,prefix in [('blackwell','BLACKWELL'),('ampere-ada','AMPERE_ADA')]:
@@ -36,6 +36,7 @@ for ((i=1;i<=$#;i++)); do
     if [[ ${!i} == --output ]]; then j=$((i+1)); output=${!j}; fi
 done
 url=${!#}
+[[ "$url" == https://huggingface.co/sudoingx/Ternary-Bonsai-2-27B-PTQ1_0-MTP-GGUF/resolve/* ]]
 backend=blackwell
 [[ "$url" != *sm86-sm89* ]] || backend=ampere-ada
 cp "$FIXTURE_ARCHIVES/$backend.tar.gz" "$output"
@@ -49,6 +50,10 @@ echo called >> "$FIXTURE_CALLS"
     second=prepare();assert second.returncode==0,second.stderr
     assert not (runtime/'old-extra').exists()
     assert len((root/'calls').read_text().splitlines())==2,'verified cache used network'
+    environment['BONSAI_MODEL_VARIANT']='pq2_0'
+    variant=prepare();assert variant.returncode==0,variant.stderr
+    environment.pop('BONSAI_MODEL_VARIANT')
+    assert len((root/'calls').read_text().splitlines())==2,'model variant changed backend pins'
     # An archive that matches its pin but has an invalid internal manifest must
     # never replace the previous verified runtime.
     bundle=root/'bad';bundle.mkdir();(bundle/'payload').write_text('damaged');(bundle/'SHA256SUMS').write_text('0'*64+'  ./payload\n')

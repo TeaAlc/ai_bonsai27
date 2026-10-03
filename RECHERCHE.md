@@ -1,4 +1,99 @@
 # Bonsai 2 research and measurement index
+## PTQ1_0 versus PQ2_0: research and local test — October 3, 2026
+
+“PQ1” here means the existing **PTQ1_0 MTP Lean** profile. PQ2_0 is
+an optional image; PTQ1_0 remains the default.
+
+### Representation, quality and external performance
+
+Both packs represent ternary weights with FP16 scales per 128 weights and the
+same Hadamard rotation. PTQ1_0 uses dense trits; PQ2_0 uses 2-bit slots.
+Consequently, extra storage does not imply extra numerical precision. Inference:
+packing alone should not improve coding, recall or prose; different kernels can
+still produce numerical differences. Official base sizes are 5.95 versus 7.21 GB.
+Prism reports these short-prompt results, **not measurements on this host**:
+
+| GPU | PTQ1_0 PP512 tok/s | PQ2_0 PP512 tok/s | PTQ1_0 TG128 tok/s | PQ2_0 TG128 tok/s |
+| --- | ---: | ---: | ---: | ---: |
+| RTX 5090 | 1805 | 3893 | 120.5 | 129.9 |
+| RTX 4090 | 1645 | 3124 | 91.1 | 81.2 |
+| H100 | 1237 | 2830 | 86.9 | 113.9 |
+
+Cheap unpacking favors PQ2 prefill; lower weight traffic can favor PTQ1 decode.
+PP512 is not a 30k-context server/MTP benchmark. The common backbone advertises
+262K context. Its coding average is 89.42 and BFCL v3 tool calling 74.92; these
+are model-level results, not a packing comparison or a repository-agent evaluation.
+[Primary model card](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf).
+No controlled packing-specific long-context, agentic coding or German prose
+comparison was found in the reviewed primary sources.
+
+### Local 30,000-token measurements
+
+Three fresh PQ2 containers used the identical request, native Blackwell executable
+and flags as the earlier PTQ baseline, apart from the model path. Defaults remain
+batch 2048 / microbatch 512, context 32000, q8_0 main/draft KV, Flash Attention,
+MTP depth 2 and medium thinking. The file has exactly 30000 tokenizer tokens;
+the rendered chat has 30009. All requests had zero cached tokens and completed
+normally with reasoning, 450 completion tokens and a correct risk summary.
+
+| Profile | Prefill runs (s) | Mean ± sample SD (s) | Mean tok/s | Global VRAM peak (MiB) |
+| --- | --- | --- | ---: | ---: |
+| Earlier PTQ1_0 baseline | 54.965 / 54.468 / 56.193 | 55.209 ± 0.888 | 543.65 | 10715 |
+| New PQ2_0 MTP | 56.608 / 58.929 / 56.959 | 57.499 ± 1.251 | 522.07 | 11398 |
+
+PQ2 took **4.15% longer** in this workload. The baseline was recorded earlier,
+not rerun or interleaved. VRAM is global GPU usage, includes other processes,
+and sampling can miss brief peaks; the observed difference is 683 MiB, not an
+isolated model allocation. This is insufficient to diagnose the cause or claim a
+general PQ2 slowdown. Long prefill also contains attention/recurrent-state work,
+so packing throughput alone cannot predict end-to-end performance.
+[Measurements and identities](data/research/pq2-0-mtp-20261003/measurements.json).
+
+The selected 7,557,178,656-byte model is pinned to revision
+`5edf5f552d45e40b81f0255a8bb443af35850722`, SHA256
+`78df4279d40ebebdccfd2dae0e9d4847afee52e94f48f3542ae9437220dbd847`.
+The [upstream card](https://huggingface.co/decent-jawfish/bonsai-2-27b-mtp)
+identifies an unchanged official PQ2 body with an added MTP head. Our GGUF
+inventory independently confirms identical tokenizer metadata and byte-identical
+stored spans for all 15 MTP tensors compared with PTQ1_0 Lean. Both have 866
+tensors; 402 main tensors change packing type 143 to 142. We did not independently
+decode every main tensor to prove weight equivalence.
+[Inventory](data/research/pq2-0-mtp-20261003/gguf-inventory.json).
+
+The image `localhost/bonsai2-27b-pq2-0:1.5.1` is built locally from a dirty
+immutable development snapshot, with model pins in its labels/receipt and all
+four backend profiles retained. PTQ image tags are preserved. Offline regressions,
+real CUDA runtime checks and fresh 16k/8k API QA passed, including 15k recall,
+CPU BF16 vision and three coding tasks in the restricted Python container.
+All 18 final audit checks passed. An earlier audit rejected the PQ hash because
+it only recognized PTQ; it is retained as failed evidence. The updated audit
+checks shared known pins and rejects unknown/mismatched profiles.
+[Fresh validation](data/research/pq2-0-mtp-20261003/validation.json).
+These functional probes do not establish comparative agent quality or fluency.
+
+### Long context, agent loops and language
+
+Prism documents malformed or looping tool calls as a model limitation. It also
+reports cache misses when earlier reasoning or tool calls are re-rendered; omitting
+past reasoning from subsequent requests is its workaround. Output limits include
+thinking, and exhaustion can appear as poor non-English output. Medium effort
+shortens reasoning; the packing change does not fix these behaviors.
+[Known issues](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/blob/b072e1d3b35a0a630cece372c2127528e0994386/KNOWN_ISSUES.md).
+
+Prefix reuse, checkpoint restoration of hybrid state, RAM prompt-cache storage
+and cache shifting are distinct mechanisms. The official cache guide recommends
+checking actual processed-token counts and checkpoint logs, with a full-prefill
+control; its suggested speculative-disabled experiment cannot simply be assumed
+to work with our MTP settings. We retain the authorized runtime defaults.
+[Prompt-cache guide](https://github.com/PrismML-Eng/Bonsai-demo/blob/main/PROMPT-CACHE.md).
+
+For this 12 GB notebook and long prompts, retain PTQ1_0 and default batches:
+the measured PQ2 profile provides no prefill benefit and less observed memory
+headroom. For agent workloads, the next useful experiment is an identified
+multi-turn tool conversation measuring cached versus processed tokens and
+end-to-end latency, followed by interleaved packing runs. No format-specific
+advantage in long-context accuracy, agent reliability or expression is established.
+
 
 ## Corrected 30,000-token batch comparison — October 3, 2026
 

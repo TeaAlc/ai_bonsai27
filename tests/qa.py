@@ -5,7 +5,9 @@ sys.dont_write_bytecode = True
 import argparse
 import hashlib
 import json
+import os
 import re
+import subprocess
 from pathlib import Path
 
 
@@ -26,6 +28,19 @@ def audit(directory):
     log = log_bytes.decode('utf-8', errors='replace')
     if any(identity[key] != small[key] for key in ('image_id', 'revision', 'suite_id', 'model_hashes')):
         raise ValueError('8k and 16k checks use different images')
+    model_variant = identity.get('model_variant', 'ptq1_0')
+    if model_variant != small.get('model_variant', 'ptq1_0'):
+        raise ValueError('8k and 16k checks use different model variants')
+    if model_variant not in ('ptq1_0', 'pq2_0'):
+        raise ValueError('Unsupported model variant in test evidence')
+    # Use shared pins for the identified variant; never accept an arbitrary hash.
+    pins = Path(__file__).resolve().parents[1] / 'data/models/download.sh'
+    expected_hashes = subprocess.check_output([
+        'bash', '-c', 'set -e; source "$1"; printf "%s\\n" "$MODEL_SHA" "$VISION_SHA"',
+        'qa-model-pins', str(pins),
+    ], env=dict(os.environ, BONSAI_MODEL_VARIANT=model_variant), text=True).splitlines()
+    image_pin_matches = identity.get('model_pin_sha256') in (None, expected_hashes[0])
+    image_pin_matches = image_pin_matches and small.get('model_pin_sha256') in (None, expected_hashes[0])
     if read('server-log')['sha256'] != hashlib.sha256(log_bytes).hexdigest():
         raise ValueError('server log does not belong to this evidence set')
     models = read('models')
@@ -48,7 +63,7 @@ def audit(directory):
         'no_cuda_init_error': 'failed to initialize CUDA' not in log,
         'context_16k': identity['context'] == 16384 and read('props')['default_generation_settings']['n_ctx'] == 16384,
         'context_env_8k': small['context'] == 8192 and props8['default_generation_settings']['n_ctx'] == 8192,
-        'pinned_models': [line.split()[0] for line in identity['model_hashes']] == ['1e33c571a5ce7a9a3e42474d66192923d5a6d77da7fb3a22986dc809522b5685', 'e287342d92332fa3577ed1d42e921dac9370c08da58ba9337fa450f6cc76cfd7'],
+        'pinned_models': image_pin_matches and [line.split()[0] for line in identity['model_hashes']] == expected_hashes,
         'api_model': any(item['id'] == 'bonsai2-27b' for item in models['data']),
         'api_chat': chat['choices'][0]['message']['content'].strip() == '42',
         'api_long_context': read('api-test-summary')['long_context_pass'] and read('context-16k')['usage']['prompt_tokens'] >= 14900,

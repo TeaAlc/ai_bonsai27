@@ -34,6 +34,10 @@ if (blackwell_backend / 'SHA256SUMS').is_file():
     blackwell_build = json.loads((blackwell_backend / 'build.json').read_text())
 record = {'schema': 1, 'image_id': 'sha256:' + image['Id'].removeprefix('sha256:'), 'engine': 'podman',
           'version': version, 'revision': revision, 'dirty': dirty == 'true',
+          'model_variant': labels.get('io.bonsai.model.variant', 'ptq1_0'),
+          'model_file': labels.get('io.bonsai.model.file'),
+          'model_revision': labels.get('io.bonsai.model.revision'),
+          'model_sha256': labels.get('io.bonsai.model.sha256'),
           'source': expected['org.opencontainers.image.source'],
           'built_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
           'inputs': inputs, 'ada_source_build': optional_build, 'blackwell_source_build': blackwell_build, 'containerfile': (root / 'Containerfile').read_text(),

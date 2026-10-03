@@ -1,0 +1,35 @@
+{
+  "researched_on": "2026-10-03",
+  "sources": [
+    {
+      "url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "scope": "Official representation, short-prompt throughput and common model capability claims"
+    },
+    {
+      "url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/blob/b072e1d3b35a0a630cece372c2127528e0994386/KNOWN_ISSUES.md",
+      "scope": "Reasoning limits, language output, tool loops and cache misses"
+    },
+    {
+      "url": "https://github.com/PrismML-Eng/Bonsai-demo/blob/main/PROMPT-CACHE.md",
+      "scope": "Prefix reuse, hybrid checkpoints, cache controls and experimental comparison limitations"
+    },
+    {
+      "url": "https://huggingface.co/decent-jawfish/bonsai-2-27b-mtp/tree/5edf5f552d45e40b81f0255a8bb443af35850722",
+      "scope": "Pinned optional PQ2 MTP artifact; retained card and patch"
+    },
+    {
+      "url": "https://huggingface.co/sudoingx/Ternary-Bonsai-2-27B-PTQ1_0-MTP-GGUF/tree/f04a3bd22b7b482675663e99efaba6719347b419",
+      "scope": "Pinned existing PTQ1 MTP Lean profile"
+    }
+  ],
+  "retained_files_sha256": {
+    "base-model-metadata.json": "7de0f1f5c168e8030862f3cfd8cacec84437c11399cd99bfe8d9987293dba00e",
+    "gguf-inventory.json": "c74fcdd8a1f76a2ffdcaff9503cc9d702319ec0824a7ef5629b12456ea029426",
+    "measurements.json": "e481aa99ecb99ac0f5599796719b1ba06b7f8189ba1fb8e27e25160a303a6e10",
+    "model-metadata.json": "75df1ac178405dc8145251bd55ecf2a44fe209972d7c3cd07236e69ed42a7a90",
+    "upstream-base-LICENSE": "69849221bfb90053de2134ef5e6d540287b4b98062326492f1f96f5da685524b",
+    "upstream-hadamard.patch": "c10f622220f4a542c46aef5bb2042a99a279d23e2ab5727c89ea528568ce23b0",
+    "upstream-model-card.md": "783316819de93307e27137f779438555c217c27445633e3b92c2a90a921524ca",
+    "validation.json": "2733fffd5b96d1c53e161a53d60c25049744cdc2910ef1086498c2cf821ff0b3"
+  }
+}
