@@ -433,7 +433,10 @@ text boundaries may differ from the original generation. Each exchange records
 if any exchange lacks a count. Completion-token usage already includes thinking;
 do not add `reasoning_tokens` to the usage total again.
 
-Prompt-cache results are printed per exchange and in the JSON summary:
+Prompt-cache results are printed per exchange and in the JSON summary.
+The per-exchange `Prompt cache:` line also shows reasoning tokens (with their
+API-counter or estimated source) and total output tokens, including reasoning.
+Unavailable reasoning counts are displayed as `unknown`.
 `cached_prompt_tokens` counts reused input tokens, `processed_prompt_tokens`
 counts input tokens that required processing, and `cache_hit_rate_percent`
 expresses the reused fraction. The total rate is token-weighted:

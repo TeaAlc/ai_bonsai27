@@ -281,12 +281,17 @@ def main():
             print(f"Thinking tokens: {thinking['reasoning_tokens']} ({qualifier if thinking['reasoning_tokens'] is not None else 'unknown'}).", flush=True)
             print(f"Usage: {usage['prompt_tokens']} input + {usage['completion_tokens']} output; "
                   f'{seconds:.2f}s.', flush=True)
+            reasoning_count = thinking['reasoning_tokens']
+            reasoning_display = (f'{reasoning_count} ({qualifier})'
+                                 if reasoning_count is not None else 'unknown')
+            output_metrics = (f" Reasoning tokens: {reasoning_display}; "
+                              f"output tokens: {usage['completion_tokens']} (including reasoning).")
             if cache['cached_prompt_tokens'] is None:
-                print('Prompt cache: counters unavailable; hit rate unknown.', flush=True)
+                print('Prompt cache: counters unavailable; hit rate unknown.' + output_metrics, flush=True)
             else:
                 print(f"Prompt cache: {cache['cached_prompt_tokens']} cached + "
                       f"{cache['processed_prompt_tokens']} processed input tokens; "
-                      f"hit rate {cache['cache_hit_rate_percent']:.2f}%.", flush=True)
+                      f"hit rate {cache['cache_hit_rate_percent']:.2f}%." + output_metrics, flush=True)
         run_status = 'completed'
     except BaseException as error:
         run_status = 'cancelled' if isinstance(error, KeyboardInterrupt) else 'failed'
