@@ -436,6 +436,8 @@ do not add `reasoning_tokens` to the usage total again.
 Prompt-cache results are printed per exchange and in the JSON summary.
 Each exchange prints one compact statistics line, highlighted in bold cyan on
 terminals (unless `NO_COLOR` is set); redirected output contains no ANSI escapes.
+Message labels use bold yellow for the user and bold green for the assistant;
+message text retains the normal terminal color.
 For example: `Tokens: 37 in | 1568 out (incl. 1483 (est.) reasoning) | Cache: 33 cached + 4 processed; hit rate 89.19% | 12.16s`.
 Output includes reasoning; `(est.)` marks retokenized estimates, and unavailable
 counts are displayed as `unknown`.

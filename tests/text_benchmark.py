@@ -275,8 +275,15 @@ def main():
                 'timings': response.get('timings') or {},
                 **cache, **thinking,
             })
-            print(f'\nMessage {2 * turn - 1}/20 (user): {question}', flush=True)
-            print(f'Message {2 * turn}/20 (assistant): {assistant}', flush=True)
+            # Color only message labels, using the same terminal policy as statistics.
+            use_color = sys.stdout.isatty() and 'NO_COLOR' not in os.environ
+            user_label = f'Message {2 * turn - 1}/20 (user):'
+            assistant_label = f'Message {2 * turn}/20 (assistant):'
+            if use_color:
+                user_label = f'\033[1;33m{user_label}\033[0m'
+                assistant_label = f'\033[1;32m{assistant_label}\033[0m'
+            print(f'\n{user_label} {question}', flush=True)
+            print(f'{assistant_label} {assistant}', flush=True)
             reasoning_count = thinking['reasoning_tokens']
             reasoning_display = 'unknown' if reasoning_count is None else str(reasoning_count)
             if thinking['reasoning_tokens_are_estimated']:
@@ -291,7 +298,7 @@ def main():
                        f"(incl. {reasoning_display} reasoning) | "
                        f"Cache: {cache_display} | {seconds:.2f}s")
             # Highlight terminal output; keep redirected logs free of ANSI escapes.
-            if sys.stdout.isatty() and 'NO_COLOR' not in os.environ:
+            if use_color:
                 metrics = f'\033[1;36m{metrics}\033[0m'
             print(metrics, flush=True)
         run_status = 'completed'
