@@ -1,17 +1,5 @@
 # Bonsai 2 research and measurement index
 
-## Planned PTQ1 optimization campaign — October 3, 2026
-
-The [implementation and acceptance plan](docs/ptq1-optimization-plan.md) orders
-isolated changes to host overhead, MMQ scale reuse, activation preparation,
-Hadamard fusion and matvec activation loads. It requires exact numerical and
-model-behavior preservation, realistic short/long analysis/tool/coding cases,
-sanitisers, explicit ownership/dependency contracts, fault injection and soaks.
-Only Blackwell hardware is available: Ampere/Ada paths are qualified by native
-compilation, generated-code/resource inspection and theoretical equivalence and
-progress review, with conservative fallback. Their runtime performance and
-quality are not measured. No kernel has been changed by preparing this plan.
-
 ## Packing recheck and PTQ kernel review — October 3, 2026
 
 The local model profiles were **not swapped**: PTQ1_0 Lean is GGUF type 143,

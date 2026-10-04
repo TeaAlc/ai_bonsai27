@@ -32,3 +32,6 @@ data/backends/*/*.lock.d/
 
 # Local repository copies used for integration
 /other_repo/
+
+# Local PTQ1 optimization archive
+/experimental/
