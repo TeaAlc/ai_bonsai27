@@ -27,8 +27,9 @@ Set `BONSAI_BIND_ADDRESS=127.0.0.1` for local-only access.
 
 ## Documentation website
 
-Open [docs/index.html](docs/index.html) for the browser game and the documentation
-index. **[DWARF BUSTER](docs/game/index.html) is a playable demo built by the
+Open the [documentation website](https://teaalc.github.io/ai_bonsai27/) for the
+browser game and the documentation index.
+**[DWARF BUSTER](https://teaalc.github.io/ai_bonsai27/game/) is a playable demo built by the
 model running in the container.** It is a self-contained HTML5 Canvas survival
 game with procedural graphics and synthesized sound.
 Documents are rendered as HTML, with links to their Markdown sources.
