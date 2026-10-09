@@ -14,6 +14,7 @@ Performance benchmarks always enable thinking with **`medium`** reasoning.
 The host API binds to all IPv4 interfaces (`0.0.0.0`) by default.
 Set `BONSAI_BIND_ADDRESS=127.0.0.1` for local-only access.
 
+- [Documentation website and model-built game demo](#documentation-website)
 - [Quick start](#quick-start)
 - [GPU requirements and host setup](#gpu-requirements-and-host-setup)
 - [Configuration](#configuration)
@@ -23,6 +24,34 @@ Set `BONSAI_BIND_ADDRESS=127.0.0.1` for local-only access.
 - [Text benchmark](#text-conversation-benchmark)
 - [Performance and validation](#performance-and-validation)
 - [Desktop setup](docs/desktop.md), [releases and publication](docs/releases.md), [validation details](docs/validation.md)
+
+## Documentation website
+
+Open [docs/index.html](docs/index.html) for the browser game and the documentation
+index. **[DWARF BUSTER](docs/game/index.html) is a playable demo built by the
+model running in the container.** It is a self-contained HTML5 Canvas survival
+game with procedural graphics and synthesized sound.
+Documents are rendered as HTML, with links to their Markdown sources.
+The site works without external services or JavaScript dependencies; the
+reader uses a small local script to select the requested document.
+
+To serve the complete site locally from the repository root:
+
+```bash
+python3 -B -m http.server 8888 --bind 127.0.0.1
+```
+
+Visit `http://127.0.0.1:8888/docs/`. You can also open `docs/index.html` directly.
+When hosting, serve the repository root so the root README, research overview,
+and referenced assets remain available. The game requires a desktop keyboard
+and mouse. After editing Markdown documents, regenerate the bundled reader:
+
+```bash
+node tools/build-docs.mjs
+```
+
+The generator uses the included MIT-licensed marked 18.0.11 renderer; no package
+installation is needed. Add new document links to `docs/index.html` as needed.
 
 ## Quick start
 

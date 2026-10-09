@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DWARF BUSTER — Bert im Wüstendorf</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" width="960" height="540"></canvas>
+
+  <!-- Screen FX -->
+  <div class="vignette"></div>
+  <div id="flash"></div>
+  <div id="healglow"></div>
+  <div id="victoryglow"></div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-panel hud-tl">
+      <div class="lbl">LEBEN — BERT</div>
+      <div class="bar-wrap"><div class="bar" id="hphp"></div></div>
+      <div id="hptxt">100 / 100</div>
+    </div>
+
+    <div class="hud-panel hud-tc">
+      <div class="lbl">WAVE</div>
+      <div class="wave" id="hwave">1 / 5</div>
+      <div class="t-value" id="htime">01:23</div>
+    </div>
+
+    <div class="hud-panel hud-tr">
+      <div class="lbl">SCORE</div>
+      <div class="t-value" id="hscore">0</div>
+      <div class="lbl" style="margin-top:4px">⭐ MULTIPL</div>
+      <div class="t-value" id="hmult" style="font-size:11px">×1.0</div>
+    </div>
+
+    <div class="hud-panel hud-bl">
+      <div class="lbl">WAFFE</div>
+      <div style="font-size:14px; margin:2px 0 4px;"><span id="hweapon">Pistole</span>
+        <span style="color:var(--ammo); font-size:12px;" id="hmag">12 / 40</span></div>
+      <div>
+        <div class="slot active" data-w="0" title="1 — Pistole"><span>1</span>P</div>
+        <div class="slot" data-w="1" title="2 — Gewehr"><span>2</span>G</div>
+        <div class="slot" data-w="2" title="3 — Shotgun"><span>3</span>S</div>
+      </div>
+    </div>
+
+    <div class="hud-panel hud-br">
+      <div class="lbl">MUNITION · GRANATEN</div>
+      <div style="font-size:14px; margin:2px 0 4px; color:var(--ammo);"><span id="hammo">40</span> Schuss</div>
+      <div style="font-size:14px; margin:2px 0 4px; color:var(--gren);">💣 <span id="hgren">4</span></div>
+      <div class="lbl">SPRINT</div>
+      <div class="bar-wrap"><div class="bar sprint" id="hsprint"></div></div>
+    </div>
+  </div>
+
+  <div id="combo"></div>
+
+  <!-- ===== OVERLAYS ===== -->
+  <div class="overlay show" id="menu">
+    <h1 id="menuTitle">DWARF<br><span style="font-size:34px; color:#e8dfc8;">BUSTER</span></h1>
+    <p>Du bist <b>Bert</b>, letzter freier Zwerg im Wüstendorf.
+       Überlebe die <b>5 Wellen</b>, bis der Rettungshelikopter kommt.
+       Sammle Munition, Granaten und Goldmünzen. Vermeide die Leichenbetrager und die Feind-Zwerge.</p>
+    <p style="color:#b5a98f; font-size:13px;">
+      WASD/Pfeile: bewegen &nbsp; Maus: zielen &nbsp; LMB: schießen &nbsp; G/RMB/Space: Granate<br>
+      Q: Sprint &nbsp; 1/2/3: Waffe &nbsp; P: Pause &nbsp; R: Neustart
+    </p>
+    <button class="btn" id="btnStart">★ START ★</button>
+    <div class="flicker" style="margin-top:16px; font-size:12px; color:var(--text-dim);">
+      5 WELLEN · 250 SEKUNDEN · ÜBERLEBEN
+    </div>
+  </div>
+
+  <div class="overlay" id="pause">
+    <h1>⏸ PAUSE</h1>
+    <p>Das Dorf wartet auf dich.</p>
+    <button class="btn" id="btnResume">▶ FORTSETZEN</button>
+  </div>
+
+  <div class="overlay" id="gameover">
+    <h1 class="dead">✝ GAME OVER</h1>
+    <p><span id="goWave">Bert fiel in der Wellen.</span><br>
+       Die Ruinen schlafen weiter.</p>
+    <div class="stats" id="goStats">SCORE: 0 · TIME: 0:00 · KILLS: 0</div>
+    <button class="btn" id="btnRestart">↻ NEU STARTEN</button>
+  </div>
+
+  <div class="overlay" id="victory">
+    <h1 class="win">🚁 RETTUNG!</h1>
+    <p><span id="viText">Der Heli fliegt ab. Bert lebt — für heute.</span></p>
+    <div class="stats" id="viStats">SCORE: 0 · TIME: 0:00 · KILLS: 0</div>
+    <button class="btn" id="btnPlayAgain">★ NOCHMALE ★</button>
+  </div>
+
+  <div id="debug"></div>
+</div>
+
+<script src="game.js?v=6"></script>
+</body>
+</html>

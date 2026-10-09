@@ -1,0 +1,187 @@
+/* ============================================================
+   DWARF BUSTER — styles.css
+   Dark post-apocalyptic UI. All overlays are absolute inside #stage.
+   ============================================================ */
+
+:root {
+  --bg: #12100c;
+  --panel-bg: rgba(18, 14, 10, 0.82);
+  --border: #8a7a5a;
+  --text: #e8dfc8;
+  --text-dim: #9a8f75;
+  --hp: #d94f4f;
+  --heal: #6fd27a;
+  --ammo: #f2c14e;
+  --gren: #ff6b35;
+  --gold: #ffd94d;
+  --danger: #ff3b3b;
+  --steel: #b8b0a0;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background:
+    radial-gradient(ellipse at 50% 40%, #26201a 0%, #12100c 65%),
+    repeating-linear-gradient(90deg, #100e0a 0px 2px, #161410 2px 4px);
+  color: var(--text);
+  font-family: "Trebuchet MS", "Verdana", sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ---------- Game stage (fixed 960x540) ---------- */
+#stage {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  background: #0b0a08;
+  box-shadow: 0 0 60px 10px rgba(0,0,0,0.8), 0 0 0 4px #2a2318, 0 0 0 8px #3a2f1e;
+  overflow: hidden;
+}
+
+#stage.shake { animation: shake .18s linear 1; }
+@keyframes shake {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-6px, 4px); }
+  40%  { transform: translate(5px, -4px); }
+  60%  { transform: translate(-4px, -3px); }
+  80%  { transform: translate(3px, 2px); }
+  100% { transform: translate(0, 0); }
+}
+#stage.shake.shake2 { animation: shake .12s linear 1; }
+
+canvas { display: block; width: 960px; height: 540px; image-rendering: pixelated; }
+
+/* ---------- Screen effects ---------- */
+#flash, #healglow, #victoryglow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .45s linear;
+}
+#flash   { background: radial-gradient(ellipse at center, rgba(255,40,40,.55), rgba(120,0,0,.15) 75%); }
+#healglow{ background: radial-gradient(ellipse at center, rgba(90,230,120,.28), transparent 70%); }
+#victoryglow { background: radial-gradient(ellipse at center, rgba(255,210,80,.2), transparent 75%); }
+
+.vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.62) 100%);
+}
+
+/* ---------- HUD ---------- */
+#hud {
+  position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+  pointer-events: none;
+}
+#hud * { pointer-events: auto; }
+
+.hud-panel {
+  position: absolute;
+  background: var(--panel-bg);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.6);
+  font-weight: bold;
+  line-height: 1.45;
+}
+
+.hud-tl { top: 10px; left: 10px; min-width: 168px; }
+.hud-tc { top: 10px; left: 50%; transform: translateX(-50%); }
+.hud-tr { top: 10px; right: 10px; text-align: right; min-width: 120px; }
+.hud-bl { bottom: 10px; left: 10px; }
+.hud-br { bottom: 10px; right: 10px; text-align: right; }
+
+.lbl { color: var(--text-dim); font-size: 10px; letter-spacing: 1px; }
+
+.bar-wrap { width: 100%; height: 10px; background: rgba(0,0,0,.6); border-radius: 5px; overflow: hidden; margin-top: 3px; border: 1px solid rgba(255,255,255,.12); }
+.bar { height: 100%; background: var(--hp); width: 100%; transition: width .12s linear; }
+.bar.ammo { background: var(--ammo); }
+.bar.sprint { background: var(--steel); }
+.bar.heal { background: var(--heal); }
+
+.hud-tc .t-value { font-size: 14px; color: var(--gold); }
+.hud-tc .wave { font-size: 11px; color: var(--text-dim); letter-spacing: 2px; }
+
+/* combo popup (DOM) */
+#combo {
+  position: absolute; left: 50%; top: 28%; transform: translate(-50%, -50%);
+  font-size: 22px; font-weight: bold; color: var(--gold);
+  text-shadow: 2px 2px 0 #20180a, 0 0 12px rgba(255,210,80,.6);
+  opacity: 0; pointer-events: none; transition: opacity .12s linear, transform .18s ease-out;
+  font-size: 24px;
+}
+#combo.show { opacity: 1; }
+
+/* weapon slots */
+.slot {
+  display: inline-block; width: 28px; height: 22px;
+  border: 1px solid var(--border); border-radius: 4px;
+  text-align: center; line-height: 22px; font-size: 11px; font-weight: bold;
+  background: rgba(0,0,0,.5); color: var(--text-dim);
+  cursor: pointer;
+}
+.slot.active { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 8px rgba(255,210,80,.5); }
+.slot span { margin-right: 3px; }
+
+/* ---------- Overlays (menu / pause / game over / victory) ---------- */
+.overlay {
+  position: absolute; inset: 0;
+  background: rgba(6, 5, 3, .78);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .28s linear;
+}
+.overlay.show { opacity: 1; pointer-events: auto; }
+.overlay h1 {
+  font-size: 46px; margin: 0 0 6px; letter-spacing: 4px;
+  color: #f2c14e; text-shadow: 3px 3px 0 #3a1e06, 0 0 30px rgba(242,193,78,.35);
+}
+.overlay h1.dead { color: #e05a5a; text-shadow: 3px 3px 0 #3a1e06; }
+.overlay h1.win  { color: #8fe692; text-shadow: 3px 3px 0 #0a3a16; }
+.overlay p { margin: 4px 0 14px; color: var(--text-dim); font-size: 15px; line-height: 1.6; max-width: 620px; }
+.overlay .stats { font-size: 15px; color: var(--gold); margin-bottom: 18px; letter-spacing: 1px; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  font-family: inherit;
+  font-size: 17px; font-weight: bold; letter-spacing: 2px;
+  padding: 10px 26px;
+  background: linear-gradient(#3d3428, #2a2218);
+  color: var(--text);
+  border: 2px solid var(--gold);
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(0,0,0,.5), 0 4px 12px rgba(0,0,0,.6);
+}
+.btn:hover {
+  background: linear-gradient(#55483a, #3a3024);
+  box-shadow: 0 0 14px rgba(242,193,78,.4), 0 4px 12px rgba(0,0,0,.6);
+}
+.btn:active { transform: translateY(2px); }
+
+/* hint flicker */
+@keyframes flick { 0%,100% { opacity:.55; } 50% { opacity:.95; } }
+.flicker { animation: flick 1.6s ease-in-out infinite; }
+
+/* ---------- Debug (test mode) ---------- */
+#debug {
+  position: absolute; bottom: -14px; left: 10px;
+  font-size: 10px; font-family: monospace; color: #7a8f6a;
+  pointer-events: none;
+}
+#debug.show { display: block; }
+#debug.show { display: block; }
